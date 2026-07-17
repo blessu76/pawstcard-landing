@@ -334,7 +334,7 @@
 </main>
 
 <footer>
-  <div class="wrap">Pawstcard · Made with 🐾 for independent pet sitters · hello@pawstcard.app</div>
+  <div class="wrap">Pawstcard · Made with 🐾 for independent pet sitters</div>
 </footer>
 
 <script>
@@ -360,7 +360,7 @@
 
 /* --- GA4: CTA click tracking --- */
 (function(){
-  document.querySelectorAll('a.btn[href="#signup"]').forEach(function(a){
+  document.querySelectorAll('a[href="#signup"]').forEach(function(a){
     a.addEventListener('click', function(){
       if(typeof gtag === 'function'){
         gtag('event','cta_click',{location: (a.textContent || '').trim()});
@@ -392,7 +392,7 @@ document.getElementById('ea-form').addEventListener('submit', async function(e){
       throw new Error();
     }
   }catch(err){
-    msg.textContent = "Something went wrong — please try again, or email hello@pawstcard.app.";
+    msg.textContent = "Something went wrong — please try again in a moment.";
     msg.className = 'form-msg err';
   }
 });
