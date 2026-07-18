@@ -39,7 +39,7 @@
     line-height:1.6;
     -webkit-font-smoothing:antialiased;
   }
-  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 28px}
 
   /* ---------- header ---------- */
   header{padding:22px 0}
@@ -179,6 +179,22 @@
     .hero{grid-template-columns:1fr;gap:44px;padding:36px 0 56px}
     .q-grid,.steps{grid-template-columns:1fr}
     .price-card{flex-direction:column;align-items:flex-start;gap:18px}
+  }
+  /* ---- mobile: roomier gutters + unified left-alignment across sections ---- */
+  @media(max-width:640px){
+    /* wider page gutter so nothing hugs the screen edge */
+    .wrap{padding:0 22px}
+    /* card sections already inset content via their own padding; trim it a touch
+       so the card-content left line lands near the hero/quotes text line */
+    .step{padding:26px 22px}
+    .price-card{padding:28px 22px}
+    .signup-box{padding:36px 22px}
+    .q-card{padding:22px 22px}
+    /* non-card text (hero copy, quotes header) gets a matching inner inset so its
+       left edge aligns with the card-content left edge; the mock keeps no inset */
+    .hero > div:not(.mock),
+    .quotes .wrap > h2,
+    .quotes .wrap > .sub{padding-left:22px;padding-right:22px}
   }
   @media(prefers-reduced-motion:reduce){
     *{animation:none!important;transition:none!important}
