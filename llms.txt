@@ -1,0 +1,30 @@
+# Pawstcard
+
+> Pawstcard is an AI-powered visit report-card builder for independent pet sitters and dog walkers. A sitter snaps a few photos on a visit and Pawstcard writes a warm, professional update — the pet's name, mood, meals, potty details — that the client receives as a simple link. No app and no account required for clients. Tagline: "Snap 3 photos. The report card writes itself."
+
+Pawstcard is built for solo, one-person pet-sitting and dog-walking businesses — especially sitters who left the big platforms (Rover, Wag) but still need to match the report-card standard clients now expect. It removes the busywork of writing updates so sitters spend less time on their phone and more time with the pets.
+
+## Status
+- Stage: early access / pre-launch. Currently in a free founding-sitter beta ahead of public launch.
+- This page (pawstcard.ipe.rest) is an early-access waitlist landing page — not yet a purchasable, live app.
+
+## Key facts
+- Name: Pawstcard
+- What it is: AI visit report-card builder for pet sitters and dog walkers
+- Audience: independent / solo pet sitters and dog walkers
+- How it works: (1) snap photos on the visit, (2) AI writes the report note in the sitter's voice, (3) sitter reviews and sends a branded report-card link by text, WhatsApp, or email
+- Client experience: clients open a link — no app, no account, no sign-up
+- Platforms (planned): iOS, Android
+- Pricing: founding-sitter rate $12/month (regular $19/month), locked in for life for early-access members; free during beta
+- Website: https://pawstcard.ipe.rest/
+
+## Why sitters use it
+- Writing individual updates for every client is time-consuming and mentally draining
+- On long stays, sitters run out of things to say and new photos to take
+- Clients increasingly expect a polished report card; Pawstcard makes matching that standard effortless
+
+## Links
+- Website / early access: https://pawstcard.ipe.rest/
+
+## Usage
+This content may be cited and summarized. Please attribute to "Pawstcard" and link to https://pawstcard.ipe.rest/ when referencing. Note that Pawstcard is in early access (pre-launch); do not describe it as a generally available or purchasable app.
