@@ -139,6 +139,15 @@
   }
   .btn:hover,.btn:focus-visible{background:var(--forest-deep);transform:translateY(-1px)}
   .cta-note{font-size:.85rem;color:var(--muted)}
+  /* offer signal chip in hero (above the fold) */
+  .offer-signal{
+    display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;
+    font-size:.86rem;font-weight:600;color:var(--forest-deep);
+    background:#EDF3E8;border:1px solid #CFE0C6;border-radius:999px;
+    padding:8px 15px;margin-bottom:22px;line-height:1.35;
+  }
+  .offer-signal .free{color:var(--forest);font-weight:700}
+  .offer-signal .dot-sep{opacity:.5}
 
   /* ---------- report card mock (signature) ---------- */
   .mock{position:relative}
@@ -239,9 +248,29 @@
 
   footer{border-top:1px solid var(--line);padding:26px 0;font-size:.82rem;color:var(--muted);text-align:center}
 
+  /* ---------- post-submit survey (progressive: shown after email captured) ---------- */
+  .survey{display:none;margin-top:22px;text-align:left;max-width:430px;margin-left:auto;margin-right:auto}
+  .survey.show{display:block}
+  .survey h3{font-family:'Fraunces',serif;font-weight:600;font-size:1.12rem;margin-bottom:6px;text-align:center}
+  .survey .survey-sub{font-size:.86rem;color:var(--muted);text-align:center;margin-bottom:16px}
+  .survey form{gap:12px}
+  .survey .survey-thanks{font-size:.9rem;color:var(--forest);text-align:center;margin-top:10px}
+
+  /* ---------- mobile sticky CTA bar ---------- */
+  .sticky-cta{
+    position:fixed;left:0;right:0;bottom:0;z-index:50;display:none;
+    background:rgba(244,247,241,.94);backdrop-filter:saturate(1.4) blur(8px);
+    border-top:1px solid var(--line);box-shadow:0 -6px 20px rgba(34,64,47,.10);
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+  }
+  .sticky-cta .sc-inner{display:flex;align-items:center;gap:12px;max-width:520px;margin:0 auto}
+  .sticky-cta .sc-copy{flex:1;min-width:0;font-size:.78rem;line-height:1.25;color:var(--forest-deep);font-weight:600}
+  .sticky-cta .sc-copy span{display:block;font-weight:500;color:var(--muted);font-size:.72rem}
+  .sticky-cta .btn{padding:12px 20px;font-size:.92rem;white-space:nowrap}
+
   /* ---------- responsive ---------- */
   @media(max-width:860px){
-    .hero{grid-template-columns:1fr;gap:44px;padding:36px 0 56px}
+    .hero{grid-template-columns:1fr;gap:28px;padding:24px 0 48px}
     .q-grid,.steps{grid-template-columns:1fr}
     .price-card{flex-direction:column;align-items:flex-start;gap:18px}
   }
@@ -249,6 +278,15 @@
   @media(max-width:640px){
     /* wider page gutter so nothing hugs the screen edge */
     .wrap{padding:0 22px}
+    /* compress hero so eyebrow+headline+offer+CTA fit the first screen */
+    .hero{gap:22px;padding:16px 0 40px}
+    h1{font-size:clamp(1.8rem,7.4vw,2.3rem);margin-bottom:14px}
+    .eyebrow{margin-bottom:12px}
+    .hero p.lede{font-size:1rem;margin-bottom:18px}
+    .offer-signal{margin-bottom:16px}
+    /* push the mock BELOW the CTA on mobile so the CTA sits above the fold */
+    .hero > div:not(.mock){order:1}
+    .hero .mock{order:2}
     /* card sections already inset content via their own padding; trim it a touch
        so the card-content left line lands near the hero/quotes text line */
     .step{padding:26px 22px}
@@ -260,6 +298,9 @@
     .hero > div:not(.mock),
     .quotes .wrap > h2,
     .quotes .wrap > .sub{padding-left:22px;padding-right:22px}
+    /* show sticky CTA bar on mobile; pad body so it doesn't cover the footer */
+    .sticky-cta{display:block}
+    body{padding-bottom:78px}
   }
   @media(prefers-reduced-motion:reduce){
     *{animation:none!important;transition:none!important}
@@ -282,9 +323,14 @@
       <span class="eyebrow">For independent pet sitters &amp; dog walkers</span>
       <h1>Snap 3 photos.<br>The report card <span class="hl">writes itself.</span></h1>
       <p class="lede">Pawstcard's AI turns your visit photos into a warm, professional report card your clients screenshot and share. You just review and hit send. <strong>Less phone time, more pet time.</strong></p>
+      <div class="offer-signal">
+        <span class="free">Free during beta</span>
+        <span class="dot-sep">·</span>
+        <span>founding sitters lock in $12/mo</span>
+      </div>
       <div class="cta-row">
         <a class="btn" href="#signup">Join the early access list</a>
-        <span class="cta-note">Free for founding sitters during beta</span>
+        <span class="cta-note">No card required</span>
       </div>
     </div>
 
@@ -386,33 +432,57 @@
       <p class="sub">Leave your email and we'll invite you to the free beta. Founding sitters shape the features and lock in the lifetime rate.</p>
 
       <!-- Web3Forms (free, unlimited). access_key is a public submission key by design. -->
+      <!-- Step 1: email only — minimal friction. -->
       <form id="ea-form" action="https://api.web3forms.com/submit" method="POST">
         <input type="hidden" name="access_key" value="022118b2-b323-4e2b-8d74-d79e5993a7a4">
+        <input type="hidden" name="subject" value="Pawstcard early access — new signup">
         <!-- honeypot: bots fill this, humans can't see it -->
         <input type="checkbox" name="botcheck" style="display:none !important" tabindex="-1" autocomplete="off">
-        <input type="email" name="email" placeholder="you@example.com" required autocomplete="email" aria-label="Email address">
-        <select name="current_tool" aria-label="How do you send updates today?">
-          <option value="" disabled selected>How do you send updates today?</option>
-          <option>Text / WhatsApp</option>
-          <option>Rover or Wag cards</option>
-          <option>Software (Time To Pet, etc.)</option>
-          <option>I don't send updates</option>
-        </select>
-        <select name="visits_per_day" aria-label="How many visits do you do per day?">
-          <option value="" disabled selected>How many visits do you do per day?</option>
-          <option>1–2 visits/day</option>
-          <option>3–5 visits/day</option>
-          <option>6–10 visits/day</option>
-          <option>10+ visits/day</option>
-          <option>Varies a lot</option>
-        </select>
+        <input type="email" name="email" id="ea-email" placeholder="you@example.com" required autocomplete="email" aria-label="Email address">
         <button class="btn" type="submit">Get early access</button>
         <div class="form-msg" id="form-msg" role="status"></div>
       </form>
       <p class="privacy">No spam, ever. One invite email — that's it.</p>
+
+      <!-- Step 2: optional survey — revealed only after a successful signup. -->
+      <div class="survey" id="ea-survey" aria-live="polite">
+        <h3>One quick thing (optional) 🐾</h3>
+        <p class="survey-sub">Helps us build the right features first. Skip anytime.</p>
+        <form id="survey-form" action="https://api.web3forms.com/submit" method="POST">
+          <input type="hidden" name="access_key" value="022118b2-b323-4e2b-8d74-d79e5993a7a4">
+          <input type="hidden" name="subject" value="Pawstcard survey — founding sitter">
+          <input type="hidden" name="email" id="survey-email">
+          <input type="checkbox" name="botcheck" style="display:none !important" tabindex="-1" autocomplete="off">
+          <select name="current_tool" aria-label="How do you send updates today?">
+            <option value="" disabled selected>How do you send updates today?</option>
+            <option>Text / WhatsApp</option>
+            <option>Rover or Wag cards</option>
+            <option>Software (Time To Pet, etc.)</option>
+            <option>I don't send updates</option>
+          </select>
+          <select name="visits_per_day" aria-label="How many visits do you do per day?">
+            <option value="" disabled selected>How many visits do you do per day?</option>
+            <option>1–2 visits/day</option>
+            <option>3–5 visits/day</option>
+            <option>6–10 visits/day</option>
+            <option>10+ visits/day</option>
+            <option>Varies a lot</option>
+          </select>
+          <button class="btn" type="submit">Send &amp; finish</button>
+          <div class="survey-thanks" id="survey-thanks"></div>
+        </form>
+      </div>
     </div>
   </section>
 </main>
+
+<!-- mobile sticky CTA bar -->
+<div class="sticky-cta" id="sticky-cta" aria-hidden="false">
+  <div class="sc-inner">
+    <div class="sc-copy">Free during beta<span>Founding sitters lock in $12/mo</span></div>
+    <a class="btn" href="#signup">Get early access</a>
+  </div>
+</div>
 
 <footer>
   <div class="wrap">Pawstcard · Made with 🐾 for independent pet sitters</div>
@@ -439,7 +509,7 @@
   tick();
 })();
 
-/* --- GA4: CTA click tracking --- */
+/* --- GA4: CTA click tracking (includes mobile sticky CTA — same selector) --- */
 (function(){
   document.querySelectorAll('a[href="#signup"]').forEach(function(a){
     a.addEventListener('click', function(){
@@ -450,10 +520,25 @@
   });
 })();
 
-/* --- AJAX form submit (Web3Forms) --- */
+/* --- GA4: form_start — fires once on first focus of the email input --- */
+(function(){
+  var email = document.getElementById('ea-email');
+  if(!email) return;
+  var fired = false;
+  email.addEventListener('focus', function(){
+    if(fired) return;
+    fired = true;
+    if(typeof gtag === 'function'){
+      gtag('event','form_start',{form_id:'ea-form'});
+    }
+  });
+})();
+
+/* --- AJAX form submit (Web3Forms) — email_signup fires ONLY on res.ok --- */
 document.getElementById('ea-form').addEventListener('submit', async function(e){
   e.preventDefault();
   var form = e.target, msg = document.getElementById('form-msg');
+  var emailVal = (form.querySelector('input[type=email]').value || '').trim();
   msg.textContent = 'Sending…'; msg.className = 'form-msg';
   try{
     var res = await fetch(form.action, {
@@ -464,11 +549,16 @@ document.getElementById('ea-form').addEventListener('submit', async function(e){
     if(res.ok){
       msg.textContent = "You're on the list! 🎉 We'll email your beta invite soon.";
       msg.className = 'form-msg ok';
-      form.querySelector('input[type=email]').value = '';
       /* GA4: email signup (Davy: mark as Key Event in GA4 UI) */
       if(typeof gtag === 'function'){
         gtag('event','email_signup',{method:'web3forms'});
       }
+      /* reveal optional survey; carry the email so the survey ties back to the signup */
+      var survey = document.getElementById('ea-survey');
+      var surveyEmail = document.getElementById('survey-email');
+      if(surveyEmail) surveyEmail.value = emailVal;
+      form.querySelector('input[type=email]').value = '';
+      if(survey){ survey.classList.add('show'); survey.scrollIntoView({behavior:'smooth',block:'center'}); }
     }else{
       throw new Error();
     }
@@ -477,6 +567,32 @@ document.getElementById('ea-form').addEventListener('submit', async function(e){
     msg.className = 'form-msg err';
   }
 });
+
+/* --- Optional survey submit (does not affect email_signup) --- */
+(function(){
+  var sform = document.getElementById('survey-form');
+  if(!sform) return;
+  sform.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var thanks = document.getElementById('survey-thanks');
+    thanks.textContent = 'Saving…';
+    try{
+      var res = await fetch(sform.action, {
+        method:'POST',
+        body:new FormData(sform),
+        headers:{'Accept':'application/json'}
+      });
+      if(res.ok){
+        thanks.textContent = "Thanks — that's a real help! 🐾";
+        if(typeof gtag === 'function'){ gtag('event','survey_complete',{form_id:'survey-form'}); }
+        sform.querySelectorAll('select').forEach(function(s){ s.disabled = true; });
+        sform.querySelector('button').disabled = true;
+      }else{ throw new Error(); }
+    }catch(err){
+      thanks.textContent = "Couldn't save that — no worries, you're still on the list.";
+    }
+  });
+})();
 </script>
 </body>
 </html>
