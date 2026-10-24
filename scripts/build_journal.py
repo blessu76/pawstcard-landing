@@ -150,10 +150,9 @@ def iso_sec(d):
 
 
 def fmt_date(d):
-    """static text: Oct 25, 2026, 8:13 PM KST"""
+    """static text (crawlers, no-JS readers): Oct 25, 2026, 20:13 KST  (24-hour, no seconds)"""
     d = kst(d)
-    h = d.hour % 12 or 12
-    return "%s %d, %d, %d:%02d %s KST" % (MONTHS[d.month - 1], d.day, d.year, h, d.minute, "AM" if d.hour < 12 else "PM")
+    return "%s %d, %d, %02d:%02d KST" % (MONTHS[d.month - 1], d.day, d.year, d.hour, d.minute)
 
 
 def ymd(d):
@@ -471,6 +470,27 @@ src="https://www.facebook.com/tr?id={PIXEL_ID}&ev=PageView&noscript=1"/></noscri
 """
 
 
+LOCALIZE_JS = """<script>
+/* Show publish times in the reader's own time zone (with its abbreviation). Without JS / for crawlers the static KST text stays. */
+(function () {
+  try {
+    var zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    var names = { 'Asia/Seoul': 'KST', 'Asia/Tokyo': 'JST' };
+    var fmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZoneName: 'short' });
+    var els = document.querySelectorAll('time[data-localize]');
+    for (var i = 0; i < els.length; i++) {
+      var d = new Date(els[i].getAttribute('datetime'));
+      if (isNaN(d.getTime())) continue;
+      els[i].textContent = fmt.formatToParts(d).map(function (p) {
+        return p.type === 'timeZoneName' && names[zone] ? names[zone] : p.value;
+      }).join('');
+    }
+  } catch (e) {}
+})();
+</script>
+"""
+
+
 def footer():
     return """<footer>
   <div class="wrap">
@@ -478,7 +498,7 @@ def footer():
     <p class="foot-links"><a href="/">Home</a> · <a href="/journal/">Journal</a> · <a href="/journal/feed.xml">RSS</a> · <a href="/#signup">Join the waitlist</a></p>
   </div>
 </footer>
-</body>
+""" + LOCALIZE_JS + """</body>
 </html>
 """
 
@@ -525,7 +545,7 @@ def render_post(p, v):
             + f"""<main class="wrap article-wrap">
   <article class="article">
     <header class="article-head">
-      <p class="j-meta"><a href="/journal/">Journal</a> <span aria-hidden="true">·</span> <time datetime="{iso_sec(p['_pub'])}">{fmt_date(p['_pub'])}</time>{cat}{' <span class="draft-flag">DRAFT</span>' if p['draft'] else ''}</p>
+      <p class="j-meta"><a href="/journal/">Journal</a> <span aria-hidden="true">·</span> <time datetime="{iso_sec(p['_pub'])}" data-localize>{fmt_date(p['_pub'])}</time>{cat}{' <span class="draft-flag">DRAFT</span>' if p['draft'] else ''}</p>
       <h1>{esc(p['title'])}</h1>
       <p class="lede">{esc(p['description'])}</p>
     </header>
@@ -555,7 +575,7 @@ def render_list(posts, v):
                                     for i, p in enumerate(posts)]}
     if posts:
         items = "\n".join(f"""      <li>
-        <p class="j-meta"><time datetime="{iso_sec(p['_pub'])}">{fmt_date(p['_pub'])}</time>{' · ' + esc(p['category']) if p.get('category') else ''}</p>
+        <p class="j-meta"><time datetime="{iso_sec(p['_pub'])}" data-localize>{fmt_date(p['_pub'])}</time>{' · ' + esc(p['category']) if p.get('category') else ''}</p>
         <h2><a href="{post_path(p)}">{esc(p['title'])}</a></h2>
         <p>{esc(p['description'])}</p>
       </li>""" for p in posts)

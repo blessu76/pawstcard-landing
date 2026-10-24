@@ -141,7 +141,7 @@ src="https://www.facebook.com/tr?id=1932639057434633&ev=PageView&noscript=1"/></
 <main class="wrap article-wrap">
   <article class="article">
     <header class="article-head">
-      <p class="j-meta"><a href="/journal/">Journal</a> <span aria-hidden="true">·</span> <time datetime="2026-10-25T08:44:00+09:00">Oct 25, 2026, 8:44 AM KST</time></p>
+      <p class="j-meta"><a href="/journal/">Journal</a> <span aria-hidden="true">·</span> <time datetime="2026-10-25T08:44:00+09:00" data-localize>Oct 25, 2026, 08:44 KST</time></p>
       <h1>How to Write a Pet Sitting Visit Report Clients Actually Read</h1>
       <p class="lede">A simple five-part structure for pet sitting visit reports, with a checklist, a sample note, and the mistakes that make clients stop reading.</p>
     </header>
@@ -186,5 +186,23 @@ src="https://www.facebook.com/tr?id=1932639057434633&ev=PageView&noscript=1"/></
     <p class="foot-links"><a href="/">Home</a> · <a href="/journal/">Journal</a> · <a href="/journal/feed.xml">RSS</a> · <a href="/#signup">Join the waitlist</a></p>
   </div>
 </footer>
+<script>
+/* Show publish times in the reader's own time zone (with its abbreviation). Without JS / for crawlers the static KST text stays. */
+(function () {
+  try {
+    var zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    var names = { 'Asia/Seoul': 'KST', 'Asia/Tokyo': 'JST' };
+    var fmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZoneName: 'short' });
+    var els = document.querySelectorAll('time[data-localize]');
+    for (var i = 0; i < els.length; i++) {
+      var d = new Date(els[i].getAttribute('datetime'));
+      if (isNaN(d.getTime())) continue;
+      els[i].textContent = fmt.formatToParts(d).map(function (p) {
+        return p.type === 'timeZoneName' && names[zone] ? names[zone] : p.value;
+      }).join('');
+    }
+  } catch (e) {}
+})();
+</script>
 </body>
 </html>

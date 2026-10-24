@@ -163,10 +163,10 @@ class ActualPublishTime(unittest.TestCase):
         page = s.read("journal/en/x/index.html")
         self.assertIn('"datePublished": "2026-10-26T03:13:00+09:00"', page)
         self.assertIn('"dateModified": "2026-10-26T03:13:00+09:00"', page)
-        self.assertIn("Oct 26, 2026, 3:13 AM KST", page)
+        self.assertIn("Oct 26, 2026, 03:13 KST", page)
         self.assertIn("2026-10-26T03:13:00+09:00", page)
         self.assertNotIn("14:00", page.split("</head>")[1])
-        self.assertIn("Oct 26, 2026, 3:13 AM KST", s.read("journal/index.html"))
+        self.assertIn("Oct 26, 2026, 03:13 KST", s.read("journal/index.html"))
         self.assertIn("<pubDate>Mon, 26 Oct 2026 03:13:00 +0900</pubDate>", s.read("journal/feed.xml"))
         self.assertIn("<lastmod>2026-10-26T03:13:00+09:00</lastmod>", s.read("sitemap.xml"))
         self.assertIn("(2026-10-26)", s.read("llms.txt"))
@@ -278,7 +278,7 @@ class EasternTime(unittest.TestCase):
         self.assertIn("published_at: 2026-11-02T21:20+09:00", s.read("journal/queue/x.md"))
         page = s.read("journal/en/x/index.html")
         self.assertIn('"datePublished": "2026-11-02T21:20:00+09:00"', page)
-        self.assertIn("Nov 2, 2026, 9:20 PM KST", page)
+        self.assertIn("Nov 2, 2026, 21:20 KST", page)
 
     def test_stamp_across_the_boundary_day(self):
         s = Site(self)
@@ -299,17 +299,20 @@ class EasternTime(unittest.TestCase):
         self.assertEqual(pj.run(s.root, bj.parse_now("2026-10-25T11:13:00Z"), slug="x", out=lambda m: None), 0)
         self.assertIn("published_at: 2026-10-25T20:13+09:00", s.read("journal/queue/x.md"))
 
-    def test_kst_static_text_and_no_timezone_script(self):
+    def test_kst_record_static_kst_text_and_device_time_hook(self):
         s = Site(self)
         s.post("x", "2026-10-25T07:13-04:00")
         bj.build(s.root, NOW)
         page, lst = s.read("journal/en/x/index.html"), s.read("journal/index.html")
-        self.assertIn('<time datetime="2026-10-25T20:13:00+09:00">Oct 25, 2026, 8:13 PM KST</time>', page)
-        self.assertIn('<time datetime="2026-10-25T20:13:00+09:00">Oct 25, 2026, 8:13 PM KST</time>', lst)
-        for text in (page, lst):  # site-wide policy: no converter here, a shared module comes later
-            self.assertNotIn("data-localize", text)
-            self.assertNotIn("Intl.", text)
-            self.assertNotIn("-04:00", text)
+        want = '<time datetime="2026-10-25T20:13:00+09:00" data-localize>Oct 25, 2026, 20:13 KST</time>'
+        for text in (page, lst):
+            self.assertIn(want, text)  # recorded in KST, static text HH:MM KST, hook for the device time zone
+            self.assertIn("Intl.DateTimeFormat", text)
+            self.assertIn("hourCycle: 'h23'", text)
+            self.assertIn("'Asia/Seoul': 'KST'", text)
+            self.assertNotIn("-04:00", text)  # no Eastern time anywhere in what is recorded/shown
+        for text in (page, lst, s.read("journal/feed.xml"), s.read("sitemap.xml")):
+            self.assertNotIn("-0400", text)
 
     def test_recorded_times_must_be_kst(self):
         for bad in ("2026-10-25T07:13-04:00", "2026-10-25T20:13Z", "2026-10-25T20:13+08:00", "2026-10-25T20:13:00+09:00", "2026-10-25"):
