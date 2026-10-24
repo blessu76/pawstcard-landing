@@ -1,0 +1,103 @@
+name: Journal — publish due posts
+
+# Publishes /journal/ manuscripts whose publish_at (America/New_York) has passed, with no local session:
+# scripts/publish_journal.py stamps published_at with the real run time, the result is committed to main,
+# and deploy.yml is started with workflow_dispatch (a push made with GITHUB_TOKEN does NOT trigger deploy.yml;
+# workflow_dispatch is the documented exception). deploy.yml itself is untouched and stays the only deploy path.
+#
+# Cron is UTC and has no DST, so both seasons are covered: 07:xx ET = 11 UTC (EDT, until Nov 1 2026) / 12 UTC (EST),
+# 14:xx ET = 18 / 19 UTC. The off-season hour is harmless — publish_at is only a floor and the script no-ops when nothing is due.
+# Minutes avoid :00 (GitHub delays top-of-hour schedules the most). Keep new publish_at values inside these windows.
+
+on:
+  schedule:
+    - cron: '3,18,33,48 11,12 * * *'
+    - cron: '3,18,33,48 18,19 * * *'
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'Publish only this slug (must already be due). Empty = everything due.'
+        required: false
+        default: ''
+      dry_run:
+        description: 'Report only: no commit, no deploy'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write   # commit + push to main
+  actions: write    # gh workflow run deploy.yml
+
+concurrency:
+  group: journal-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}   # job level so the failure step's `if:` can see it
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Is anything due?
+        id: due
+        env:
+          SLUG: ${{ github.event.inputs.slug }}
+        run: |
+          set -e
+          ARGS=""
+          [ -n "$SLUG" ] && ARGS="--slug $SLUG"
+          python3 scripts/publish_journal.py --dry-run $ARGS | tee /tmp/dry.txt
+          if grep -q "would publish: —" /tmp/dry.txt; then echo "due=false" >> "$GITHUB_OUTPUT"; else echo "due=true" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Test + publish
+        if: steps.due.outputs.due == 'true' && github.event.inputs.dry_run != 'true'
+        env:
+          SLUG: ${{ github.event.inputs.slug }}
+        run: |
+          set -e
+          ./scripts/check.sh
+          ARGS=""
+          [ -n "$SLUG" ] && ARGS="--slug $SLUG"
+          python3 scripts/publish_journal.py $ARGS
+          ./scripts/check.sh
+
+      - name: Commit and push to main
+        id: push
+        if: steps.due.outputs.due == 'true' && github.event.inputs.dry_run != 'true'
+        run: |
+          set -e
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add journal sitemap.xml llms.txt
+          if git diff --cached --quiet; then echo "nothing to commit"; echo "pushed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
+          SLUGS=$(git diff --cached --name-only -- journal/queue | sed 's#journal/queue/##; s#\.md$##' | paste -sd, -)
+          git commit -m "journal: publish ${SLUGS:-due posts} (scheduled run)"
+          for i in 1 2 3; do
+            git push origin HEAD:main && { echo "pushed=true" >> "$GITHUB_OUTPUT"; exit 0; }
+            git pull --rebase origin main
+          done
+          exit 1
+
+      - name: Start the deploy (deploy.yml, workflow_dispatch)
+        if: steps.push.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref main --repo "$GITHUB_REPOSITORY"
+
+      - name: Notify Slack — failure
+        if: failure() && env.SLACK_BOT_TOKEN != ''
+        env:
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          TEXT=$(printf '❌ *Journal 예약 발행 실패 — 확인 필요*\n_보고: Paul (Head of Reach) → #release-note_\n\n• Actions: https://github.com/blessu76/pawstcard-landing/actions/runs/%s' "$RUN_ID")
+          PAYLOAD=$(jq -nc --arg channel "C0BJ1EF5PC0" --arg text "$TEXT" '{channel: $channel, text: $text, mrkdwn: true}')
+          curl -s -X POST https://slack.com/api/chat.postMessage \
+            -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
+            -H "Content-Type: application/json; charset=utf-8" \
+            --data "$PAYLOAD"
