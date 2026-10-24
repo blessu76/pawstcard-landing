@@ -2,7 +2,7 @@
 slug: how-independent-pet-sitters-build-client-trust
 title: How Independent Pet Sitters Build Client Trust (and Keep It)
 description: Trust is built before, during, and after each job. A practical checklist for independent pet sitters, including how to report problems well.
-publish_at: 2026-10-27T07:00+09:00
+publish_at: 2026-10-27T07:10+09:00
 tags: [pet sitting, client trust, independent pet sitter, business]
 ---
 

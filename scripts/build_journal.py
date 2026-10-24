@@ -9,15 +9,17 @@ Writes  journal/en/<slug>/index.html      one page per published post (Article J
                                           (hreflang + lastmod + image); the landing entry is never touched
         llms.txt                          "Journal" section between <!-- journal:llms:start --> / <!-- journal:llms:end -->
 
-A post is published only when its `publish_at` is NOT in the future (compared with --now, default = the real clock).
-Later posts are validated but produce no page, no list entry, no sitemap/llms/feed line. The build is a pure function of
-(manuscripts, now): re-running it never changes anything unless a post became due or a manuscript changed.
+`publish_at` is only a floor ("never before this time"). A post goes live when scripts/publish_journal.py stamps it with
+`published_at` = the real run time (KST, HH:MM). Pages, list, feed, sitemap lastmod, JSON-LD datePublished all show
+`published_at`, never `publish_at`. A post without `published_at` (or with one after --now) produces no page, no list entry,
+no sitemap/llms/feed line. The build is a pure function of (manuscripts, now).
 
 Front matter (between two `---` lines, `key: value` per line):
     slug:         required, [a-z0-9-]+, must equal the file name (<slug>.md)
     title:        required
     description:  required, one sentence, <= 155 characters (meta description, list card, RSS)
-    publish_at:   required, YYYY-MM-DDTHH:MM+09:00  (KST, nothing else is accepted)
+    publish_at:   required, YYYY-MM-DDTHH:MM+09:00  (KST, nothing else is accepted) — earliest time the post may go live
+    published_at: written by scripts/publish_journal.py, same format; the actual publication time. Do not write it by hand.
     updated:      optional, same format -> dateModified / sitemap lastmod
     category:     optional, e.g. guides
     tags:         optional, list `[a, b, c]` or comma separated -> keywords / article:tag (`keywords:` is accepted as an alias)
@@ -104,7 +106,7 @@ def iso_sec(d):
 
 def fmt_date(d):
     d = d.astimezone(KST)
-    return "%s %d, %d" % (MONTHS[d.month - 1], d.day, d.year)
+    return "%s %d, %d · %02d:%02d KST" % (MONTHS[d.month - 1], d.day, d.year, d.hour, d.minute)
 
 
 def ymd(d):
@@ -141,9 +143,12 @@ def parse_post(path):
     if path.stem != meta["slug"]:
         raise ValueError("file name must be <slug>.md (slug is %r)" % meta["slug"])
     meta["_at"] = parse_stamp(meta["publish_at"])
+    meta["_pub"] = parse_stamp(meta["published_at"], "published_at") if meta.get("published_at") else None
+    if meta["_pub"] and meta["_pub"] < meta["_at"]:
+        raise ValueError("published_at is earlier than publish_at")
     meta["_updated"] = parse_stamp(meta["updated"], "updated") if meta.get("updated") else None
-    if meta["_updated"] and meta["_updated"] < meta["_at"]:
-        raise ValueError("updated is earlier than publish_at")
+    if meta["_updated"] and meta["_updated"] < (meta["_pub"] or meta["_at"]):
+        raise ValueError("updated is earlier than the publication time")
     meta["draft"] = str(meta.get("draft", "false")).lower() in ("true", "yes", "1")
     if len(meta["description"]) > DESC_MAX:
         raise ValueError("description is %d characters (max %d)" % (len(meta["description"]), DESC_MAX))
@@ -175,16 +180,37 @@ def load_posts(root):
             continue
         seen[p["slug"]] = f.name
         posts.append(p)
-    posts.sort(key=lambda p: (p["_at"], p["slug"]), reverse=True)
+    posts.sort(key=lambda p: (p["_pub"] or p["_at"], p["slug"]), reverse=True)
     return posts, errors
 
 
 def split_due(posts, now, drafts_ok=False):
-    """-> (due, waiting). Drafts are dropped unless drafts_ok. due = publish_at <= now."""
-    live = [p for p in posts if drafts_ok or not p["draft"]]
-    due = [p for p in live if p["_at"] <= now]
-    waiting = [p for p in live if p["_at"] > now]
-    return due, waiting
+    """-> (live, waiting, ready). live = stamped with published_at <= now (drafts only with drafts_ok, shown at publish_at).
+    ready = waiting posts whose publish_at has passed but that publish_journal.py has not stamped yet."""
+    live, waiting = [], []
+    for p in posts:
+        if p["draft"] and not drafts_ok:
+            continue
+        if p["draft"] and p["_pub"] is None:
+            p["_pub"] = p["_at"]  # preview only
+        (live if p["_pub"] and p["_pub"] <= now else waiting).append(p)
+    ready = [p for p in waiting if p["_at"] <= now and not p["draft"]]
+    return live, waiting, ready
+
+
+def stamp_published(path, stamp):
+    """Add `published_at: <stamp>` right after the publish_at line of a manuscript's front matter (body untouched)."""
+    text = path.read_text(encoding="utf-8")
+    end = text.find("\n---", 4)
+    lines = text[:end].split("\n")
+    if any(l.lower().startswith("published_at:") for l in lines):
+        return False
+    for i, l in enumerate(lines):
+        if l.lower().startswith("publish_at:"):
+            lines.insert(i + 1, "published_at: %s" % stamp)
+            path.write_text("\n".join(lines) + text[end:], encoding="utf-8")
+            return True
+    raise ValueError("%s: no publish_at line" % path.name)
 
 
 # ---------------------------------------------------------------- markdown (small, safe subset)
@@ -423,11 +449,11 @@ def alt_links(url):
 # ---------------------------------------------------------------- pages
 def render_post(p, v):
     url = post_url(p)
-    modified = p["_updated"] or p["_at"]
+    modified = p["_updated"] or p["_pub"]
     data = {
         "@context": "https://schema.org", "@type": "BlogPosting",
         "headline": p["title"], "description": p["description"],
-        "datePublished": iso_sec(p["_at"]), "dateModified": iso_sec(modified),
+        "datePublished": iso_sec(p["_pub"]), "dateModified": iso_sec(modified),
         "inLanguage": "en",
         "mainEntityOfPage": {"@type": "WebPage", "@id": url}, "url": url,
         "image": hero(p),
@@ -441,7 +467,7 @@ def render_post(p, v):
     if p["_keywords"]:
         data["keywords"] = ", ".join(p["_keywords"])
     extra = ('<meta property="article:published_time" content="%s">\n<meta property="article:modified_time" content="%s">\n'
-             % (iso_sec(p["_at"]), iso_sec(modified))
+             % (iso_sec(p["_pub"]), iso_sec(modified))
              + ('<meta property="article:section" content="%s">\n' % esc(p["category"]) if p.get("category") else "")
              + "".join('<meta property="article:tag" content="%s">\n' % esc(k) for k in p["_keywords"])
              + ld(data) + ld(breadcrumb(p["title"], url)))
@@ -452,7 +478,7 @@ def render_post(p, v):
             + f"""<main class="wrap article-wrap">
   <article class="article">
     <header class="article-head">
-      <p class="j-meta"><a href="/journal/">Journal</a> <span aria-hidden="true">·</span> <time datetime="{iso_sec(p['_at'])}">{fmt_date(p['_at'])}</time>{cat}{' <span class="draft-flag">DRAFT</span>' if p['draft'] else ''}</p>
+      <p class="j-meta"><a href="/journal/">Journal</a> <span aria-hidden="true">·</span> <time datetime="{iso_sec(p['_pub'])}">{fmt_date(p['_pub'])}</time>{cat}{' <span class="draft-flag">DRAFT</span>' if p['draft'] else ''}</p>
       <h1>{esc(p['title'])}</h1>
       <p class="lede">{esc(p['description'])}</p>
     </header>
@@ -475,14 +501,14 @@ def render_list(posts, v):
     data = {"@context": "https://schema.org", "@type": "Blog", "name": "Pawstcard Journal", "url": url,
             "description": BLOG_DESC, "inLanguage": "en", "publisher": dict(ORG),
             "blogPost": [{"@type": "BlogPosting", "headline": p["title"], "url": post_url(p),
-                          "datePublished": iso_sec(p["_at"]), "inLanguage": "en"} for p in posts]}
+                          "datePublished": iso_sec(p["_pub"]), "inLanguage": "en"} for p in posts]}
     itemlist = {"@context": "https://schema.org", "@type": "ItemList", "name": "Pawstcard Journal", "url": url,
                 "numberOfItems": len(posts), "itemListOrder": "https://schema.org/ItemListOrderDescending",
                 "itemListElement": [{"@type": "ListItem", "position": i + 1, "url": post_url(p), "name": p["title"]}
                                     for i, p in enumerate(posts)]}
     if posts:
         items = "\n".join(f"""      <li>
-        <p class="j-meta"><time datetime="{iso_sec(p['_at'])}">{fmt_date(p['_at'])}</time>{' · ' + esc(p['category']) if p.get('category') else ''}</p>
+        <p class="j-meta"><time datetime="{iso_sec(p['_pub'])}">{fmt_date(p['_pub'])}</time>{' · ' + esc(p['category']) if p.get('category') else ''}</p>
         <h2><a href="{post_path(p)}">{esc(p['title'])}</a></h2>
         <p>{esc(p['description'])}</p>
       </li>""" for p in posts)
@@ -515,10 +541,10 @@ def render_feed(posts, now):
       <title>{esc(p['title'])}</title>
       <link>{post_url(p)}</link>
       <guid isPermaLink="true">{post_url(p)}</guid>
-      <pubDate>{rfc822(p['_at'])}</pubDate>{'' if not p.get('category') else chr(10) + '      <category>' + esc(p['category']) + '</category>'}
+      <pubDate>{rfc822(p['_pub'])}</pubDate>{'' if not p.get('category') else chr(10) + '      <category>' + esc(p['category']) + '</category>'}
       <description>{esc(p['description'])}</description>
     </item>""" for p in posts)
-    last = rfc822(max((p["_updated"] or p["_at"]) for p in posts)) if posts else rfc822(now)
+    last = rfc822(max((p["_updated"] or p["_pub"]) for p in posts)) if posts else rfc822(now)
     return f"""<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
@@ -541,13 +567,13 @@ def render_sitemap_block(posts):
     xl = lambda u: ('    <xhtml:link rel="alternate" hreflang="en" href="%s"/>\n'
                     '    <xhtml:link rel="alternate" hreflang="x-default" href="%s"/>\n' % (u, u))
     hub = SITE + "/journal/"
-    last = max(ymd(p["_updated"] or p["_at"]) for p in posts)
+    last = max(ymd(p["_updated"] or p["_pub"]) for p in posts)
     rows = ["  <url>\n    <loc>%s</loc>\n    <lastmod>%s</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.6</priority>\n%s  </url>"
             % (hub, last, xl(hub))]
     for p in posts:
         rows.append("  <url>\n    <loc>%s</loc>\n    <lastmod>%s</lastmod>\n    <priority>0.5</priority>\n%s"
                     "    <image:image>\n      <image:loc>%s</image:loc>\n    </image:image>\n  </url>"
-                    % (post_url(p), ymd(p["_updated"] or p["_at"]), xl(post_url(p)), esc(hero(p))))
+                    % (post_url(p), ymd(p["_updated"] or p["_pub"]), xl(post_url(p)), esc(hero(p))))
     return "\n".join(rows) + "\n"
 
 
@@ -575,7 +601,7 @@ def render_llms_block(posts):
         return ""
     lines = ["## Journal",
              "Practical notes for independent pet sitters and dog walkers. Index: %s/journal/ · Feed: %s/journal/feed.xml" % (SITE, SITE), ""]
-    lines += ["- [%s](%s) — %s (%s)" % (p["title"], post_url(p), p["description"], ymd(p["_at"])) for p in posts]
+    lines += ["- [%s](%s) — %s (%s)" % (p["title"], post_url(p), p["description"], ymd(p["_pub"])) for p in posts]
     return "\n".join(lines) + "\n"
 
 
@@ -618,8 +644,9 @@ def build(root, now, drafts_ok=False, check_only=False):
     posts, errors = load_posts(root)
     if errors:
         raise JournalError(errors)
-    due, waiting = split_due(posts, now, drafts_ok)
+    due, waiting, ready = split_due(posts, now, drafts_ok)
     report = {"due": [p["slug"] for p in due], "waiting": [(p["slug"], p["publish_at"]) for p in waiting],
+              "ready": [p["slug"] for p in ready],
               "new": [p["slug"] for p in due if not (root / post_path(p).strip("/") / "index.html").exists()]}
     if check_only:
         return report
@@ -661,7 +688,7 @@ def main(argv=None):
         return 1
     print("journal: %s — %d published, %d scheduled (now %s)" % ("OK" if a.check else "built", len(rep["due"]), len(rep["waiting"]), stamp_str(now)))
     for slug, at in rep["waiting"]:
-        print("  waiting: %s @ %s" % (slug, at))
+        print("  waiting: %s @ %s%s" % (slug, at, "  (due — run scripts/publish_journal.py to stamp it)" if slug in rep["ready"] else ""))
     return 0
 
 

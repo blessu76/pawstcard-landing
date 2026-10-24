@@ -54,7 +54,12 @@ class Site:
         (self.root / "journal" / "assets").mkdir()
         shutil.copy(REPO / "journal" / "assets" / "journal.css", self.root / "journal" / "assets" / "journal.css")
 
-    def post(self, slug, at, **extra):
+    def post(self, slug, at, pub="same", **extra):
+        """pub="same": already published at `at`; pub=None: unstamped manuscript (publish_journal.py will stamp it)."""
+        if pub == "same":
+            extra.setdefault("published_at", at)
+        elif pub:
+            extra["published_at"] = pub
         (self.root / "journal" / "queue" / (slug + ".md")).write_text(md(slug, at, **extra), encoding="utf-8")
 
     def read(self, rel):
@@ -109,7 +114,7 @@ class FutureGate(unittest.TestCase):
 
     def test_publish_script_refuses_future_slug(self):
         s = Site(self)
-        s.post("later", "2026-10-26T07:00+09:00")
+        s.post("later", "2026-10-26T07:00+09:00", pub=None)
         buf = []
         code = pj.run(s.root, NOW, slug="later", out=buf.append)
         self.assertEqual(code, 3)
@@ -118,8 +123,8 @@ class FutureGate(unittest.TestCase):
 
     def test_publish_script_publishes_due_slug_and_skips_future_ones(self):
         s = Site(self)
-        s.post("now", "2026-10-25T07:00+09:00")
-        s.post("later", "2026-10-26T07:00+09:00")
+        s.post("now", "2026-10-25T07:00+09:00", pub=None)
+        s.post("later", "2026-10-26T07:00+09:00", pub=None)
         buf = []
         self.assertEqual(pj.run(s.root, NOW, slug="now", out=buf.append), 0)
         self.assertTrue(s.exists("journal/en/now/index.html"))
@@ -128,10 +133,100 @@ class FutureGate(unittest.TestCase):
 
     def test_publish_script_unknown_slug_and_dry_run(self):
         s = Site(self)
-        s.post("now", "2026-10-25T07:00+09:00")
+        s.post("now", "2026-10-25T07:00+09:00", pub=None)
         self.assertEqual(pj.run(s.root, NOW, slug="nope", out=lambda m: None), 2)
         self.assertEqual(pj.run(s.root, NOW, dry_run=True, out=lambda m: None), 0)
         self.assertFalse(s.exists("journal/index.html"))
+
+
+class ActualPublishTime(unittest.TestCase):
+    """publish_at is a floor; the page shows the real publish_journal.py run time."""
+
+    def test_due_but_unstamped_post_is_not_live(self):
+        s = Site(self)
+        s.post("x", "2026-10-25T07:00+09:00", pub=None)
+        rep = bj.build(s.root, NOW)
+        self.assertEqual(rep["due"], [])
+        self.assertEqual(rep["ready"], ["x"])
+        self.assertFalse(s.exists("journal/en/x/index.html"))
+
+    def test_actual_time_everywhere_not_publish_at(self):
+        s = Site(self)
+        s.post("x", "2026-10-25T14:00+09:00", pub=None)
+        now = dt.datetime(2026, 10, 25, 14, 13, 41, tzinfo=KST)
+        self.assertEqual(pj.run(s.root, now, out=lambda m: None), 0)
+        self.assertIn("published_at: 2026-10-25T14:13+09:00", s.read("journal/queue/x.md"))
+        page = s.read("journal/en/x/index.html")
+        self.assertIn('"datePublished": "2026-10-25T14:13:00+09:00"', page)
+        self.assertIn('"dateModified": "2026-10-25T14:13:00+09:00"', page)
+        self.assertIn("Oct 25, 2026 · 14:13 KST", page)
+        self.assertIn("2026-10-25T14:13:00+09:00", page)
+        self.assertNotIn("14:00", page.split("</head>")[1])
+        self.assertIn("Oct 25, 2026 · 14:13 KST", s.read("journal/index.html"))
+        self.assertIn("<pubDate>Sun, 25 Oct 2026 14:13:00 +0900</pubDate>", s.read("journal/feed.xml"))
+        self.assertIn("<lastmod>2026-10-25</lastmod>", s.read("sitemap.xml"))
+        self.assertIn("(2026-10-25)", s.read("llms.txt"))
+
+    def test_lastmod_follows_actual_date_when_it_slips_past_midnight(self):
+        s = Site(self)
+        s.post("x", "2026-10-25T23:00+09:00", pub=None)
+        pj.run(s.root, dt.datetime(2026, 10, 26, 0, 20, tzinfo=KST), out=lambda m: None)
+        self.assertIn("<lastmod>2026-10-26</lastmod>", s.read("sitemap.xml"))
+
+    def test_stamp_only_touches_front_matter(self):
+        s = Site(self)
+        s.post("x", "2026-10-25T14:00+09:00", pub=None)
+        before = s.read("journal/queue/x.md")
+        pj.run(s.root, NOW, out=lambda m: None)
+        after = s.read("journal/queue/x.md")
+        self.assertEqual(after.replace("published_at: 2026-10-25T14:00+09:00\n", "", 1), before)
+
+    def test_republish_keeps_first_stamp(self):
+        s = Site(self)
+        s.post("x", "2026-10-25T14:00+09:00", pub=None)
+        pj.run(s.root, dt.datetime(2026, 10, 25, 14, 13, tzinfo=KST), out=lambda m: None)
+        first = s.read("journal/queue/x.md")
+        pj.run(s.root, dt.datetime(2026, 10, 25, 18, 2, tzinfo=KST), out=lambda m: None)
+        self.assertEqual(first, s.read("journal/queue/x.md"))
+        self.assertIn("14:13:00+09:00", s.read("journal/en/x/index.html"))
+
+    def test_slug_run_stamps_only_that_post(self):
+        s = Site(self)
+        s.post("a", "2026-10-25T07:00+09:00", pub=None)
+        s.post("b", "2026-10-25T07:00+09:00", pub=None)
+        pj.run(s.root, NOW, slug="a", out=lambda m: None)
+        self.assertTrue(s.exists("journal/en/a/index.html"))
+        self.assertFalse(s.exists("journal/en/b/index.html"))
+        self.assertNotIn("published_at", s.read("journal/queue/b.md"))
+
+    def test_dry_run_and_refusal_do_not_stamp(self):
+        s = Site(self)
+        s.post("a", "2026-10-25T07:00+09:00", pub=None)
+        s.post("f", "2026-10-30T07:00+09:00", pub=None)
+        before = {n: s.read("journal/queue/%s.md" % n) for n in "af"}
+        pj.run(s.root, NOW, dry_run=True, out=lambda m: None)
+        pj.run(s.root, NOW, slug="f", out=lambda m: None)
+        self.assertEqual(before, {n: s.read("journal/queue/%s.md" % n) for n in "af"})
+
+    def test_run_without_slug_never_stamps_future_post(self):
+        s = Site(self)
+        s.post("a", "2026-10-25T07:00+09:00", pub=None)
+        s.post("f", "2026-10-26T07:00+09:00", pub=None)
+        pj.run(s.root, NOW, out=lambda m: None)
+        self.assertNotIn("published_at", s.read("journal/queue/f.md"))
+        self.assertFalse(s.exists("journal/en/f/index.html"))
+
+    def test_published_at_before_publish_at_is_rejected(self):
+        s = Site(self)
+        s.post("x", "2026-10-25T14:00+09:00", published_at="2026-10-25T13:59+09:00")
+        with self.assertRaises(bj.JournalError) as cm:
+            bj.build(s.root, NOW)
+        self.assertIn("published_at is earlier", str(cm.exception))
+
+    def test_published_at_after_now_hidden(self):
+        s = Site(self)
+        s.post("x", "2026-10-25T07:00+09:00", published_at="2026-10-25T15:00+09:00")
+        self.assertEqual(bj.build(s.root, NOW)["due"], [])
 
 
 class FrontMatter(unittest.TestCase):

@@ -19,28 +19,31 @@ Meta ads drive traffic here; UTM tags split channels; GA4 measures conversion.
 
 ## Journal (/journal/)
 
-Manuscripts live in `journal/queue/<slug>.md`; the build turns the ones whose `publish_at` has passed into
-`journal/en/<slug>/index.html`, the `/journal/` list, `journal/feed.xml`, and merges them into `sitemap.xml` and `llms.txt`
-(the landing entries are never touched). Full front-matter spec: docstring of `scripts/build_journal.py`.
+Manuscripts live in `journal/queue/<slug>.md`. `publish_at` is only a floor ("not before"); running
+`scripts/publish_journal.py` is what publishes: it stamps every due manuscript with `published_at` (the real run time, KST, HH:MM)
+and builds `journal/en/<slug>/index.html`, the `/journal/` list, `journal/feed.xml`, and merges them into `sitemap.xml` and `llms.txt`
+(the landing entries are never touched). Pages, sitemap lastmod, JSON-LD `datePublished` and the feed all carry the stamped time.
+Full front-matter spec: docstring of `scripts/build_journal.py`.
 
 ```
 ---
 slug: my-post                      # = file name
 title: Post title
-description: One sentence for meta/cards/RSS.
-publish_at: 2026-10-25T14:00+09:00 # KST, this exact format
+description: One sentence, <= 155 chars.
+publish_at: 2026-10-25T14:13+09:00 # KST, this exact format; earliest time the post may go live
+tags: [pet sitting, visit reports]
 ---
 Markdown body…
 ```
 
 ```bash
 ./scripts/check.sh                                   # green gate: unit tests + manuscript validation
-python3 scripts/publish_journal.py                   # publish everything that is due (--dry-run, --slug X, --now ISO available)
-git add journal/en journal/index.html journal/feed.xml journal/queue/<due-slug>.md sitemap.xml llms.txt && git commit && git push
+python3 scripts/publish_journal.py --slug my-post    # publish one (refuses if publish_at is in the future); --dry-run, --now ISO available
+git add journal sitemap.xml llms.txt && git commit && git push
 ```
 
-Future-dated manuscripts are validated but never rendered, listed, or put in the sitemap/llms.txt/feed.
-Note: Pages serves the whole repo root, so a manuscript committed to `main` is readable at its URL before it is due.
+Not-yet-due or unstamped manuscripts are validated but never rendered, listed, or put in the sitemap/llms.txt/feed.
+Note: Pages serves the whole repo root, so a manuscript committed to `main` is readable at its URL before it is published.
 
 ## Local preview
 
