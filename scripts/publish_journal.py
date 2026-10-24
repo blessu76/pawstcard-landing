@@ -2,13 +2,13 @@
 """Publish what is due: stamp it with the real time, then run the journal build.
 
 `publish_at` in a manuscript is only a floor ("not before"). Running this script is what publishes: every manuscript whose
-publish_at has passed gets `published_at: <now, KST, HH:MM>` written into its front matter, and the build then renders it.
+publish_at has passed gets `published_at: <now, America/New_York, HH:MM, offset included>` written into its front matter, and the build then renders it.
 Pages, sitemap lastmod, JSON-LD datePublished and the feed all carry that actual time. Future publish_at -> refused/skipped.
 
     python3 scripts/publish_journal.py                  # stamp + publish every due, not-yet-published manuscript
     python3 scripts/publish_journal.py --slug my-post   # only that one; REFUSE (exit 3) if it is not due yet
     python3 scripts/publish_journal.py --dry-run        # report only, write nothing (no stamping)
-    python3 scripts/publish_journal.py --now 2026-10-25T14:13+09:00   # test with a fixed clock
+    python3 scripts/publish_journal.py --now 2026-10-25T07:13-04:00   # test with a fixed clock
 
 Exit codes: 0 ok · 1 bad manuscript / bad arguments · 2 unknown --slug · 3 --slug is not due / still draft (nothing written)
 
@@ -27,6 +27,7 @@ import build_journal as bj  # noqa: E402
 
 def run(root, now, slug=None, dry_run=False, out=print):
     root = Path(root).resolve()
+    now = now.astimezone(dt.timezone.utc)
     posts, errors = bj.load_posts(root)
     if errors:
         out("journal: errors\n  " + "\n  ".join(errors))
@@ -67,7 +68,7 @@ def main(argv=None):
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args(argv)
     try:
-        now = bj.parse_now(a.now) if a.now else dt.datetime.now(bj.KST)
+        now = bj.parse_now(a.now) if a.now else dt.datetime.now(dt.timezone.utc)
     except ValueError as ex:
         print(str(ex), file=sys.stderr)
         return 1

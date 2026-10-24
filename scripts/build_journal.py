@@ -10,7 +10,7 @@ Writes  journal/en/<slug>/index.html      one page per published post (Article J
         llms.txt                          "Journal" section between <!-- journal:llms:start --> / <!-- journal:llms:end -->
 
 `publish_at` is only a floor ("never before this time"). A post goes live when scripts/publish_journal.py stamps it with
-`published_at` = the real run time (KST, HH:MM). Pages, list, feed, sitemap lastmod, JSON-LD datePublished all show
+`published_at` = the real run time (America/New_York, HH:MM, offset included). Pages, list, feed, sitemap lastmod, JSON-LD datePublished all show
 `published_at`, never `publish_at`. A post without `published_at` (or with one after --now) produces no page, no list entry,
 no sitemap/llms/feed line. The build is a pure function of (manuscripts, now).
 
@@ -18,7 +18,8 @@ Front matter (between two `---` lines, `key: value` per line):
     slug:         required, [a-z0-9-]+, must equal the file name (<slug>.md)
     title:        required
     description:  required, one sentence, <= 155 characters (meta description, list card, RSS)
-    publish_at:   required, YYYY-MM-DDTHH:MM+09:00  (KST, nothing else is accepted) — earliest time the post may go live
+    publish_at:   required, YYYY-MM-DDTHH:MM-04:00  (America/New_York; the offset is verified against the real EDT/EST rule,
+                  e.g. -04:00 until 2026-11-01, -05:00 after) — earliest time the post may go live
     published_at: written by scripts/publish_journal.py, same format; the actual publication time. Do not write it by hand.
     updated:      optional, same format -> dateModified / sitemap lastmod
     category:     optional, e.g. guides
@@ -29,7 +30,7 @@ Front matter (between two `---` lines, `key: value` per line):
 
 Usage:
     python3 scripts/build_journal.py                      # build into this repo (real clock)
-    python3 scripts/build_journal.py --now 2026-10-25T14:00+09:00
+    python3 scripts/build_journal.py --now 2026-10-25T07:13-04:00
     python3 scripts/build_journal.py --check              # validate only, write nothing
     python3 scripts/build_journal.py --root /tmp/preview --drafts
 """
@@ -41,6 +42,7 @@ import json
 import re
 import sys
 from pathlib import Path
+from zoneinfo import ZoneInfo  # Python 3.9+
 
 SITE = "https://pawstcard.ipe.rest"
 GA_ID = "G-XG4BH800J0"
@@ -51,8 +53,8 @@ REQUIRED = ("slug", "title", "description", "publish_at")
 DESC_MAX = 155
 RESERVED_SLUGS = ("index", "feed", "assets", "queue")
 SLUG_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
-STAMP_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}\+09:00$")
-KST = dt.timezone(dt.timedelta(hours=9))
+STAMP_RE = re.compile(r"^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})([+-]\d{2}:\d{2})$")
+TZ = ZoneInfo("America/New_York")  # the publishing clock: Eastern Time (EDT -04:00 / EST -05:00)
 IMG_NS = "http://www.google.com/schemas/sitemap-image/1.1"
 XHTML_NS = "http://www.w3.org/1999/xhtml"
 MONTHS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
@@ -75,42 +77,65 @@ def esc(s):
 
 # ---------------------------------------------------------------- time
 def parse_stamp(value, field="publish_at"):
-    """YYYY-MM-DDTHH:MM+09:00 -> aware datetime (KST). Anything else is an error."""
-    if not STAMP_RE.match(value or ""):
-        raise ValueError("%s must look like YYYY-MM-DDTHH:MM+09:00 (KST): %r" % (field, value))
+    """YYYY-MM-DDTHH:MM-04:00 -> aware datetime (America/New_York). The offset must be the one Eastern Time really has at
+    that wall-clock time (-04:00 in EDT, -05:00 in EST; DST switches on 2026-11-01) — it is checked, never trusted."""
+    m = STAMP_RE.match(value or "")
+    if not m:
+        raise ValueError("%s must look like YYYY-MM-DDTHH:MM-04:00 (America/New_York, offset included): %r" % (field, value))
     try:
-        return dt.datetime.fromisoformat(value)
+        naive = dt.datetime.fromisoformat(m.group(1))
     except ValueError:
         raise ValueError("%s is not a real date/time: %r" % (field, value))
+    for fold in (0, 1):  # fold=1 only matters for the repeated hour at the end of DST
+        cand = naive.replace(tzinfo=TZ, fold=fold)
+        if cand.astimezone(dt.timezone.utc).astimezone(TZ).replace(tzinfo=None) != naive:
+            raise ValueError("%s: %s does not exist in America/New_York (DST gap)" % (field, m.group(1)))
+        if offset_str(cand) == m.group(2):
+            return cand.astimezone(dt.timezone.utc)  # compare instants, never same-zone wall clocks (that is wrong across DST)
+    raise ValueError("%s: wrong UTC offset for America/New_York at that time (it is %s): %r" % (field, offset_str(naive.replace(tzinfo=TZ)), value))
+
+
+def offset_str(d):
+    s = d.strftime("%z")
+    return s[:3] + ":" + s[3:]
 
 
 def parse_now(value):
-    """--now accepts YYYY-MM-DDTHH:MM[:SS] with an explicit offset (+09:00, Z, ...)."""
+    """--now accepts YYYY-MM-DDTHH:MM[:SS] with an explicit offset (-04:00, +09:00, Z, ...)."""
     s = value.strip().replace("Z", "+00:00")
     try:
         d = dt.datetime.fromisoformat(s)
     except ValueError:
-        raise ValueError("--now must be ISO 8601 with an offset, e.g. 2026-10-25T14:00+09:00: %r" % value)
+        raise ValueError("--now must be ISO 8601 with an offset, e.g. 2026-10-25T14:00-04:00: %r" % value)
     if d.tzinfo is None:
-        raise ValueError("--now needs an explicit UTC offset, e.g. 2026-10-25T14:00+09:00: %r" % value)
-    return d
+        raise ValueError("--now needs an explicit UTC offset, e.g. 2026-10-25T14:00-04:00: %r" % value)
+    return d.astimezone(dt.timezone.utc)
+
+
+def et(d):
+    return d.astimezone(TZ)
 
 
 def stamp_str(d):
-    return d.astimezone(KST).strftime("%Y-%m-%dT%H:%M+09:00")
+    """minute precision, Eastern Time with its real offset: 2026-10-25T07:13-04:00"""
+    d = et(d)
+    return d.strftime("%Y-%m-%dT%H:%M") + offset_str(d)
 
 
 def iso_sec(d):
-    return d.astimezone(KST).strftime("%Y-%m-%dT%H:%M:%S+09:00")
+    d = et(d)
+    return d.strftime("%Y-%m-%dT%H:%M:%S") + offset_str(d)
 
 
 def fmt_date(d):
-    d = d.astimezone(KST)
-    return "%s %d, %d · %02d:%02d KST" % (MONTHS[d.month - 1], d.day, d.year, d.hour, d.minute)
+    """static text (what crawlers and no-JS readers see): Oct 25, 2026, 7:13 AM ET"""
+    d = et(d)
+    h = d.hour % 12 or 12
+    return "%s %d, %d, %d:%02d %s ET" % (MONTHS[d.month - 1], d.day, d.year, h, d.minute, "AM" if d.hour < 12 else "PM")
 
 
 def ymd(d):
-    return d.astimezone(KST).strftime("%Y-%m-%d")
+    return et(d).strftime("%Y-%m-%d")
 
 
 # ---------------------------------------------------------------- front matter
@@ -424,6 +449,27 @@ src="https://www.facebook.com/tr?id={PIXEL_ID}&ev=PageView&noscript=1"/></noscri
 """
 
 
+LOCALIZE_JS = """<script>
+/* Show publish times in the reader's own time zone (with its abbreviation). Without JS / for crawlers the static ET text stays. */
+(function () {
+  try {
+    var zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    var names = { 'Asia/Seoul': 'KST', 'Asia/Tokyo': 'JST' };
+    var fmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
+    var els = document.querySelectorAll('time[data-localize]');
+    for (var i = 0; i < els.length; i++) {
+      var d = new Date(els[i].getAttribute('datetime'));
+      if (isNaN(d.getTime())) continue;
+      els[i].textContent = fmt.formatToParts(d).map(function (p) {
+        return p.type === 'timeZoneName' && names[zone] ? names[zone] : p.value;
+      }).join('');
+    }
+  } catch (e) {}
+})();
+</script>
+"""
+
+
 def footer():
     return """<footer>
   <div class="wrap">
@@ -431,7 +477,7 @@ def footer():
     <p class="foot-links"><a href="/">Home</a> · <a href="/journal/">Journal</a> · <a href="/journal/feed.xml">RSS</a> · <a href="/#signup">Join the waitlist</a></p>
   </div>
 </footer>
-</body>
+""" + LOCALIZE_JS + """</body>
 </html>
 """
 
@@ -478,7 +524,7 @@ def render_post(p, v):
             + f"""<main class="wrap article-wrap">
   <article class="article">
     <header class="article-head">
-      <p class="j-meta"><a href="/journal/">Journal</a> <span aria-hidden="true">·</span> <time datetime="{iso_sec(p['_pub'])}">{fmt_date(p['_pub'])}</time>{cat}{' <span class="draft-flag">DRAFT</span>' if p['draft'] else ''}</p>
+      <p class="j-meta"><a href="/journal/">Journal</a> <span aria-hidden="true">·</span> <time datetime="{iso_sec(p['_pub'])}" data-localize>{fmt_date(p['_pub'])}</time>{cat}{' <span class="draft-flag">DRAFT</span>' if p['draft'] else ''}</p>
       <h1>{esc(p['title'])}</h1>
       <p class="lede">{esc(p['description'])}</p>
     </header>
@@ -508,7 +554,7 @@ def render_list(posts, v):
                                     for i, p in enumerate(posts)]}
     if posts:
         items = "\n".join(f"""      <li>
-        <p class="j-meta"><time datetime="{iso_sec(p['_pub'])}">{fmt_date(p['_pub'])}</time>{' · ' + esc(p['category']) if p.get('category') else ''}</p>
+        <p class="j-meta"><time datetime="{iso_sec(p['_pub'])}" data-localize>{fmt_date(p['_pub'])}</time>{' · ' + esc(p['category']) if p.get('category') else ''}</p>
         <h2><a href="{post_path(p)}">{esc(p['title'])}</a></h2>
         <p>{esc(p['description'])}</p>
       </li>""" for p in posts)
@@ -533,7 +579,7 @@ def render_list(posts, v):
 
 
 def rfc822(d):
-    return d.astimezone(KST).strftime("%a, %d %b %Y %H:%M:%S +0900")
+    return et(d).strftime("%a, %d %b %Y %H:%M:%S %z")
 
 
 def render_feed(posts, now):
@@ -567,13 +613,13 @@ def render_sitemap_block(posts):
     xl = lambda u: ('    <xhtml:link rel="alternate" hreflang="en" href="%s"/>\n'
                     '    <xhtml:link rel="alternate" hreflang="x-default" href="%s"/>\n' % (u, u))
     hub = SITE + "/journal/"
-    last = max(ymd(p["_updated"] or p["_pub"]) for p in posts)
+    last = iso_sec(max(p["_updated"] or p["_pub"] for p in posts))
     rows = ["  <url>\n    <loc>%s</loc>\n    <lastmod>%s</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.6</priority>\n%s  </url>"
             % (hub, last, xl(hub))]
     for p in posts:
         rows.append("  <url>\n    <loc>%s</loc>\n    <lastmod>%s</lastmod>\n    <priority>0.5</priority>\n%s"
                     "    <image:image>\n      <image:loc>%s</image:loc>\n    </image:image>\n  </url>"
-                    % (post_url(p), ymd(p["_updated"] or p["_pub"]), xl(post_url(p)), esc(hero(p))))
+                    % (post_url(p), iso_sec(p["_updated"] or p["_pub"]), xl(post_url(p)), esc(hero(p))))
     return "\n".join(rows) + "\n"
 
 
@@ -641,6 +687,7 @@ def sweep_generated(root, written):
 def build(root, now, drafts_ok=False, check_only=False):
     """Build the journal into `root` as of `now` (aware datetime). Returns a dict report; raises JournalError on bad manuscripts."""
     root = Path(root).resolve()
+    now = now.astimezone(dt.timezone.utc)  # all comparisons are between UTC instants
     posts, errors = load_posts(root)
     if errors:
         raise JournalError(errors)
@@ -676,12 +723,12 @@ def build(root, now, drafts_ok=False, check_only=False):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--root", default=str(Path(__file__).resolve().parent.parent), help="site root (default: this repo)")
-    ap.add_argument("--now", help="clock as ISO 8601 with offset, e.g. 2026-10-25T14:00+09:00 (default: real clock)")
+    ap.add_argument("--now", help="clock as ISO 8601 with offset, e.g. 2026-10-25T07:13-04:00 (default: real clock)")
     ap.add_argument("--drafts", action="store_true", help="include draft posts (preview only — never commit the result)")
     ap.add_argument("--check", action="store_true", help="validate manuscripts only, write nothing")
     a = ap.parse_args(argv)
     try:
-        now = parse_now(a.now) if a.now else dt.datetime.now(KST)
+        now = parse_now(a.now) if a.now else dt.datetime.now(dt.timezone.utc)
         rep = build(a.root, now, a.drafts, a.check)
     except (JournalError, ValueError) as ex:
         print("journal: errors\n  " + "\n  ".join(getattr(ex, "errors", [str(ex)])), file=sys.stderr)

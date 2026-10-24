@@ -2,7 +2,7 @@
 slug: pet-sitter-photo-updates-how-many-and-what-to-shoot
 title: Pet Sitter Photo Updates: How Many to Send and What to Shoot
 description: How many photos to send per visit, which three shots matter, and how to take them quickly without letting your phone take over the visit.
-publish_at: 2026-10-26T07:44+09:00
+publish_at: 2026-10-25T14:44-04:00
 tags: [pet sitting, photo updates, dog walking, client communication]
 ---
 

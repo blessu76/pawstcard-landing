@@ -20,7 +20,7 @@ Meta ads drive traffic here; UTM tags split channels; GA4 measures conversion.
 ## Journal (/journal/)
 
 Manuscripts live in `journal/queue/<slug>.md`. `publish_at` is only a floor ("not before"); running
-`scripts/publish_journal.py` is what publishes: it stamps every due manuscript with `published_at` (the real run time, KST, HH:MM)
+`scripts/publish_journal.py` is what publishes: it stamps every due manuscript with `published_at` (the real run time, America/New_York, HH:MM, offset included)
 and builds `journal/en/<slug>/index.html`, the `/journal/` list, `journal/feed.xml`, and merges them into `sitemap.xml` and `llms.txt`
 (the landing entries are never touched). Pages, sitemap lastmod, JSON-LD `datePublished` and the feed all carry the stamped time.
 Full front-matter spec: docstring of `scripts/build_journal.py`.
@@ -30,7 +30,7 @@ Full front-matter spec: docstring of `scripts/build_journal.py`.
 slug: my-post                      # = file name
 title: Post title
 description: One sentence, <= 155 chars.
-publish_at: 2026-10-25T14:13+09:00 # KST, this exact format; earliest time the post may go live
+publish_at: 2026-10-25T07:13-04:00 # America/New_York; offset must be the real EDT/EST one (-04:00 until 2026-11-01, then -05:00); earliest go-live time
 tags: [pet sitting, visit reports]
 ---
 Markdown body…
