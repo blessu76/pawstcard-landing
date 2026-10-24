@@ -2,7 +2,7 @@
 """Publish what is due: stamp it with the real time, then run the journal build.
 
 `publish_at` in a manuscript is only a floor ("not before"). Running this script is what publishes: every manuscript whose
-publish_at has passed gets `published_at: <now, America/New_York, HH:MM, offset included>` written into its front matter, and the build then renders it.
+publish_at has passed gets `published_at: <now, KST, YYYY-MM-DDTHH:MM+09:00>` written into its front matter, and the build then renders it.
 Pages, sitemap lastmod, JSON-LD datePublished and the feed all carry that actual time. Future publish_at -> refused/skipped.
 
     python3 scripts/publish_journal.py                  # stamp + publish every due, not-yet-published manuscript
@@ -39,7 +39,7 @@ def run(root, now, slug=None, dry_run=False, out=print):
             return 2
         p = match[0]
         if p["_at"] > now:
-            out("publish: REFUSED — %s may not go live before %s, now is %s" % (slug, p["publish_at"], bj.stamp_str(now)))
+            out("publish: REFUSED — %s may not go live before %s, now is %s (%s)" % (slug, p["publish_at"], bj.et_stamp_str(now), bj.stamp_str(now)))
             return 3
         if p["draft"]:
             out("publish: REFUSED — %s is still marked draft: true" % slug)
@@ -50,7 +50,7 @@ def run(root, now, slug=None, dry_run=False, out=print):
         for p in todo:
             bj.stamp_published(root / "journal" / "queue" / p["_src"], stamp)
     rep = bj.build(root, now, check_only=dry_run)
-    out("publish: now %s%s" % (bj.stamp_str(now), " (dry run, nothing written)" if dry_run else ""))
+    out("publish: now %s = %s%s" % (bj.stamp_str(now), bj.et_stamp_str(now), " (dry run, nothing written)" if dry_run else ""))
     out("  %s: %s" % ("would publish" if dry_run else "newly published", ", ".join(p["slug"] for p in todo) or "—"))
     out("  live in total:   %d" % (len(rep["due"]) + (len(todo) if dry_run else 0)))
     for s, at in rep["waiting"]:

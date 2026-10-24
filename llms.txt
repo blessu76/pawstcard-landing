@@ -27,6 +27,10 @@ Pawstcard is built for solo, one-person pet-sitting and dog-walking businesses �
 - Website / early access: https://pawstcard.ipe.rest/
 
 <!-- journal:llms:start -->
+## Journal
+Practical notes for independent pet sitters and dog walkers. Index: https://pawstcard.ipe.rest/journal/ · Feed: https://pawstcard.ipe.rest/journal/feed.xml
+
+- [How to Write a Pet Sitting Visit Report Clients Actually Read](https://pawstcard.ipe.rest/journal/en/how-to-write-a-pet-sitting-visit-report/) — A simple five-part structure for pet sitting visit reports, with a checklist, a sample note, and the mistakes that make clients stop reading. (2026-10-25)
 <!-- journal:llms:end -->
 
 ## Usage

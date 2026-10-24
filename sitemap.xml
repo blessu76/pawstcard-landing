@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://pawstcard.ipe.rest/</loc>
     <lastmod>2026-07-18</lastmod>
@@ -7,5 +9,23 @@
     <priority>1.0</priority>
   </url>
   <!-- journal:start -->
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/</loc>
+    <lastmod>2026-10-25T08:44:00+09:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/"/>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/en/how-to-write-a-pet-sitting-visit-report/</loc>
+    <lastmod>2026-10-25T08:44:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-write-a-pet-sitting-visit-report/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-write-a-pet-sitting-visit-report/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
+  </url>
   <!-- journal:end -->
 </urlset>

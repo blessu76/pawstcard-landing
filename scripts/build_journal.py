@@ -10,7 +10,7 @@ Writes  journal/en/<slug>/index.html      one page per published post (Article J
         llms.txt                          "Journal" section between <!-- journal:llms:start --> / <!-- journal:llms:end -->
 
 `publish_at` is only a floor ("never before this time"). A post goes live when scripts/publish_journal.py stamps it with
-`published_at` = the real run time (America/New_York, HH:MM, offset included). Pages, list, feed, sitemap lastmod, JSON-LD datePublished all show
+`published_at` = the real run time (KST = Asia/Seoul, HH:MM+09:00; the site-wide rule is "registration = KST"). Pages, list, feed, sitemap lastmod, JSON-LD datePublished all show
 `published_at`, never `publish_at`. A post without `published_at` (or with one after --now) produces no page, no list entry,
 no sitemap/llms/feed line. The build is a pure function of (manuscripts, now).
 
@@ -20,8 +20,8 @@ Front matter (between two `---` lines, `key: value` per line):
     description:  required, one sentence, <= 155 characters (meta description, list card, RSS)
     publish_at:   required, YYYY-MM-DDTHH:MM-04:00  (America/New_York; the offset is verified against the real EDT/EST rule,
                   e.g. -04:00 until 2026-11-01, -05:00 after) — earliest time the post may go live
-    published_at: written by scripts/publish_journal.py, same format; the actual publication time. Do not write it by hand.
-    updated:      optional, same format -> dateModified / sitemap lastmod
+    published_at: written by scripts/publish_journal.py as YYYY-MM-DDTHH:MM+09:00 (KST); the actual publication time. Do not write it by hand.
+    updated:      optional, YYYY-MM-DDTHH:MM+09:00 (KST) -> dateModified / sitemap lastmod
     category:     optional, e.g. guides
     tags:         optional, list `[a, b, c]` or comma separated -> keywords / article:tag (`keywords:` is accepted as an alias)
     image:        optional, hero image (/journal/assets/<slug>/x.jpg or https URL); default /og-image.png
@@ -54,7 +54,9 @@ DESC_MAX = 155
 RESERVED_SLUGS = ("index", "feed", "assets", "queue")
 SLUG_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 STAMP_RE = re.compile(r"^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})([+-]\d{2}:\d{2})$")
-TZ = ZoneInfo("America/New_York")  # the publishing clock: Eastern Time (EDT -04:00 / EST -05:00)
+KST_STAMP_RE = re.compile(r"^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})\+09:00$")
+TZ = ZoneInfo("America/New_York")  # the scheduling clock: publish_at floors are Eastern Time (EDT -04:00 / EST -05:00)
+OUT_TZ = ZoneInfo("Asia/Seoul")    # everything that is shown or recorded (published_at, JSON-LD, sitemap, feed, page text) is KST +09:00
 IMG_NS = "http://www.google.com/schemas/sitemap-image/1.1"
 XHTML_NS = "http://www.w3.org/1999/xhtml"
 MONTHS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
@@ -112,30 +114,50 @@ def parse_now(value):
     return d.astimezone(dt.timezone.utc)
 
 
+def parse_kst_stamp(value, field="published_at"):
+    """YYYY-MM-DDTHH:MM+09:00 -> aware datetime (UTC instant). Korea has no DST, so the offset must be exactly +09:00."""
+    m = KST_STAMP_RE.match(value or "")
+    if not m:
+        raise ValueError("%s must look like YYYY-MM-DDTHH:MM+09:00 (KST): %r" % (field, value))
+    try:
+        naive = dt.datetime.fromisoformat(m.group(1))
+    except ValueError:
+        raise ValueError("%s is not a real date/time: %r" % (field, value))
+    return naive.replace(tzinfo=OUT_TZ).astimezone(dt.timezone.utc)
+
+
+def kst(d):
+    return d.astimezone(OUT_TZ)
+
+
 def et(d):
     return d.astimezone(TZ)
 
 
 def stamp_str(d):
-    """minute precision, Eastern Time with its real offset: 2026-10-25T07:13-04:00"""
+    """minute precision, KST: 2026-10-25T20:13+09:00 (what is written to published_at)"""
+    return kst(d).strftime("%Y-%m-%dT%H:%M") + "+09:00"
+
+
+def et_stamp_str(d):
+    """minute precision, Eastern Time with its real offset (publish_at terms): 2026-10-25T07:13-04:00"""
     d = et(d)
     return d.strftime("%Y-%m-%dT%H:%M") + offset_str(d)
 
 
 def iso_sec(d):
-    d = et(d)
-    return d.strftime("%Y-%m-%dT%H:%M:%S") + offset_str(d)
+    return kst(d).strftime("%Y-%m-%dT%H:%M:%S") + "+09:00"
 
 
 def fmt_date(d):
-    """static text (what crawlers and no-JS readers see): Oct 25, 2026, 7:13 AM ET"""
-    d = et(d)
+    """static text: Oct 25, 2026, 8:13 PM KST"""
+    d = kst(d)
     h = d.hour % 12 or 12
-    return "%s %d, %d, %d:%02d %s ET" % (MONTHS[d.month - 1], d.day, d.year, h, d.minute, "AM" if d.hour < 12 else "PM")
+    return "%s %d, %d, %d:%02d %s KST" % (MONTHS[d.month - 1], d.day, d.year, h, d.minute, "AM" if d.hour < 12 else "PM")
 
 
 def ymd(d):
-    return et(d).strftime("%Y-%m-%d")
+    return kst(d).strftime("%Y-%m-%d")
 
 
 # ---------------------------------------------------------------- front matter
@@ -168,10 +190,10 @@ def parse_post(path):
     if path.stem != meta["slug"]:
         raise ValueError("file name must be <slug>.md (slug is %r)" % meta["slug"])
     meta["_at"] = parse_stamp(meta["publish_at"])
-    meta["_pub"] = parse_stamp(meta["published_at"], "published_at") if meta.get("published_at") else None
+    meta["_pub"] = parse_kst_stamp(meta["published_at"], "published_at") if meta.get("published_at") else None
     if meta["_pub"] and meta["_pub"] < meta["_at"]:
         raise ValueError("published_at is earlier than publish_at")
-    meta["_updated"] = parse_stamp(meta["updated"], "updated") if meta.get("updated") else None
+    meta["_updated"] = parse_kst_stamp(meta["updated"], "updated") if meta.get("updated") else None
     if meta["_updated"] and meta["_updated"] < (meta["_pub"] or meta["_at"]):
         raise ValueError("updated is earlier than the publication time")
     meta["draft"] = str(meta.get("draft", "false")).lower() in ("true", "yes", "1")
@@ -449,27 +471,6 @@ src="https://www.facebook.com/tr?id={PIXEL_ID}&ev=PageView&noscript=1"/></noscri
 """
 
 
-LOCALIZE_JS = """<script>
-/* Show publish times in the reader's own time zone (with its abbreviation). Without JS / for crawlers the static ET text stays. */
-(function () {
-  try {
-    var zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    var names = { 'Asia/Seoul': 'KST', 'Asia/Tokyo': 'JST' };
-    var fmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
-    var els = document.querySelectorAll('time[data-localize]');
-    for (var i = 0; i < els.length; i++) {
-      var d = new Date(els[i].getAttribute('datetime'));
-      if (isNaN(d.getTime())) continue;
-      els[i].textContent = fmt.formatToParts(d).map(function (p) {
-        return p.type === 'timeZoneName' && names[zone] ? names[zone] : p.value;
-      }).join('');
-    }
-  } catch (e) {}
-})();
-</script>
-"""
-
-
 def footer():
     return """<footer>
   <div class="wrap">
@@ -477,7 +478,7 @@ def footer():
     <p class="foot-links"><a href="/">Home</a> · <a href="/journal/">Journal</a> · <a href="/journal/feed.xml">RSS</a> · <a href="/#signup">Join the waitlist</a></p>
   </div>
 </footer>
-""" + LOCALIZE_JS + """</body>
+</body>
 </html>
 """
 
@@ -524,7 +525,7 @@ def render_post(p, v):
             + f"""<main class="wrap article-wrap">
   <article class="article">
     <header class="article-head">
-      <p class="j-meta"><a href="/journal/">Journal</a> <span aria-hidden="true">·</span> <time datetime="{iso_sec(p['_pub'])}" data-localize>{fmt_date(p['_pub'])}</time>{cat}{' <span class="draft-flag">DRAFT</span>' if p['draft'] else ''}</p>
+      <p class="j-meta"><a href="/journal/">Journal</a> <span aria-hidden="true">·</span> <time datetime="{iso_sec(p['_pub'])}">{fmt_date(p['_pub'])}</time>{cat}{' <span class="draft-flag">DRAFT</span>' if p['draft'] else ''}</p>
       <h1>{esc(p['title'])}</h1>
       <p class="lede">{esc(p['description'])}</p>
     </header>
@@ -554,7 +555,7 @@ def render_list(posts, v):
                                     for i, p in enumerate(posts)]}
     if posts:
         items = "\n".join(f"""      <li>
-        <p class="j-meta"><time datetime="{iso_sec(p['_pub'])}" data-localize>{fmt_date(p['_pub'])}</time>{' · ' + esc(p['category']) if p.get('category') else ''}</p>
+        <p class="j-meta"><time datetime="{iso_sec(p['_pub'])}">{fmt_date(p['_pub'])}</time>{' · ' + esc(p['category']) if p.get('category') else ''}</p>
         <h2><a href="{post_path(p)}">{esc(p['title'])}</a></h2>
         <p>{esc(p['description'])}</p>
       </li>""" for p in posts)
@@ -579,7 +580,7 @@ def render_list(posts, v):
 
 
 def rfc822(d):
-    return et(d).strftime("%a, %d %b %Y %H:%M:%S %z")
+    return kst(d).strftime("%a, %d %b %Y %H:%M:%S %z")
 
 
 def render_feed(posts, now):
@@ -733,7 +734,7 @@ def main(argv=None):
     except (JournalError, ValueError) as ex:
         print("journal: errors\n  " + "\n  ".join(getattr(ex, "errors", [str(ex)])), file=sys.stderr)
         return 1
-    print("journal: %s — %d published, %d scheduled (now %s)" % ("OK" if a.check else "built", len(rep["due"]), len(rep["waiting"]), stamp_str(now)))
+    print("journal: %s — %d published, %d scheduled (now %s = %s)" % ("OK" if a.check else "built", len(rep["due"]), len(rep["waiting"]), stamp_str(now), et_stamp_str(now)))
     for slug, at in rep["waiting"]:
         print("  waiting: %s @ %s%s" % (slug, at, "  (due — run scripts/publish_journal.py to stamp it)" if slug in rep["ready"] else ""))
     return 0

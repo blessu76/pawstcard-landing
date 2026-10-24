@@ -2,7 +2,7 @@
 slug: what-to-write-in-pet-sitting-updates-long-stays
 title: What to Write in Pet Sitting Updates When Nothing New Happens
 description: Long stays make updates repetitive. Nine ideas for fresh, honest pet sitter notes, plus how to keep them short when the day was uneventful.
-publish_at: 2026-10-26T07:40-04:00
+publish_at: 2026-10-25T14:44-04:00
 tags: [pet sitting, long stays, updates, writing, client communication]
 ---
 

@@ -6,7 +6,13 @@
     <atom:link href="https://pawstcard.ipe.rest/journal/feed.xml" rel="self" type="application/rss+xml"/>
     <description>Practical notes for independent pet sitters and dog walkers: client updates, visit report cards, and running a solo pet-care business.</description>
     <language>en</language>
-    <lastBuildDate>Sat, 24 Oct 2026 19:41:26 -0400</lastBuildDate>
-
+    <lastBuildDate>Sun, 25 Oct 2026 08:44:00 +0900</lastBuildDate>
+    <item>
+      <title>How to Write a Pet Sitting Visit Report Clients Actually Read</title>
+      <link>https://pawstcard.ipe.rest/journal/en/how-to-write-a-pet-sitting-visit-report/</link>
+      <guid isPermaLink="true">https://pawstcard.ipe.rest/journal/en/how-to-write-a-pet-sitting-visit-report/</guid>
+      <pubDate>Sun, 25 Oct 2026 08:44:00 +0900</pubDate>
+      <description>A simple five-part structure for pet sitting visit reports, with a checklist, a sample note, and the mistakes that make clients stop reading.</description>
+    </item>
   </channel>
 </rss>

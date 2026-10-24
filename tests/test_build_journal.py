@@ -13,7 +13,7 @@ sys.path.insert(0, str(REPO / "scripts"))
 import build_journal as bj  # noqa: E402
 import publish_journal as pj  # noqa: E402
 
-KST = bj.TZ  # Eastern Time (name kept short in the tests)
+ET = bj.TZ  # publish_at floors are Eastern Time; everything recorded/shown is KST (+09:00)
 SEED_SITEMAP = """<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
@@ -57,7 +57,10 @@ class Site:
     def post(self, slug, at, pub="same", **extra):
         """pub="same": already published at `at`; pub=None: unstamped manuscript (publish_journal.py will stamp it)."""
         if pub == "same":
-            extra.setdefault("published_at", at)
+            try:
+                extra.setdefault("published_at", bj.stamp_str(bj.parse_stamp(at)))  # same instant, written the KST way
+            except ValueError:  # deliberately malformed publish_at (validation tests)
+                pass
         elif pub:
             extra["published_at"] = pub
         (self.root / "journal" / "queue" / (slug + ".md")).write_text(md(slug, at, **extra), encoding="utf-8")
@@ -69,7 +72,7 @@ class Site:
         return (self.root / rel).exists()
 
 
-NOW = dt.datetime(2026, 10, 25, 14, 0, tzinfo=KST)
+NOW = dt.datetime(2026, 10, 25, 14, 0, tzinfo=ET)
 
 
 class FutureGate(unittest.TestCase):
@@ -154,25 +157,25 @@ class ActualPublishTime(unittest.TestCase):
     def test_actual_time_everywhere_not_publish_at(self):
         s = Site(self)
         s.post("x", "2026-10-25T14:00-04:00", pub=None)
-        now = dt.datetime(2026, 10, 25, 14, 13, 41, tzinfo=KST)
+        now = dt.datetime(2026, 10, 25, 14, 13, 41, tzinfo=ET)
         self.assertEqual(pj.run(s.root, now, out=lambda m: None), 0)
-        self.assertIn("published_at: 2026-10-25T14:13-04:00", s.read("journal/queue/x.md"))
+        self.assertIn("published_at: 2026-10-26T03:13+09:00", s.read("journal/queue/x.md"))
         page = s.read("journal/en/x/index.html")
-        self.assertIn('"datePublished": "2026-10-25T14:13:00-04:00"', page)
-        self.assertIn('"dateModified": "2026-10-25T14:13:00-04:00"', page)
-        self.assertIn("Oct 25, 2026, 2:13 PM ET", page)
-        self.assertIn("2026-10-25T14:13:00-04:00", page)
+        self.assertIn('"datePublished": "2026-10-26T03:13:00+09:00"', page)
+        self.assertIn('"dateModified": "2026-10-26T03:13:00+09:00"', page)
+        self.assertIn("Oct 26, 2026, 3:13 AM KST", page)
+        self.assertIn("2026-10-26T03:13:00+09:00", page)
         self.assertNotIn("14:00", page.split("</head>")[1])
-        self.assertIn("Oct 25, 2026, 2:13 PM ET", s.read("journal/index.html"))
-        self.assertIn("<pubDate>Sun, 25 Oct 2026 14:13:00 -0400</pubDate>", s.read("journal/feed.xml"))
-        self.assertIn("<lastmod>2026-10-25T14:13:00-04:00</lastmod>", s.read("sitemap.xml"))
-        self.assertIn("(2026-10-25)", s.read("llms.txt"))
+        self.assertIn("Oct 26, 2026, 3:13 AM KST", s.read("journal/index.html"))
+        self.assertIn("<pubDate>Mon, 26 Oct 2026 03:13:00 +0900</pubDate>", s.read("journal/feed.xml"))
+        self.assertIn("<lastmod>2026-10-26T03:13:00+09:00</lastmod>", s.read("sitemap.xml"))
+        self.assertIn("(2026-10-26)", s.read("llms.txt"))
 
     def test_lastmod_follows_actual_date_when_it_slips_past_midnight(self):
         s = Site(self)
         s.post("x", "2026-10-25T23:00-04:00", pub=None)
-        pj.run(s.root, dt.datetime(2026, 10, 26, 0, 20, tzinfo=KST), out=lambda m: None)
-        self.assertIn("<lastmod>2026-10-26T00:20:00-04:00</lastmod>", s.read("sitemap.xml"))
+        pj.run(s.root, dt.datetime(2026, 10, 26, 0, 20, tzinfo=ET), out=lambda m: None)
+        self.assertIn("<lastmod>2026-10-26T13:20:00+09:00</lastmod>", s.read("sitemap.xml"))
 
     def test_stamp_only_touches_front_matter(self):
         s = Site(self)
@@ -180,16 +183,16 @@ class ActualPublishTime(unittest.TestCase):
         before = s.read("journal/queue/x.md")
         pj.run(s.root, NOW, out=lambda m: None)
         after = s.read("journal/queue/x.md")
-        self.assertEqual(after.replace("published_at: 2026-10-25T14:00-04:00\n", "", 1), before)
+        self.assertEqual(after.replace("published_at: 2026-10-26T03:00+09:00\n", "", 1), before)
 
     def test_republish_keeps_first_stamp(self):
         s = Site(self)
         s.post("x", "2026-10-25T14:00-04:00", pub=None)
-        pj.run(s.root, dt.datetime(2026, 10, 25, 14, 13, tzinfo=KST), out=lambda m: None)
+        pj.run(s.root, dt.datetime(2026, 10, 25, 14, 13, tzinfo=ET), out=lambda m: None)
         first = s.read("journal/queue/x.md")
-        pj.run(s.root, dt.datetime(2026, 10, 25, 18, 2, tzinfo=KST), out=lambda m: None)
+        pj.run(s.root, dt.datetime(2026, 10, 25, 18, 2, tzinfo=ET), out=lambda m: None)
         self.assertEqual(first, s.read("journal/queue/x.md"))
-        self.assertIn("14:13:00-04:00", s.read("journal/en/x/index.html"))
+        self.assertIn("2026-10-26T03:13:00+09:00", s.read("journal/en/x/index.html"))
 
     def test_slug_run_stamps_only_that_post(self):
         s = Site(self)
@@ -219,23 +222,24 @@ class ActualPublishTime(unittest.TestCase):
 
     def test_published_at_before_publish_at_is_rejected(self):
         s = Site(self)
-        s.post("x", "2026-10-25T14:00-04:00", published_at="2026-10-25T13:59-04:00")
+        s.post("x", "2026-10-25T14:00-04:00", published_at="2026-10-26T02:59+09:00")
         with self.assertRaises(bj.JournalError) as cm:
             bj.build(s.root, NOW)
         self.assertIn("published_at is earlier", str(cm.exception))
 
     def test_published_at_after_now_hidden(self):
         s = Site(self)
-        s.post("x", "2026-10-25T07:00-04:00", published_at="2026-10-25T15:00-04:00")
+        s.post("x", "2026-10-25T07:00-04:00", published_at="2026-10-26T04:00+09:00")
         self.assertEqual(bj.build(s.root, NOW)["due"], [])
 
 
 class EasternTime(unittest.TestCase):
-    """The publishing clock is America/New_York: offsets are derived and verified, never trusted."""
+    """publish_at floors are America/New_York: offsets are derived and verified, never trusted. Recorded times are KST."""
 
     def test_offset_must_match_eastern_rules(self):
-        self.assertEqual(bj.stamp_str(bj.parse_stamp("2026-10-25T07:13-04:00")), "2026-10-25T07:13-04:00")
-        self.assertEqual(bj.stamp_str(bj.parse_stamp("2026-11-02T07:13-05:00")), "2026-11-02T07:13-05:00")
+        self.assertEqual(bj.et_stamp_str(bj.parse_stamp("2026-10-25T07:13-04:00")), "2026-10-25T07:13-04:00")
+        self.assertEqual(bj.et_stamp_str(bj.parse_stamp("2026-11-02T07:13-05:00")), "2026-11-02T07:13-05:00")
+        self.assertEqual(bj.stamp_str(bj.parse_stamp("2026-10-25T07:13-04:00")), "2026-10-25T20:13+09:00")  # = KST
         for bad in ("2026-11-02T07:13-04:00", "2026-10-25T07:13-05:00", "2026-10-25T07:13+09:00"):
             with self.assertRaises(ValueError, msg=bad):
                 bj.parse_stamp(bad)
@@ -271,17 +275,17 @@ class EasternTime(unittest.TestCase):
         s.post("x", "2026-10-31T07:13-04:00", pub=None)
         now = bj.parse_now("2026-11-02T12:20:30Z")  # = 07:20 EST
         pj.run(s.root, now, out=lambda m: None)
-        self.assertIn("published_at: 2026-11-02T07:20-05:00", s.read("journal/queue/x.md"))
+        self.assertIn("published_at: 2026-11-02T21:20+09:00", s.read("journal/queue/x.md"))
         page = s.read("journal/en/x/index.html")
-        self.assertIn('"datePublished": "2026-11-02T07:20:00-05:00"', page)
-        self.assertIn("Nov 2, 2026, 7:20 AM ET", page)
+        self.assertIn('"datePublished": "2026-11-02T21:20:00+09:00"', page)
+        self.assertIn("Nov 2, 2026, 9:20 PM KST", page)
 
     def test_stamp_across_the_boundary_day(self):
         s = Site(self)
         s.post("x", "2026-11-01T01:30-04:00", pub=None)
         now = bj.parse_now("2026-11-01T06:45:00Z")  # 01:45 EST, second pass through the 01:00 hour
         pj.run(s.root, now, out=lambda m: None)
-        self.assertIn("published_at: 2026-11-01T01:45-05:00", s.read("journal/queue/x.md"))
+        self.assertIn("published_at: 2026-11-01T15:45+09:00", s.read("journal/queue/x.md"))
 
     def test_run_before_floor_is_refused_in_eastern_terms(self):
         s = Site(self)
@@ -293,17 +297,25 @@ class EasternTime(unittest.TestCase):
         pj.run(s.root, early, out=lambda m: None)  # without --slug: skipped, not stamped
         self.assertNotIn("published_at", s.read("journal/queue/x.md"))
         self.assertEqual(pj.run(s.root, bj.parse_now("2026-10-25T11:13:00Z"), slug="x", out=lambda m: None), 0)
-        self.assertIn("published_at: 2026-10-25T07:13-04:00", s.read("journal/queue/x.md"))
+        self.assertIn("published_at: 2026-10-25T20:13+09:00", s.read("journal/queue/x.md"))
 
-    def test_kst_reader_sees_localisation_hook(self):
+    def test_kst_static_text_and_no_timezone_script(self):
         s = Site(self)
         s.post("x", "2026-10-25T07:13-04:00")
         bj.build(s.root, NOW)
-        page = s.read("journal/en/x/index.html")
-        self.assertIn('<time datetime="2026-10-25T07:13:00-04:00" data-localize>Oct 25, 2026, 7:13 AM ET</time>', page)
-        self.assertIn("Intl.DateTimeFormat", page)
-        self.assertIn("'Asia/Seoul': 'KST'", page)
-        self.assertIn('data-localize>Oct 25, 2026, 7:13 AM ET</time>', s.read("journal/index.html"))
+        page, lst = s.read("journal/en/x/index.html"), s.read("journal/index.html")
+        self.assertIn('<time datetime="2026-10-25T20:13:00+09:00">Oct 25, 2026, 8:13 PM KST</time>', page)
+        self.assertIn('<time datetime="2026-10-25T20:13:00+09:00">Oct 25, 2026, 8:13 PM KST</time>', lst)
+        for text in (page, lst):  # site-wide policy: no converter here, a shared module comes later
+            self.assertNotIn("data-localize", text)
+            self.assertNotIn("Intl.", text)
+            self.assertNotIn("-04:00", text)
+
+    def test_recorded_times_must_be_kst(self):
+        for bad in ("2026-10-25T07:13-04:00", "2026-10-25T20:13Z", "2026-10-25T20:13+08:00", "2026-10-25T20:13:00+09:00", "2026-10-25"):
+            with self.assertRaises(ValueError, msg=bad):
+                bj.parse_kst_stamp(bad)
+        self.assertEqual(bj.parse_kst_stamp("2026-10-25T20:13+09:00"), bj.parse_stamp("2026-10-25T07:13-04:00"))
 
 
 class FrontMatter(unittest.TestCase):
@@ -314,7 +326,7 @@ class FrontMatter(unittest.TestCase):
             bj.build(s.root, NOW)
         return "\n".join(cm.exception.errors)
 
-    def test_publish_at_must_be_kst_stamp(self):
+    def test_publish_at_must_be_eastern_stamp(self):
         for bad in ("2026-10-25", "2026-10-25 07:00", "2026-10-25T07:00:00-04:00", "2026-10-25T07:00Z", "2026-10-25T07:00+00:00", "2026-10-25T07:00+09:00", "2026-13-40T07:00-04:00", "2026-11-02T07:00-04:00", "2026-10-25T07:00-05:00"):
             self.assertIn("publish_at", self.build_err(at=bad), bad)
 
@@ -370,7 +382,7 @@ class SitemapMerge(unittest.TestCase):
     def test_landing_entry_preserved_and_journal_added(self):
         s = Site(self)
         s.post("a", "2026-10-24T07:00-04:00")
-        s.post("b", "2026-10-25T07:00-04:00", updated="2026-10-25T09:00-04:00")
+        s.post("b", "2026-10-25T07:00-04:00", updated="2026-10-25T22:00+09:00")
         bj.build(s.root, NOW)
         sm = s.read("sitemap.xml")
         self.assertIn(SEED_SITEMAP.split("</urlset>")[0].split("<urlset")[1].split(">", 1)[1], sm)  # landing <url> byte-for-byte
@@ -384,7 +396,7 @@ class SitemapMerge(unittest.TestCase):
         self.assertIn("<image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>", sm)
         self.assertIn('xmlns:xhtml="', sm)
         self.assertIn('xmlns:image="', sm)
-        self.assertIn("<lastmod>2026-10-25T09:00:00-04:00</lastmod>", sm)
+        self.assertIn("<lastmod>2026-10-25T22:00:00+09:00</lastmod>", sm)
         import xml.dom.minidom
         xml.dom.minidom.parseString(sm)  # well-formed
 
@@ -397,7 +409,7 @@ class SitemapMerge(unittest.TestCase):
         bj.build(s.root, NOW)
         self.assertEqual(first, s.read("sitemap.xml"))
         self.assertEqual(first.count(bj.SM_START), 1)
-        bj.build(s.root, dt.datetime(2026, 10, 26, 7, 0, tzinfo=KST))
+        bj.build(s.root, dt.datetime(2026, 10, 26, 7, 0, tzinfo=ET))
         self.assertIn("/journal/en/b/", s.read("sitemap.xml"))
         self.assertEqual(s.read("sitemap.xml").count("<loc>https://pawstcard.ipe.rest/journal/</loc>"), 1)
 
@@ -436,7 +448,7 @@ class LlmsTxt(unittest.TestCase):
         s = Site(self)
         s.post("a", "2026-10-24T07:00-04:00")
         s.post("b", "2026-10-25T07:00-04:00")
-        bj.build(s.root, dt.datetime(2026, 10, 24, 12, 0, tzinfo=KST))
+        bj.build(s.root, dt.datetime(2026, 10, 24, 12, 0, tzinfo=ET))
         self.assertNotIn("journal/en/b/", s.read("llms.txt"))
         bj.build(s.root, NOW)
         t = s.read("llms.txt")
@@ -470,7 +482,7 @@ class Pages(unittest.TestCase):
     def test_post_page_seo(self):
         p = self.post
         self.assertIn('<link rel="canonical" href="https://pawstcard.ipe.rest/journal/en/a/">', p)
-        self.assertIn('"datePublished": "2026-10-25T14:00:00-04:00"', p)
+        self.assertIn('"datePublished": "2026-10-26T03:00:00+09:00"', p)
         self.assertIn('hreflang="x-default"', p)
         self.assertIn("BlogPosting", self.ld_types(p))
         self.assertIn("BreadcrumbList", self.ld_types(p))
@@ -511,7 +523,7 @@ class Pages(unittest.TestCase):
         self.assertIn('<a href="/journal/en/a/">Title of a</a>', self.lst)
         feed = self.s.read("journal/feed.xml")
         self.assertIn("<link>https://pawstcard.ipe.rest/journal/en/a/</link>", feed)
-        self.assertIn("<pubDate>Sun, 25 Oct 2026 14:00:00 -0400</pubDate>", feed)
+        self.assertIn("<pubDate>Mon, 26 Oct 2026 03:00:00 +0900</pubDate>", feed)
         import xml.dom.minidom
         xml.dom.minidom.parseString(feed)
 
