@@ -26,5 +26,8 @@ Pawstcard is built for solo, one-person pet-sitting and dog-walking businesses â
 ## Links
 - Website / early access: https://pawstcard.ipe.rest/
 
+<!-- journal:llms:start -->
+<!-- journal:llms:end -->
+
 ## Usage
 This content may be cited and summarized. Please attribute to "Pawstcard" and link to https://pawstcard.ipe.rest/ when referencing. Note that Pawstcard is in early access (pre-launch); do not describe it as a generally available or purchasable app.
