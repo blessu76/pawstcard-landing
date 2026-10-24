@@ -170,6 +170,23 @@ class FrontMatter(unittest.TestCase):
         with self.assertRaises(bj.JournalError):
             bj.build(s.root, NOW)
 
+    def test_description_max_155(self):
+        self.assertIn("155", self.build_err(description="x" * 156))
+        s = Site(self)
+        s.post("ok155", "2026-10-25T07:00+09:00", description="x" * 155)
+        bj.build(s.root, NOW)
+
+    def test_tags_list_becomes_keywords(self):
+        s = Site(self)
+        s.post("t", "2026-10-25T07:00+09:00", tags="[pet sitting, visit reports, dog walking]")
+        bj.build(s.root, NOW)
+        page = s.read("journal/en/t/index.html")
+        self.assertIn('"keywords": "pet sitting, visit reports, dog walking"', page)
+        self.assertIn('<meta property="article:tag" content="visit reports">', page)
+        s.post("k", "2026-10-25T07:00+09:00", keywords="a, b")  # alias still works
+        bj.build(s.root, NOW)
+        self.assertIn('"keywords": "a, b"', s.read("journal/en/k/index.html"))
+
     def test_colon_in_title_survives(self):
         s = Site(self)
         s.post("c", "2026-10-25T07:00+09:00", title="Rover vs Wag: which pays more?")
