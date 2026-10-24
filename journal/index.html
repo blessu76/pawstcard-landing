@@ -100,7 +100,7 @@ src="https://www.facebook.com/tr?id=1932639057434633&ev=PageView&noscript=1"/></
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/journal/assets/journal.css?v=29ba21d5">
+<link rel="stylesheet" href="/journal/assets/journal.css?v=f3671d54">
 <!-- Cloudflare Web Analytics -->
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "32d73b01c2de4d46a9de77a88952a654"}'></script>
 <!-- End Cloudflare Web Analytics -->
@@ -133,5 +133,23 @@ src="https://www.facebook.com/tr?id=1932639057434633&ev=PageView&noscript=1"/></
     <p class="foot-links"><a href="/">Home</a> · <a href="/journal/">Journal</a> · <a href="/journal/feed.xml">RSS</a> · <a href="/#signup">Join the waitlist</a></p>
   </div>
 </footer>
+<script>
+/* Show publish times in the reader's own time zone (with its abbreviation). Without JS / for crawlers the static ET text stays. */
+(function () {
+  try {
+    var zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    var names = { 'Asia/Seoul': 'KST', 'Asia/Tokyo': 'JST' };
+    var fmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
+    var els = document.querySelectorAll('time[data-localize]');
+    for (var i = 0; i < els.length; i++) {
+      var d = new Date(els[i].getAttribute('datetime'));
+      if (isNaN(d.getTime())) continue;
+      els[i].textContent = fmt.formatToParts(d).map(function (p) {
+        return p.type === 'timeZoneName' && names[zone] ? names[zone] : p.value;
+      }).join('');
+    }
+  } catch (e) {}
+})();
+</script>
 </body>
 </html>

@@ -93,6 +93,10 @@ footer a{color:inherit}
 }
 @media(max-width:360px){
   .nav-journal{display:none}
+  .nav{gap:8px}
+  .logo{font-size:1.15rem;gap:6px}
+  .logo .paw{width:26px;height:26px;font-size:13px}
+  .cta-mini{padding:7px 11px;font-size:.78rem}
 }
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
