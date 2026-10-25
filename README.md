@@ -47,6 +47,31 @@ git add journal sitemap.xml llms.txt && git commit && git push
 Not-yet-due or unstamped manuscripts are validated but never rendered, listed, or put in the sitemap/llms.txt/feed.
 Note: Pages serves the whole repo root, so a manuscript committed to `main` is readable at its URL before it is published.
 
+### Unattended publishing (Mac mini, launchd — lives OUTSIDE this repo)
+
+A launchd job on the Mac mini publishes the night editions. The plist and script are **not** in the repo (decision 2026-10-25); only this note is.
+
+| piece | where |
+|---|---|
+| job | `~/Library/LaunchAgents/rest.ipe.pawstcard-publish.plist` (label `rest.ipe.pawstcard-publish`, every 300 s + at load) |
+| script | `~/.ipe/bin/pawstcard_publish.sh` |
+| dedicated clone | `~/.ipe/pawstcard-publish/repo` (always reset to `origin/main`; never edit it) |
+| manuscripts | `~/pawstcard-journal-queue/` (published ones are moved to `.published/`) |
+| log · state | `~/.ipe/logs/pawstcard-publish.log` · `~/.ipe/pawstcard-publish/{FAILED,SOFT_ALERT,last_tick}` |
+
+Each tick: fetch + reset to `origin/main` → nothing due? exit quietly → due: `publish_journal.py` (stamps the real KST time) → `scripts/check.sh` → commit → `git push origin HEAD:main`, back to back, so `published_at` ≈ go-live time.
+It never pushes when `check.sh` is red, when anything would be deleted, or when staged paths fall outside `journal/ sitemap.xml llms.txt`.
+That is a *hard* failure: `FAILED` is written (and a macOS notification shown) and the job stands down until you read and delete `FAILED`. Network / rejected-push failures are *soft*: retried next tick, `SOFT_ALERT` after 3 in a row.
+The job works on a staging copy of the queue, so a failed run never loses a manuscript.
+
+```bash
+~/.ipe/bin/pawstcard_publish.sh --dry-run                                  # everything but the real push; PAWSTCARD_NOW=2026-10-25T20:14+09:00 to fake the clock
+launchctl bootout   gui/$(id -u)/rest.ipe.pawstcard-publish                # stop (kill switch)
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/rest.ipe.pawstcard-publish.plist   # start
+```
+
+The job does nothing until `scripts/publish_journal.py` on `main` supports `--queue` (the queue-outside-the-repo commit). The Mac mini never sleeps (`pmset sleep 0` + `rest.ipe.prevent-sleep`); after any gap launchd fires on wake and the stamp is simply the actual time.
+
 ## Local preview
 
 ```bash
