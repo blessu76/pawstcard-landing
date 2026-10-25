@@ -3,7 +3,7 @@ slug: how-to-write-a-pet-sitting-visit-report
 title: How to Write a Pet Sitting Visit Report Clients Actually Read
 description: A simple five-part structure for pet sitting visit reports, with a checklist, a sample note, and the mistakes that make clients stop reading.
 publish_at: 2026-10-24T19:44-04:00
-published_at: 2026-10-25T08:44+09:00
+published_at: 2026-10-25T09:44+09:00
 tags: [pet sitting, visit reports, client communication, dog walking]
 ---
 
