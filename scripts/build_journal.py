@@ -11,6 +11,9 @@ Writes  journal/en/<slug>/index.html      one page per published post (Article J
         sitemap.xml                       journal URLs between <!-- journal:start --> / <!-- journal:end -->
                                           (hreflang + lastmod + image); the landing entry is never touched
         llms.txt                          "Journal" section between <!-- journal:llms:start --> / <!-- journal:llms:end -->
+        index.html                        landing page: the "Journal" card section (newest HOME_CARDS = 3 published posts) between
+                                          <!-- journal:home:start --> / <!-- journal:home:end -->; the rest of the file is never touched.
+                                          --check fails when that block is not exactly what the published posts say it should be.
 
 `publish_at` is only a floor ("never before this time"). A post goes live when scripts/publish_journal.py stamps it with
 `published_at` = the real run time (KST = Asia/Seoul, HH:MM+09:00; the site-wide rule is "registration = KST"). Pages, list, feed, sitemap lastmod, JSON-LD datePublished all show
@@ -69,6 +72,8 @@ ORG = {"@type": "Organization", "name": "Pawstcard", "url": SITE + "/"}
 SM_START, SM_END = "<!-- journal:start -->", "<!-- journal:end -->"
 LLMS_START, LLMS_END = "<!-- journal:llms:start -->", "<!-- journal:llms:end -->"
 CSS_REL = "journal/assets/journal.css"
+HOME_START, HOME_END = "<!-- journal:home:start -->", "<!-- journal:home:end -->"
+HOME_CARDS = 3  # the landing page shows the newest 3 published posts
 BLOG_DESC = "Practical notes for independent pet sitters and dog walkers: client updates, visit report cards, and running a solo pet-care business."
 
 
@@ -626,6 +631,69 @@ def render_feed(posts, now):
 """
 
 
+# ---------------------------------------------------------------- landing page: Journal card section
+def render_home_block(posts):
+    """The card section for the landing page (static HTML, no JS of its own). `posts` = published posts; newest HOME_CARDS shown.
+    The whole card is one link; the date is a <time data-ipe-time> that the inline ipe-localtime v2 script in index.html localises.
+    The grid class carries the card count (jc-n1/2/3) so 1-2 cards still lay out as a finished row at every width."""
+    top = sorted(posts, key=lambda p: (p["_pub"], p["slug"]), reverse=True)[:HOME_CARDS]
+    if not top:
+        return ""
+    cards = "\n".join(f"""      <li>
+        <a class="jc" href="{post_path(p)}">
+          <time datetime="{stamp_str(p['_pub'])}" data-ipe-time>{fmt_date(p['_pub'])}</time>
+          <h3>{esc(p['title'])}</h3>
+          <p>{esc(p['description'])}</p>
+          <span class="jc-more" aria-hidden="true">Read the post →</span>
+        </a>
+      </li>""" for p in top)
+    return f"""  <section class="journal-home wrap" id="journal" aria-labelledby="journal-home-title">
+    <h2 id="journal-home-title">Journal</h2>
+    <p class="sub">Practical notes for independent pet sitters and dog walkers.</p>
+    <ul class="jc-grid jc-n{len(top)}">
+{cards}
+    </ul>
+    <p class="jh-all"><a href="/journal/">View all journal posts <span aria-hidden="true">→</span></a></p>
+  </section>
+"""
+
+
+def merge_home(text, block):
+    """Replace the block between the home markers (markers stay on their own lines). The markers MUST exist."""
+    if HOME_START not in text or HOME_END not in text or text.index(HOME_START) > text.index(HOME_END):
+        raise ValueError("index.html: markers %s ... %s not found (the landing card section cannot be updated)" % (HOME_START, HOME_END))
+    s = text.index(HOME_START)
+    s = text.find("\n", s) + 1
+    e = text.index(HOME_END)
+    e = text.rfind("\n", 0, e) + 1
+    return text[:s] + block + text[e:]
+
+
+def home_slugs(text):
+    """slugs of the cards currently in index.html's home block, in page order"""
+    s, e = text.index(HOME_START), text.index(HOME_END)
+    return re.findall(r'<a class="jc" href="/journal/en/([a-z0-9-]+)/"', text[s:e])
+
+
+def check_home(root, posts_live):
+    """-> list of error strings. index.html's card block must be exactly the newest HOME_CARDS published posts."""
+    idx = Path(root) / "index.html"
+    if not idx.exists():
+        return []  # a site root without a landing page (tests / previews)
+    text = idx.read_text(encoding="utf-8")
+    try:
+        want = merge_home(text, render_home_block(posts_live))
+    except ValueError as ex:
+        return [str(ex)]
+    if want == text:
+        return []
+    top = [p["slug"] for p in sorted(posts_live, key=lambda p: (p["_pub"], p["slug"]), reverse=True)[:HOME_CARDS]]
+    got = home_slugs(text)
+    if got != top:
+        return ["index.html: main-page cards are %s but the newest published posts are %s — run scripts/build_journal.py" % (got or "none", top or "none")]
+    return ["index.html: the journal card block is out of date (same posts, different text) — run scripts/build_journal.py"]
+
+
 # ---------------------------------------------------------------- sitemap / llms.txt
 def render_sitemap_block(posts):
     if not posts:
@@ -712,7 +780,7 @@ def build(root, now, drafts_ok=False, check_only=False, queue_dir=None):
     if errors:
         raise JournalError(errors)
     due, waiting, ready = split_due(posts, now, drafts_ok)
-    report = {"due": [p["slug"] for p in due], "waiting": [(p["slug"], p["publish_at"]) for p in waiting],
+    report = {"due": [p["slug"] for p in due], "_live": due, "waiting": [(p["slug"], p["publish_at"]) for p in waiting],
               "ready": [p["slug"] for p in ready],
               "new": [p["slug"] for p in due if not (root / post_path(p).strip("/") / "index.html").exists()]}
     if check_only:
@@ -737,6 +805,10 @@ def build(root, now, drafts_ok=False, check_only=False, queue_dir=None):
     sm.write_text(merge_sitemap(sm.read_text(encoding="utf-8"), render_sitemap_block(due)), encoding="utf-8")
     llms = root / "llms.txt"
     llms.write_text(merge_llms(llms.read_text(encoding="utf-8"), render_llms_block(due)), encoding="utf-8")
+
+    idx = root / "index.html"  # the landing page's card section (only this block changes)
+    if idx.exists():
+        idx.write_text(merge_home(idx.read_text(encoding="utf-8"), render_home_block(due)), encoding="utf-8")
     return report
 
 
@@ -751,6 +823,10 @@ def main(argv=None):
     try:
         now = parse_now(a.now) if a.now else dt.datetime.now(dt.timezone.utc)
         rep = build(a.root, now, a.drafts, a.check, a.queue)
+        if a.check and not a.drafts:  # the landing page's card block must match the published posts
+            problems = check_home(Path(a.root).resolve(), rep["_live"])
+            if problems:
+                raise JournalError(problems)
     except (JournalError, ValueError) as ex:
         print("journal: errors\n  " + "\n  ".join(getattr(ex, "errors", [str(ex)])), file=sys.stderr)
         return 1

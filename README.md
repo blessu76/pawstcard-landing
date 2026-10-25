@@ -25,6 +25,8 @@ Meta ads drive traffic here; UTM tags split channels; GA4 measures conversion.
 `scripts/publish_journal.py` is what publishes: it moves and stamps every due manuscript with `published_at` (the real run time in KST, `YYYY-MM-DDTHH:MM+09:00`; site-wide rule "registration = KST", static text reads e.g. `Oct 25, 2026, 20:13 KST`; a small inline script shows it in the reader's device time zone)
 and builds `journal/en/<slug>/index.html`, the `/journal/` list, `journal/feed.xml`, and merges them into `sitemap.xml` and `llms.txt`
 (the landing entries are never touched). Pages, sitemap lastmod, JSON-LD `datePublished` and the feed all carry the stamped time.
+The same build also regenerates the **Journal card section on the landing page** (`index.html`, between `<!-- journal:home:start -->` and `<!-- journal:home:end -->`): the newest 3 published posts as static cards
+(date via `<time data-ipe-time>`, title, 1–2 line summary; the whole card links to the post; 1 / 2 posts still lay out as a finished row). Never hand-edit between those markers; `build_journal.py --check` (part of `check.sh`) fails when the cards are not the newest published posts.
 Full front-matter spec: docstring of `scripts/build_journal.py`.
 
 ```
@@ -41,7 +43,7 @@ Markdown body…
 ```bash
 ./scripts/check.sh                                   # green gate: unit tests + manuscript validation
 python3 scripts/publish_journal.py --slug my-post    # publish one (refuses if publish_at is in the future); --dry-run, --now ISO available
-git add journal sitemap.xml llms.txt && git commit && git push
+git add journal sitemap.xml llms.txt index.html && git commit && git push
 ```
 
 Not-yet-due or unstamped manuscripts are validated but never rendered, listed, or put in the sitemap/llms.txt/feed.
@@ -60,7 +62,7 @@ A launchd job on the Mac mini publishes the night editions. The plist and script
 | log · state | `~/.ipe/logs/pawstcard-publish.log` · `~/.ipe/pawstcard-publish/{FAILED,SOFT_ALERT,last_tick}` |
 
 Each tick: fetch + reset to `origin/main` → nothing due? exit quietly → due: `publish_journal.py` (stamps the real KST time) → `scripts/check.sh` → commit → `git push origin HEAD:main`, back to back, so `published_at` ≈ go-live time.
-It never pushes when `check.sh` is red, when anything would be deleted, or when staged paths fall outside `journal/ sitemap.xml llms.txt`.
+It never pushes when `check.sh` is red, when anything would be deleted, or when staged paths fall outside `journal/ sitemap.xml llms.txt index.html`.
 That is a *hard* failure: `FAILED` is written (and a macOS notification shown) and the job stands down until you read and delete `FAILED`. Network / rejected-push failures are *soft*: retried next tick, `SOFT_ALERT` after 3 in a row.
 The job works on a staging copy of the queue, so a failed run never loses a manuscript.
 

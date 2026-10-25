@@ -631,10 +631,154 @@ class RepoState(unittest.TestCase):
         for f in (REPO / "journal" / "posts").glob("*.md"):
             self.assertIn("\npublished_at: ", f.read_text(encoding="utf-8"), f.name)
 
-    def test_landing_links_to_journal_in_footer_only(self):
+    def test_landing_has_journal_cards_and_footer_link(self):
         landing = (REPO / "index.html").read_text(encoding="utf-8")
-        self.assertEqual(landing.count('href="/journal/"'), 1)
-        self.assertGreater(landing.index('href="/journal/"'), landing.index("<footer>"))
+        self.assertEqual(landing.count(bj.HOME_START), 1)
+        self.assertEqual(landing.count(bj.HOME_END), 1)
+        self.assertEqual(landing.count('href="/journal/"'), 2)  # "View all journal posts" in the card section + the footer link
+        self.assertGreater(landing.rindex('href="/journal/"'), landing.index("<footer>"))
+        self.assertLess(landing.index(bj.HOME_START), landing.index('class="quotes"'))  # right under the hero, above the fold-3 sections
+
+
+class HomeCards(unittest.TestCase):
+    """The landing page's Journal card section: newest 3 published posts, rebuilt by every build/publish, checked by --check."""
+
+    LANDING = """<!DOCTYPE html><html lang="en"><body>
+<main>
+  <section class="hero">hero</section>
+  <!-- journal:home:start -->
+  <!-- journal:home:end -->
+  <section class="quotes">quotes</section>
+</main>
+<footer><a href="/journal/">Journal</a></footer>
+</body></html>
+"""
+
+    def site(self, *slugs_at):
+        s = Site(self)
+        (s.root / "index.html").write_text(self.LANDING, encoding="utf-8")
+        for slug, at in slugs_at:
+            s.post(slug, at)
+        return s
+
+    def cards(self, s):
+        return bj.home_slugs(s.read("index.html"))
+
+    def test_shows_newest_three_newest_first(self):
+        s = self.site(("a", "2026-10-21T07:00-04:00"), ("b", "2026-10-22T07:00-04:00"), ("c", "2026-10-23T07:00-04:00"), ("d", "2026-10-24T07:00-04:00"))
+        bj.build(s.root, NOW)
+        self.assertEqual(self.cards(s), ["d", "c", "b"])
+        self.assertIn("jc-n3", s.read("index.html"))
+        self.assertEqual(s.read("index.html").count('class="jc"'), 3)
+
+    def test_one_or_two_posts_get_their_own_layout_class(self):
+        s = self.site(("a", "2026-10-24T07:00-04:00"))
+        bj.build(s.root, NOW)
+        self.assertEqual(self.cards(s), ["a"])
+        self.assertIn("jc-grid jc-n1", s.read("index.html"))
+        s.post("b", "2026-10-25T07:00-04:00")
+        bj.build(s.root, NOW)
+        self.assertEqual(self.cards(s), ["b", "a"])
+        self.assertIn("jc-grid jc-n2", s.read("index.html"))
+
+    def test_card_content_and_markup(self):
+        s = self.site(("a", "2026-10-24T07:00-04:00"))
+        bj.build(s.root, NOW)
+        page = s.read("index.html")
+        self.assertIn('<a class="jc" href="/journal/en/a/">', page)
+        self.assertIn('<time datetime="2026-10-24T20:00+09:00" data-ipe-time>2026-10-24 20:00 KST</time>', page)  # 07:00 EDT = 20:00 KST
+        self.assertIn("<h3>Title of a</h3>", page)
+        self.assertIn("<p>About a.</p>", page)
+        self.assertIn('href="/journal/">View all journal posts', page)
+        self.assertIn("hero", page)
+        self.assertIn('<section class="quotes">quotes</section>', page)  # outside the markers: untouched
+
+    def test_unpublished_posts_never_appear(self):
+        s = self.site(("a", "2026-10-24T07:00-04:00"))
+        s.post("later", "2026-10-26T07:00-04:00")
+        s.post("unstamped", "2026-10-25T07:00-04:00", pub=None)
+        bj.build(s.root, NOW)
+        self.assertEqual(self.cards(s), ["a"])
+
+    def test_no_posts_means_no_section(self):
+        s = self.site()
+        bj.build(s.root, NOW)
+        self.assertNotIn("journal-home", s.read("index.html"))
+        self.assertIn(bj.HOME_START, s.read("index.html"))
+
+    def test_text_is_escaped(self):
+        s = self.site()
+        s.post("x", "2026-10-24T07:00-04:00", title="A <b>&</b> B", description="say \"hi\" <i>")
+        bj.build(s.root, NOW)
+        page = s.read("index.html")
+        self.assertIn("A &lt;b&gt;&amp;&lt;/b&gt; B", page)
+        self.assertNotIn("<b>&</b>", page)
+
+    def test_build_is_idempotent_and_leaves_the_rest_byte_for_byte(self):
+        s = self.site(("a", "2026-10-24T07:00-04:00"))
+        bj.build(s.root, NOW)
+        first = s.read("index.html")
+        bj.build(s.root, NOW)
+        self.assertEqual(s.read("index.html"), first)
+        self.assertTrue(first.startswith(self.LANDING.split(bj.HOME_START)[0] + bj.HOME_START))
+        self.assertTrue(first.endswith(self.LANDING.split(bj.HOME_END)[1]))
+
+    def test_missing_markers_is_an_error_not_a_silent_skip(self):
+        s = self.site(("a", "2026-10-24T07:00-04:00"))
+        (s.root / "index.html").write_text("<html><body>no markers</body></html>", encoding="utf-8")
+        with self.assertRaises(ValueError):
+            bj.build(s.root, NOW)
+
+    def test_check_flags_stale_cards(self):
+        s = self.site(("a", "2026-10-23T07:00-04:00"))
+        bj.build(s.root, NOW)
+        live = bj.build(s.root, NOW, check_only=True)["_live"]
+        self.assertEqual(bj.check_home(s.root, live), [])
+        s.post("b", "2026-10-24T07:00-04:00")  # a newer post is published but the landing page was not rebuilt
+        live = bj.build(s.root, NOW, check_only=True)["_live"]
+        errs = bj.check_home(s.root, live)
+        self.assertEqual(len(errs), 1)
+        self.assertIn("['a']", errs[0])
+        self.assertIn("['b', 'a']", errs[0])
+
+    def test_check_flags_hand_edited_card_text(self):
+        s = self.site(("a", "2026-10-23T07:00-04:00"))
+        bj.build(s.root, NOW)
+        (s.root / "index.html").write_text(s.read("index.html").replace("<h3>Title of a</h3>", "<h3>Edited</h3>"), encoding="utf-8")
+        live = bj.build(s.root, NOW, check_only=True)["_live"]
+        self.assertEqual(len(bj.check_home(s.root, live)), 1)
+
+    def test_cli_check_fails_on_stale_cards_and_passes_when_fresh(self):
+        s = self.site(("a", "2026-10-23T07:00-04:00"))
+        argv = ["--root", str(s.root), "--check", "--queue", str(s.root / "journal" / "queue"), "--now", "2026-10-25T14:00-04:00"]
+        self.assertEqual(bj.main(argv), 1)  # card block is still empty although a is published
+        bj.build(s.root, NOW)
+        self.assertEqual(bj.main(argv), 0)
+
+    def test_publish_updates_the_cards(self):
+        """the 2nd post goes out through publish_journal.py -> the landing page now shows 2 cards, newest first"""
+        s = self.site(("one", "2026-10-24T07:00-04:00"))
+        s.post("two", "2026-10-25T07:00-04:00", pub=None)
+        bj.build(s.root, NOW)
+        self.assertEqual(self.cards(s), ["one"])
+        self.assertEqual(pj.run(s.root, NOW, out=lambda m: None), 0)
+        self.assertEqual(self.cards(s), ["two", "one"])
+        self.assertIn("jc-n2", s.read("index.html"))
+
+    def test_publish_dry_run_leaves_the_landing_page_alone(self):
+        s = self.site(("one", "2026-10-24T07:00-04:00"))
+        s.post("two", "2026-10-25T07:00-04:00", pub=None)
+        bj.build(s.root, NOW)
+        before = s.read("index.html")
+        pj.run(s.root, NOW, dry_run=True, out=lambda m: None)
+        self.assertEqual(s.read("index.html"), before)
+
+    def test_real_landing_inlines_the_canonical_localtime_script(self):
+        landing = (REPO / "index.html").read_text(encoding="utf-8")
+        raw = (REPO / "scripts" / "ipe-localtime.js").read_bytes()
+        self.assertEqual(hashlib.sha256(raw).hexdigest(), IPE_LOCALTIME_SHA256)
+        self.assertEqual(landing.count("<script>" + raw.decode("utf-8") + "</script>"), 1)  # byte-identical, exactly once
+        self.assertEqual(landing.count("data-localize"), 0)
 
 
 if __name__ == "__main__":
