@@ -19,8 +19,10 @@ Meta ads drive traffic here; UTM tags split channels; GA4 measures conversion.
 
 ## Journal (/journal/)
 
-Manuscripts live in `journal/queue/<slug>.md`. `publish_at` is only a floor ("not before"); running
-`scripts/publish_journal.py` is what publishes: it stamps every due manuscript with `published_at` (the real run time in KST, `YYYY-MM-DDTHH:MM+09:00`; site-wide rule "registration = KST", page text reads e.g. `Oct 25, 2026, 8:13 PM KST`, no time-zone script)
+**Unpublished manuscripts are NOT in this repo** (main is public and the whole repo root is served live). They live in `~/pawstcard-journal-queue/<slug>.md`
+(`--queue DIR` or `$PAWSTCARD_JOURNAL_QUEUE` to change it). Publishing moves a manuscript into `journal/posts/<slug>.md` (stamped, committed, the build input).
+`publish_at` is only a floor ("not before"); running
+`scripts/publish_journal.py` is what publishes: it moves and stamps every due manuscript with `published_at` (the real run time in KST, `YYYY-MM-DDTHH:MM+09:00`; site-wide rule "registration = KST", static text reads e.g. `Oct 25, 2026, 20:13 KST`; a small inline script shows it in the reader's device time zone)
 and builds `journal/en/<slug>/index.html`, the `/journal/` list, `journal/feed.xml`, and merges them into `sitemap.xml` and `llms.txt`
 (the landing entries are never touched). Pages, sitemap lastmod, JSON-LD `datePublished` and the feed all carry the stamped time.
 Full front-matter spec: docstring of `scripts/build_journal.py`.

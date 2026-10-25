@@ -161,7 +161,7 @@ class ActualPublishTime(unittest.TestCase):
         s.post("x", "2026-10-25T14:00-04:00", pub=None)
         now = dt.datetime(2026, 10, 25, 14, 13, 41, tzinfo=ET)
         self.assertEqual(pj.run(s.root, now, out=lambda m: None), 0)
-        self.assertIn("published_at: 2026-10-26T03:13+09:00", s.read("journal/queue/x.md"))
+        self.assertIn("published_at: 2026-10-26T03:13+09:00", s.read("journal/posts/x.md"))
         page = s.read("journal/en/x/index.html")
         self.assertIn('"datePublished": "2026-10-26T03:13:00+09:00"', page)
         self.assertIn('"dateModified": "2026-10-26T03:13:00+09:00"', page)
@@ -184,16 +184,16 @@ class ActualPublishTime(unittest.TestCase):
         s.post("x", "2026-10-25T14:00-04:00", pub=None)
         before = s.read("journal/queue/x.md")
         pj.run(s.root, NOW, out=lambda m: None)
-        after = s.read("journal/queue/x.md")
+        after = s.read("journal/posts/x.md")
         self.assertEqual(after.replace("published_at: 2026-10-26T03:00+09:00\n", "", 1), before)
 
     def test_republish_keeps_first_stamp(self):
         s = Site(self)
         s.post("x", "2026-10-25T14:00-04:00", pub=None)
         pj.run(s.root, dt.datetime(2026, 10, 25, 14, 13, tzinfo=ET), out=lambda m: None)
-        first = s.read("journal/queue/x.md")
+        first = s.read("journal/posts/x.md")
         pj.run(s.root, dt.datetime(2026, 10, 25, 18, 2, tzinfo=ET), out=lambda m: None)
-        self.assertEqual(first, s.read("journal/queue/x.md"))
+        self.assertEqual(first, s.read("journal/posts/x.md"))
         self.assertIn("2026-10-26T03:13:00+09:00", s.read("journal/en/x/index.html"))
 
     def test_slug_run_stamps_only_that_post(self):
@@ -277,7 +277,7 @@ class EasternTime(unittest.TestCase):
         s.post("x", "2026-10-31T07:13-04:00", pub=None)
         now = bj.parse_now("2026-11-02T12:20:30Z")  # = 07:20 EST
         pj.run(s.root, now, out=lambda m: None)
-        self.assertIn("published_at: 2026-11-02T21:20+09:00", s.read("journal/queue/x.md"))
+        self.assertIn("published_at: 2026-11-02T21:20+09:00", s.read("journal/posts/x.md"))
         page = s.read("journal/en/x/index.html")
         self.assertIn('"datePublished": "2026-11-02T21:20:00+09:00"', page)
         self.assertIn("2026-11-02 21:20 KST", page)
@@ -287,7 +287,7 @@ class EasternTime(unittest.TestCase):
         s.post("x", "2026-11-01T01:30-04:00", pub=None)
         now = bj.parse_now("2026-11-01T06:45:00Z")  # 01:45 EST, second pass through the 01:00 hour
         pj.run(s.root, now, out=lambda m: None)
-        self.assertIn("published_at: 2026-11-01T15:45+09:00", s.read("journal/queue/x.md"))
+        self.assertIn("published_at: 2026-11-01T15:45+09:00", s.read("journal/posts/x.md"))
 
     def test_run_before_floor_is_refused_in_eastern_terms(self):
         s = Site(self)
@@ -299,7 +299,8 @@ class EasternTime(unittest.TestCase):
         pj.run(s.root, early, out=lambda m: None)  # without --slug: skipped, not stamped
         self.assertNotIn("published_at", s.read("journal/queue/x.md"))
         self.assertEqual(pj.run(s.root, bj.parse_now("2026-10-25T11:13:00Z"), slug="x", out=lambda m: None), 0)
-        self.assertIn("published_at: 2026-10-25T20:13+09:00", s.read("journal/queue/x.md"))
+        self.assertIn("published_at: 2026-10-25T20:13+09:00", s.read("journal/posts/x.md"))
+        self.assertFalse(s.exists("journal/queue/x.md"))  # moved out of the queue
 
     def test_kst_record_static_kst_text_and_device_time_hook(self):
         s = Site(self)
@@ -330,6 +331,60 @@ class EasternTime(unittest.TestCase):
             with self.assertRaises(ValueError, msg=bad):
                 bj.parse_kst_stamp(bad)
         self.assertEqual(bj.parse_kst_stamp("2026-10-25T20:13+09:00"), bj.parse_stamp("2026-10-25T07:13-04:00"))
+
+
+class ExternalQueue(unittest.TestCase):
+    """Unpublished manuscripts live outside the repo; publishing moves them into journal/posts/."""
+
+    def setUp(self):
+        self.s = Site(self)
+        self.q = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, self.q, True)
+        (self.q / "later.md").write_text(md("later", "2026-10-26T07:00-04:00"), encoding="utf-8")
+        (self.q / "due.md").write_text(md("due", "2026-10-25T07:00-04:00"), encoding="utf-8")
+
+    def test_build_and_check_see_the_queue_but_publish_nothing(self):
+        rep = bj.build(self.s.root, NOW, queue_dir=self.q)
+        self.assertEqual(rep["due"], [])
+        self.assertEqual(sorted(rep["ready"]), ["due"])
+        self.assertEqual(sorted(x for x, _ in rep["waiting"]), ["due", "later"])
+        self.assertFalse(self.s.exists("journal/en/due/index.html"))
+        self.assertFalse(any((self.s.root / "journal").rglob("later.md")))  # never copied into the repo tree
+
+    def test_publish_moves_only_the_due_manuscript_into_posts(self):
+        self.assertEqual(pj.run(self.s.root, NOW, out=lambda m: None, queue_dir=self.q), 0)
+        self.assertTrue(self.s.exists("journal/en/due/index.html"))
+        self.assertIn("published_at: 2026-10-26T03:00+09:00", self.s.read("journal/posts/due.md"))
+        self.assertFalse((self.q / "due.md").exists())            # moved, not copied
+        self.assertTrue((self.q / "later.md").exists())           # future one stays outside
+        self.assertFalse(self.s.exists("journal/posts/later.md"))
+        # the published post keeps building from journal/posts/ alone (queue may be gone)
+        bj.build(self.s.root, NOW, queue_dir=self.q / "gone")
+        self.assertTrue(self.s.exists("journal/en/due/index.html"))
+
+    def test_dry_run_and_refusal_leave_the_queue_untouched(self):
+        pj.run(self.s.root, NOW, dry_run=True, out=lambda m: None, queue_dir=self.q)
+        self.assertEqual(pj.run(self.s.root, NOW, slug="later", out=lambda m: None, queue_dir=self.q), 3)
+        self.assertEqual(sorted(f.name for f in self.q.glob("*.md")), ["later.md", "due.md"][::-1])
+        self.assertFalse(self.s.exists("journal/posts"))
+
+    def test_slug_in_both_places_is_an_error(self):
+        (self.s.root / "journal" / "posts").mkdir(parents=True)
+        (self.s.root / "journal" / "posts" / "due.md").write_text(md("due", "2026-10-25T07:00-04:00", published_at="2026-10-26T03:00+09:00"), encoding="utf-8")
+        posts, errors = bj.load_posts(self.s.root, self.q)
+        self.assertTrue(any("duplicate slug" in e for e in errors))
+
+    def test_default_queue_dir_comes_from_env_or_home(self):
+        import os
+        old = os.environ.pop(bj.QUEUE_ENV, None)
+        try:
+            self.assertEqual(bj.default_queue_dir(), Path.home() / "pawstcard-journal-queue")
+            os.environ[bj.QUEUE_ENV] = "/x/y"
+            self.assertEqual(bj.default_queue_dir(), Path("/x/y"))
+        finally:
+            os.environ.pop(bj.QUEUE_ENV, None)
+            if old is not None:
+                os.environ[bj.QUEUE_ENV] = old
 
 
 class FrontMatter(unittest.TestCase):
@@ -567,8 +622,14 @@ class RepoState(unittest.TestCase):
         self.assertTrue((REPO / "CNAME").exists())
 
     def test_real_manuscripts_validate(self):
-        posts, errors = bj.load_posts(REPO)
+        posts, errors = bj.load_posts(REPO, queue_dir=REPO / "no-such-queue")  # repo only; the real queue lives outside it
         self.assertEqual(errors, [])
+
+    def test_no_unpublished_manuscript_is_in_the_repo(self):
+        # everything in the repo is served live (deploy.yml uploads the repo root): only stamped, published posts may be here
+        self.assertFalse((REPO / "journal" / "queue").exists())
+        for f in (REPO / "journal" / "posts").glob("*.md"):
+            self.assertIn("\npublished_at: ", f.read_text(encoding="utf-8"), f.name)
 
     def test_landing_links_to_journal_in_footer_only(self):
         landing = (REPO / "index.html").read_text(encoding="utf-8")

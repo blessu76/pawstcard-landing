@@ -2,7 +2,8 @@
 """Publish what is due: stamp it with the real time, then run the journal build.
 
 `publish_at` in a manuscript is only a floor ("not before"). Running this script is what publishes: every manuscript whose
-publish_at has passed gets `published_at: <now, KST, YYYY-MM-DDTHH:MM+09:00>` written into its front matter, and the build then renders it.
+publish_at has passed is MOVED from the queue dir (outside the repo, --queue / $PAWSTCARD_JOURNAL_QUEUE / ~/pawstcard-journal-queue) into journal/posts/ with
+`published_at: <now, KST, YYYY-MM-DDTHH:MM+09:00>` written into its front matter, and the build then renders it.
 Pages, sitemap lastmod, JSON-LD datePublished and the feed all carry that actual time. Future publish_at -> refused/skipped.
 
     python3 scripts/publish_journal.py                  # stamp + publish every due, not-yet-published manuscript
@@ -14,10 +15,11 @@ Exit codes: 0 ok · 1 bad manuscript / bad arguments · 2 unknown --slug · 3 --
 
 This script only writes files (journal/**, sitemap.xml, llms.txt, and the published_at line of the manuscripts it publishes).
 Committing and pushing to main is a separate, deliberate step:
-    git add journal sitemap.xml llms.txt && git commit && git push      # (queue/ holds only manuscripts that are already due)
+    git add journal sitemap.xml llms.txt && git commit && git push      # (journal/posts/ holds only published manuscripts; unpublished ones stay in the queue dir outside the repo)
 """
 import argparse
 import datetime as dt
+import shutil
 import sys
 from pathlib import Path
 
@@ -25,17 +27,17 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_journal as bj  # noqa: E402
 
 
-def run(root, now, slug=None, dry_run=False, out=print):
+def run(root, now, slug=None, dry_run=False, out=print, queue_dir=None):
     root = Path(root).resolve()
     now = now.astimezone(dt.timezone.utc)
-    posts, errors = bj.load_posts(root)
+    posts, errors = bj.load_posts(root, queue_dir)
     if errors:
         out("journal: errors\n  " + "\n  ".join(errors))
         return 1
     if slug:
         match = [p for p in posts if p["slug"] == slug]
         if not match:
-            out("publish: no manuscript with slug %r in journal/queue/" % slug)
+            out("publish: no manuscript with slug %r in the queue (%s) or journal/posts/" % (slug, queue_dir or root / "journal" / "queue"))
             return 2
         p = match[0]
         if p["_at"] > now:
@@ -47,9 +49,14 @@ def run(root, now, slug=None, dry_run=False, out=print):
     stamp = bj.stamp_str(now.replace(second=0, microsecond=0))
     todo = [p for p in posts if not p["draft"] and p["_pub"] is None and p["_at"] <= now and (not slug or p["slug"] == slug)]
     if not dry_run:
-        for p in todo:
-            bj.stamp_published(root / "journal" / "queue" / p["_src"], stamp)
-    rep = bj.build(root, now, check_only=dry_run)
+        posts_dir = root.joinpath(*bj.POSTS_REL)
+        posts_dir.mkdir(parents=True, exist_ok=True)
+        for p in todo:  # move the manuscript from the queue into the repo, stamped; from here on it is public
+            dest = posts_dir / p["_src"]
+            shutil.copyfile(p["_file"], dest)
+            bj.stamp_published(dest, stamp)
+            p["_file"].unlink()
+    rep = bj.build(root, now, check_only=dry_run, queue_dir=queue_dir)
     out("publish: now %s = %s%s" % (bj.stamp_str(now), bj.et_stamp_str(now), " (dry run, nothing written)" if dry_run else ""))
     out("  %s: %s" % ("would publish" if dry_run else "newly published", ", ".join(p["slug"] for p in todo) or "—"))
     out("  live in total:   %d" % (len(rep["due"]) + (len(todo) if dry_run else 0)))
@@ -66,13 +73,14 @@ def main(argv=None):
     ap.add_argument("--now", help="ISO 8601 with offset (default: real clock)")
     ap.add_argument("--slug", help="publish only this post; refuse if it is not due")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--queue", default=str(bj.default_queue_dir()), help="unpublished manuscripts (outside the repo); default ~/pawstcard-journal-queue or $%s" % bj.QUEUE_ENV)
     a = ap.parse_args(argv)
     try:
         now = bj.parse_now(a.now) if a.now else dt.datetime.now(dt.timezone.utc)
     except ValueError as ex:
         print(str(ex), file=sys.stderr)
         return 1
-    return run(a.root, now, a.slug, a.dry_run)
+    return run(a.root, now, a.slug, a.dry_run, queue_dir=a.queue)
 
 
 if __name__ == "__main__":
