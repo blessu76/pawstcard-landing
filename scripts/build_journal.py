@@ -59,7 +59,6 @@ TZ = ZoneInfo("America/New_York")  # the scheduling clock: publish_at floors are
 OUT_TZ = ZoneInfo("Asia/Seoul")    # everything that is shown or recorded (published_at, JSON-LD, sitemap, feed, page text) is KST +09:00
 IMG_NS = "http://www.google.com/schemas/sitemap-image/1.1"
 XHTML_NS = "http://www.w3.org/1999/xhtml"
-MONTHS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 ORG = {"@type": "Organization", "name": "Pawstcard", "url": SITE + "/"}
 SM_START, SM_END = "<!-- journal:start -->", "<!-- journal:end -->"
 LLMS_START, LLMS_END = "<!-- journal:llms:start -->", "<!-- journal:llms:end -->"
@@ -150,9 +149,8 @@ def iso_sec(d):
 
 
 def fmt_date(d):
-    """static text (crawlers, no-JS readers): Oct 25, 2026, 20:13 KST  (24-hour, no seconds)"""
-    d = kst(d)
-    return "%s %d, %d, %02d:%02d KST" % (MONTHS[d.month - 1], d.day, d.year, d.hour, d.minute)
+    """static text (crawlers, no-JS readers): 2026-10-25 20:13 KST  (24-hour, no seconds)"""
+    return kst(d).strftime("%Y-%m-%d %H:%M") + " KST"
 
 
 def ymd(d):
@@ -470,25 +468,10 @@ src="https://www.facebook.com/tr?id={PIXEL_ID}&ev=PageView&noscript=1"/></noscri
 """
 
 
-LOCALIZE_JS = """<script>
-/* Show publish times in the reader's own time zone (with its abbreviation). Without JS / for crawlers the static KST text stays. */
-(function () {
-  try {
-    var zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    var names = { 'Asia/Seoul': 'KST', 'Asia/Tokyo': 'JST' };
-    var fmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZoneName: 'short' });
-    var els = document.querySelectorAll('time[data-localize]');
-    for (var i = 0; i < els.length; i++) {
-      var d = new Date(els[i].getAttribute('datetime'));
-      if (isNaN(d.getTime())) continue;
-      els[i].textContent = fmt.formatToParts(d).map(function (p) {
-        return p.type === 'timeZoneName' && names[zone] ? names[zone] : p.value;
-      }).join('');
-    }
-  } catch (e) {}
-})();
-</script>
-"""
+# ipe-localtime v2 — canonical copy of ipe-rest/shared/ipe-localtime.js (SHA-256 57326449…f74b8), kept byte-for-byte and
+# inlined before </body>. Never edit it here; replace the file with the next canonical version and update the hash in tests.
+LOCALTIME_JS_PATH = Path(__file__).resolve().parent / "ipe-localtime.js"
+LOCALIZE_JS = "<script>" + LOCALTIME_JS_PATH.read_bytes().decode("utf-8") + "</script>\n"
 
 
 def footer():
@@ -545,7 +528,7 @@ def render_post(p, v):
             + f"""<main class="wrap article-wrap">
   <article class="article">
     <header class="article-head">
-      <p class="j-meta"><a href="/journal/">Journal</a> <span aria-hidden="true">·</span> <time datetime="{iso_sec(p['_pub'])}" data-localize>{fmt_date(p['_pub'])}</time>{cat}{' <span class="draft-flag">DRAFT</span>' if p['draft'] else ''}</p>
+      <p class="j-meta"><a href="/journal/">Journal</a> <span aria-hidden="true">·</span> <time datetime="{stamp_str(p['_pub'])}" data-ipe-time>{fmt_date(p['_pub'])}</time>{cat}{' <span class="draft-flag">DRAFT</span>' if p['draft'] else ''}</p>
       <h1>{esc(p['title'])}</h1>
       <p class="lede">{esc(p['description'])}</p>
     </header>
@@ -575,7 +558,7 @@ def render_list(posts, v):
                                     for i, p in enumerate(posts)]}
     if posts:
         items = "\n".join(f"""      <li>
-        <p class="j-meta"><time datetime="{iso_sec(p['_pub'])}" data-localize>{fmt_date(p['_pub'])}</time>{' · ' + esc(p['category']) if p.get('category') else ''}</p>
+        <p class="j-meta"><time datetime="{stamp_str(p['_pub'])}" data-ipe-time>{fmt_date(p['_pub'])}</time>{' · ' + esc(p['category']) if p.get('category') else ''}</p>
         <h2><a href="{post_path(p)}">{esc(p['title'])}</a></h2>
         <p>{esc(p['description'])}</p>
       </li>""" for p in posts)

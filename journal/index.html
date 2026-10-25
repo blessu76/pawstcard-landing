@@ -137,7 +137,7 @@ src="https://www.facebook.com/tr?id=1932639057434633&ev=PageView&noscript=1"/></
   </div>
     <ol class="j-list">
       <li>
-        <p class="j-meta"><time datetime="2026-10-25T09:44:00+09:00" data-localize>Oct 25, 2026, 09:44 KST</time></p>
+        <p class="j-meta"><time datetime="2026-10-25T09:44+09:00" data-ipe-time>2026-10-25 09:44 KST</time></p>
         <h2><a href="/journal/en/how-to-write-a-pet-sitting-visit-report/">How to Write a Pet Sitting Visit Report Clients Actually Read</a></h2>
         <p>A simple five-part structure for pet sitting visit reports, with a checklist, a sample note, and the mistakes that make clients stop reading.</p>
       </li>
@@ -154,20 +154,35 @@ src="https://www.facebook.com/tr?id=1932639057434633&ev=PageView&noscript=1"/></
     <p class="foot-links"><a href="/">Home</a> · <a href="/journal/">Journal</a> · <a href="/journal/feed.xml">RSS</a> · <a href="/#signup">Join the waitlist</a></p>
   </div>
 </footer>
-<script>
-/* Show publish times in the reader's own time zone (with its abbreviation). Without JS / for crawlers the static KST text stays. */
+<script>/* ipe-localtime v2 · 정본 ipe-rest/shared/ipe-localtime.js · 사본은 바이트 그대로 */
+/* time[data-ipe-time] 의 datetime(+09:00)을 보는 기기 시간대로 바꿔 보인다. 실패하면 정적 KST 글자를 그대로 둔다. */
+/* v2: 오프셋 없는/잘못된 datetime 은 건너뜀 · 그레고리력·라틴 숫자 고정 */
 (function () {
   try {
     var zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     var names = { 'Asia/Seoul': 'KST', 'Asia/Tokyo': 'JST' };
-    var fmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZoneName: 'short' });
-    var els = document.querySelectorAll('time[data-localize]');
+    var ok = /^\d{4}-\d\d-\d\dT\d\d:\d\d(:\d\d)?([+-]\d\d:?\d\d|Z)$/;
+    var fmt = new Intl.DateTimeFormat(document.documentElement.lang || 'en', {
+      calendar: 'gregory', numberingSystem: 'latn',
+      year: 'numeric', month: 'short', day: 'numeric',
+      hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZoneName: 'short'
+    });
+    var els = document.querySelectorAll('time[data-ipe-time]');
     for (var i = 0; i < els.length; i++) {
-      var d = new Date(els[i].getAttribute('datetime'));
-      if (isNaN(d.getTime())) continue;
-      els[i].textContent = fmt.formatToParts(d).map(function (p) {
-        return p.type === 'timeZoneName' && names[zone] ? names[zone] : p.value;
-      }).join('');
+      var el = els[i];
+      try {
+        if (el.hasAttribute('data-ipe-time-done')) continue;
+        var raw = (el.getAttribute('datetime') || '').trim();
+        if (!ok.test(raw)) continue;
+        var d = new Date(raw.replace(/([+-]\d\d)(\d\d)$/, '$1:$2'));
+        if (isNaN(d.getTime())) continue;
+        var text = fmt.formatToParts(d).map(function (p) {
+          return p.type === 'timeZoneName' && names[zone] ? names[zone] : p.value;
+        }).join('');
+        if (!el.getAttribute('title')) el.setAttribute('title', el.textContent.trim());
+        el.textContent = text;
+        el.setAttribute('data-ipe-time-done', '');
+      } catch (e) {}
     }
   } catch (e) {}
 })();

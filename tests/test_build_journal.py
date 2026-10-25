@@ -1,5 +1,6 @@
 """Green gate for the journal build:  python3 -m unittest discover -s tests -v"""
 import datetime as dt
+import hashlib
 import io
 import re
 import shutil
@@ -13,6 +14,7 @@ sys.path.insert(0, str(REPO / "scripts"))
 import build_journal as bj  # noqa: E402
 import publish_journal as pj  # noqa: E402
 
+IPE_LOCALTIME_SHA256 = "57326449ddf5050eabadd1394d69eb2b0f61c88f084ec83ee4aff6fcad0f74b8"  # ipe-rest c466827 shared/ipe-localtime.js
 ET = bj.TZ  # publish_at floors are Eastern Time; everything recorded/shown is KST (+09:00)
 SEED_SITEMAP = """<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -163,10 +165,10 @@ class ActualPublishTime(unittest.TestCase):
         page = s.read("journal/en/x/index.html")
         self.assertIn('"datePublished": "2026-10-26T03:13:00+09:00"', page)
         self.assertIn('"dateModified": "2026-10-26T03:13:00+09:00"', page)
-        self.assertIn("Oct 26, 2026, 03:13 KST", page)
+        self.assertIn("2026-10-26 03:13 KST", page)
         self.assertIn("2026-10-26T03:13:00+09:00", page)
         self.assertNotIn("14:00", page.split("</head>")[1])
-        self.assertIn("Oct 26, 2026, 03:13 KST", s.read("journal/index.html"))
+        self.assertIn("2026-10-26 03:13 KST", s.read("journal/index.html"))
         self.assertIn("<pubDate>Mon, 26 Oct 2026 03:13:00 +0900</pubDate>", s.read("journal/feed.xml"))
         self.assertIn("<lastmod>2026-10-26T03:13:00+09:00</lastmod>", s.read("sitemap.xml"))
         self.assertIn("(2026-10-26)", s.read("llms.txt"))
@@ -278,7 +280,7 @@ class EasternTime(unittest.TestCase):
         self.assertIn("published_at: 2026-11-02T21:20+09:00", s.read("journal/queue/x.md"))
         page = s.read("journal/en/x/index.html")
         self.assertIn('"datePublished": "2026-11-02T21:20:00+09:00"', page)
-        self.assertIn("Nov 2, 2026, 21:20 KST", page)
+        self.assertIn("2026-11-02 21:20 KST", page)
 
     def test_stamp_across_the_boundary_day(self):
         s = Site(self)
@@ -304,15 +306,24 @@ class EasternTime(unittest.TestCase):
         s.post("x", "2026-10-25T07:13-04:00")
         bj.build(s.root, NOW)
         page, lst = s.read("journal/en/x/index.html"), s.read("journal/index.html")
-        want = '<time datetime="2026-10-25T20:13:00+09:00" data-localize>Oct 25, 2026, 20:13 KST</time>'
+        want = '<time datetime="2026-10-25T20:13+09:00" data-ipe-time>2026-10-25 20:13 KST</time>'
         for text in (page, lst):
-            self.assertIn(want, text)  # recorded in KST, static text HH:MM KST, hook for the device time zone
-            self.assertIn("Intl.DateTimeFormat", text)
-            self.assertIn("hourCycle: 'h23'", text)
-            self.assertIn("'Asia/Seoul': 'KST'", text)
+            self.assertIn(want, text)  # recorded in KST, static text YYYY-MM-DD HH:MM KST, hook for the device time zone
+            self.assertNotIn("data-localize", text)  # only the canonical ipe-localtime hook, never a second one
             self.assertNotIn("-04:00", text)  # no Eastern time anywhere in what is recorded/shown
+            self.assertEqual(text.count("ipe-localtime v2"), 1)  # one copy, not two
+            inline = text.split("</footer>\n<script>")[1].split("</script>")[0]  # the inline script right before </body>
+            self.assertEqual(hashlib.sha256(inline.encode("utf-8")).hexdigest(), IPE_LOCALTIME_SHA256)  # byte-identical to the canonical copy
         for text in (page, lst, s.read("journal/feed.xml"), s.read("sitemap.xml")):
             self.assertNotIn("-0400", text)
+
+    def test_repo_copy_of_ipe_localtime_is_the_canonical_bytes(self):
+        raw = (REPO / "scripts" / "ipe-localtime.js").read_bytes()
+        self.assertEqual(len(raw), 1639)
+        self.assertEqual(hashlib.sha256(raw).hexdigest(), IPE_LOCALTIME_SHA256)
+        self.assertTrue(raw.endswith(b"\n"))
+        self.assertNotIn("data-localize", (REPO / "scripts" / "build_journal.py").read_text(encoding="utf-8"))  # old hook is gone from the builder
+        self.assertNotIn("LOCALIZE_JS = \"\"\"", (REPO / "scripts" / "build_journal.py").read_text(encoding="utf-8"))
 
     def test_recorded_times_must_be_kst(self):
         for bad in ("2026-10-25T07:13-04:00", "2026-10-25T20:13Z", "2026-10-25T20:13+08:00", "2026-10-25T20:13:00+09:00", "2026-10-25"):
