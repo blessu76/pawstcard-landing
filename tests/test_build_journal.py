@@ -637,7 +637,8 @@ class RepoState(unittest.TestCase):
         self.assertEqual(landing.count(bj.HOME_END), 1)
         self.assertEqual(landing.count('href="/journal/"'), 2)  # "View all journal posts" in the card section + the footer link
         self.assertGreater(landing.rindex('href="/journal/"'), landing.index("<footer>"))
-        self.assertLess(landing.index(bj.HOME_START), landing.index('class="quotes"'))  # right under the hero, above the fold-3 sections
+        self.assertGreater(landing.index(bj.HOME_START), landing.index('id="signup"'))  # BELOW the signup section (Meta-ad conversion test), right before </main>
+        self.assertLess(landing.index(bj.HOME_END), landing.index("</main>"))
 
 
 class HomeCards(unittest.TestCase):
@@ -646,9 +647,9 @@ class HomeCards(unittest.TestCase):
     LANDING = """<!DOCTYPE html><html lang="en"><body>
 <main>
   <section class="hero">hero</section>
+  <section class="quotes">quotes</section>
   <!-- journal:home:start -->
   <!-- journal:home:end -->
-  <section class="quotes">quotes</section>
 </main>
 <footer><a href="/journal/">Journal</a></footer>
 </body></html>
@@ -668,30 +669,31 @@ class HomeCards(unittest.TestCase):
         s = self.site(("a", "2026-10-21T07:00-04:00"), ("b", "2026-10-22T07:00-04:00"), ("c", "2026-10-23T07:00-04:00"), ("d", "2026-10-24T07:00-04:00"))
         bj.build(s.root, NOW)
         self.assertEqual(self.cards(s), ["d", "c", "b"])
-        self.assertIn("journal__grid--3", s.read("index.html"))
-        self.assertEqual(s.read("index.html").count('<article class="journal-card"'), 3)
+        self.assertIn("jgrid--3", s.read("index.html"))
+        self.assertEqual(s.read("index.html").count('<li class="jcard"'), 3)
 
     def test_one_or_two_posts_get_their_own_layout_class(self):
         s = self.site(("a", "2026-10-24T07:00-04:00"))
         bj.build(s.root, NOW)
         self.assertEqual(self.cards(s), ["a"])
-        self.assertIn("journal__grid--1", s.read("index.html"))
+        self.assertIn("jgrid--1", s.read("index.html"))
         s.post("b", "2026-10-25T07:00-04:00")
         bj.build(s.root, NOW)
         self.assertEqual(self.cards(s), ["b", "a"])
-        self.assertIn("journal__grid--2", s.read("index.html"))
+        self.assertIn("jgrid--2", s.read("index.html"))
 
     def test_card_content_and_markup(self):
         s = self.site(("a", "2026-10-24T07:00-04:00"))
         bj.build(s.root, NOW)
         page = s.read("index.html")
-        self.assertIn('<a class="journal-card__link" href="/journal/en/a/">', page)
+        self.assertIn('<a class="jlink" href="/journal/en/a/">', page)
         self.assertIn('<time datetime="2026-10-24T20:00+09:00" data-ipe-time>2026-10-24 20:00 KST</time>', page)  # 07:00 EDT = 20:00 KST
-        self.assertIn("<h3>Title of a</h3>", page)
-        self.assertIn("<p>About a.</p>", page)
-        self.assertIn('href="/journal/">View all posts', page)
+        self.assertIn(">Title of a</a></h3>", page)
+        self.assertIn("<p class=\"jex\">About a.</p>", page)
+        self.assertIn('href="/journal/">All posts', page)
         self.assertIn("hero", page)
         self.assertIn('<section class="quotes">quotes</section>', page)  # outside the markers: untouched
+        self.assertRegex(page, r'<div class="jart ph[123]" aria-hidden="true">')
 
     def test_unpublished_posts_never_appear(self):
         s = self.site(("a", "2026-10-24T07:00-04:00"))
@@ -703,7 +705,7 @@ class HomeCards(unittest.TestCase):
     def test_no_posts_means_no_section(self):
         s = self.site()
         bj.build(s.root, NOW)
-        self.assertNotIn("journal__grid", s.read("index.html"))
+        self.assertNotIn("jgrid", s.read("index.html"))
         self.assertIn(bj.HOME_START, s.read("index.html"))
 
     def test_text_is_escaped(self):
@@ -744,7 +746,7 @@ class HomeCards(unittest.TestCase):
     def test_check_flags_hand_edited_card_text(self):
         s = self.site(("a", "2026-10-23T07:00-04:00"))
         bj.build(s.root, NOW)
-        (s.root / "index.html").write_text(s.read("index.html").replace("<h3>Title of a</h3>", "<h3>Edited</h3>"), encoding="utf-8")
+        (s.root / "index.html").write_text(s.read("index.html").replace(">Title of a</a></h3>", ">Edited</a></h3>"), encoding="utf-8")
         live = bj.build(s.root, NOW, check_only=True)["_live"]
         self.assertEqual(len(bj.check_home(s.root, live)), 1)
 
@@ -763,7 +765,7 @@ class HomeCards(unittest.TestCase):
         self.assertEqual(self.cards(s), ["one"])
         self.assertEqual(pj.run(s.root, NOW, out=lambda m: None), 0)
         self.assertEqual(self.cards(s), ["two", "one"])
-        self.assertIn("journal__grid--2", s.read("index.html"))
+        self.assertIn("jgrid--2", s.read("index.html"))
 
     def test_publish_dry_run_leaves_the_landing_page_alone(self):
         s = self.site(("one", "2026-10-24T07:00-04:00"))
