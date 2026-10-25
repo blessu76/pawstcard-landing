@@ -668,28 +668,28 @@ class HomeCards(unittest.TestCase):
         s = self.site(("a", "2026-10-21T07:00-04:00"), ("b", "2026-10-22T07:00-04:00"), ("c", "2026-10-23T07:00-04:00"), ("d", "2026-10-24T07:00-04:00"))
         bj.build(s.root, NOW)
         self.assertEqual(self.cards(s), ["d", "c", "b"])
-        self.assertIn("jc-n3", s.read("index.html"))
-        self.assertEqual(s.read("index.html").count('class="jc"'), 3)
+        self.assertIn("journal__grid--3", s.read("index.html"))
+        self.assertEqual(s.read("index.html").count('<article class="journal-card"'), 3)
 
     def test_one_or_two_posts_get_their_own_layout_class(self):
         s = self.site(("a", "2026-10-24T07:00-04:00"))
         bj.build(s.root, NOW)
         self.assertEqual(self.cards(s), ["a"])
-        self.assertIn("jc-grid jc-n1", s.read("index.html"))
+        self.assertIn("journal__grid--1", s.read("index.html"))
         s.post("b", "2026-10-25T07:00-04:00")
         bj.build(s.root, NOW)
         self.assertEqual(self.cards(s), ["b", "a"])
-        self.assertIn("jc-grid jc-n2", s.read("index.html"))
+        self.assertIn("journal__grid--2", s.read("index.html"))
 
     def test_card_content_and_markup(self):
         s = self.site(("a", "2026-10-24T07:00-04:00"))
         bj.build(s.root, NOW)
         page = s.read("index.html")
-        self.assertIn('<a class="jc" href="/journal/en/a/">', page)
+        self.assertIn('<a class="journal-card__link" href="/journal/en/a/">', page)
         self.assertIn('<time datetime="2026-10-24T20:00+09:00" data-ipe-time>2026-10-24 20:00 KST</time>', page)  # 07:00 EDT = 20:00 KST
         self.assertIn("<h3>Title of a</h3>", page)
         self.assertIn("<p>About a.</p>", page)
-        self.assertIn('href="/journal/">View all journal posts', page)
+        self.assertIn('href="/journal/">View all posts', page)
         self.assertIn("hero", page)
         self.assertIn('<section class="quotes">quotes</section>', page)  # outside the markers: untouched
 
@@ -703,7 +703,7 @@ class HomeCards(unittest.TestCase):
     def test_no_posts_means_no_section(self):
         s = self.site()
         bj.build(s.root, NOW)
-        self.assertNotIn("journal-home", s.read("index.html"))
+        self.assertNotIn("journal__grid", s.read("index.html"))
         self.assertIn(bj.HOME_START, s.read("index.html"))
 
     def test_text_is_escaped(self):
@@ -763,7 +763,7 @@ class HomeCards(unittest.TestCase):
         self.assertEqual(self.cards(s), ["one"])
         self.assertEqual(pj.run(s.root, NOW, out=lambda m: None), 0)
         self.assertEqual(self.cards(s), ["two", "one"])
-        self.assertIn("jc-n2", s.read("index.html"))
+        self.assertIn("journal__grid--2", s.read("index.html"))
 
     def test_publish_dry_run_leaves_the_landing_page_alone(self):
         s = self.site(("one", "2026-10-24T07:00-04:00"))

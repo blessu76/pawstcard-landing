@@ -635,25 +635,26 @@ def render_feed(posts, now):
 def render_home_block(posts):
     """The card section for the landing page (static HTML, no JS of its own). `posts` = published posts; newest HOME_CARDS shown.
     The whole card is one link; the date is a <time data-ipe-time> that the inline ipe-localtime v2 script in index.html localises.
-    The grid class carries the card count (jc-n1/2/3) so 1-2 cards still lay out as a finished row at every width."""
+    Markup = the shared Journal card base (section.journal > .journal__head + .journal__grid > article.journal-card > a.journal-card__link);
+    the grid modifier carries the card count (journal__grid--1/2/3) so 1-2 cards still lay out as a finished row at every width."""
     top = sorted(posts, key=lambda p: (p["_pub"], p["slug"]), reverse=True)[:HOME_CARDS]
     if not top:
         return ""
-    cards = "\n".join(f"""      <li>
-        <a class="jc" href="{post_path(p)}">
+    cards = "\n".join(f"""      <article class="journal-card">
+        <a class="journal-card__link" href="{post_path(p)}">
           <time datetime="{stamp_str(p['_pub'])}" data-ipe-time>{fmt_date(p['_pub'])}</time>
           <h3>{esc(p['title'])}</h3>
           <p>{esc(p['description'])}</p>
-          <span class="jc-more" aria-hidden="true">Read the post →</span>
         </a>
-      </li>""" for p in top)
-    return f"""  <section class="journal-home wrap" id="journal" aria-labelledby="journal-home-title">
-    <h2 id="journal-home-title">Journal</h2>
-    <p class="sub">Practical notes for independent pet sitters and dog walkers.</p>
-    <ul class="jc-grid jc-n{len(top)}">
+      </article>""" for p in top)
+    return f"""  <section class="journal wrap" id="journal" aria-labelledby="journal-title">
+    <div class="journal__head">
+      <h2 id="journal-title">Journal</h2>
+      <a class="journal__all" href="/journal/">View all posts <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="journal__grid journal__grid--{len(top)}">
 {cards}
-    </ul>
-    <p class="jh-all"><a href="/journal/">View all journal posts <span aria-hidden="true">→</span></a></p>
+    </div>
   </section>
 """
 
@@ -672,7 +673,7 @@ def merge_home(text, block):
 def home_slugs(text):
     """slugs of the cards currently in index.html's home block, in page order"""
     s, e = text.index(HOME_START), text.index(HOME_END)
-    return re.findall(r'<a class="jc" href="/journal/en/([a-z0-9-]+)/"', text[s:e])
+    return re.findall(r'<a class="journal-card__link" href="/journal/en/([a-z0-9-]+)/"', text[s:e])
 
 
 def check_home(root, posts_live):
