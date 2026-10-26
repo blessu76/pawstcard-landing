@@ -2,6 +2,7 @@
 import datetime as dt
 import hashlib
 import io
+import json
 import re
 import shutil
 import sys
@@ -781,6 +782,72 @@ class HomeCards(unittest.TestCase):
         self.assertEqual(hashlib.sha256(raw).hexdigest(), IPE_LOCALTIME_SHA256)
         self.assertEqual(landing.count("<script>" + raw.decode("utf-8") + "</script>"), 1)  # byte-identical, exactly once
         self.assertEqual(landing.count("data-localize"), 0)
+
+
+class OrganizationHub(unittest.TestCase):
+    """JSON-LD: one company Organization @id (ipe.rest) referenced by the landing page and every journal page."""
+    ORG_ID = "https://ipe.rest/#organization"
+    BRAND_ID = "https://pawstcard.ipe.rest/#brand"
+
+    @staticmethod
+    def blocks(html):
+        found = re.findall(r'<script type="application/ld\+json">\s*(.*?)\s*</script>', html, re.S)
+        return [json.loads(b.replace("<\\/", "</")) for b in found]  # every block must parse
+
+    @staticmethod
+    def png_size(path):
+        raw = path.read_bytes()
+        assert raw[:8] == b"\x89PNG\r\n\x1a\n"
+        return int.from_bytes(raw[16:20], "big"), int.from_bytes(raw[20:24], "big")
+
+    def test_landing_nodes(self):
+        by_type = {b["@type"]: b for b in self.blocks((REPO / "index.html").read_text(encoding="utf-8"))}
+        self.assertEqual(by_type["Organization"]["@id"], self.ORG_ID)
+        self.assertEqual(by_type["Organization"]["name"], "ipe()")
+        self.assertEqual(by_type["Organization"]["brand"], {"@id": self.BRAND_ID})
+        self.assertEqual(by_type["Brand"]["@id"], self.BRAND_ID)
+        self.assertEqual(by_type["Brand"]["name"], "Pawstcard")
+        self.assertEqual(by_type["WebSite"]["@id"], "https://pawstcard.ipe.rest/#website")
+        self.assertEqual(by_type["WebSite"]["publisher"], {"@id": self.ORG_ID})
+        self.assertEqual(by_type["SoftwareApplication"]["publisher"], {"@id": self.ORG_ID})
+
+    def test_images_are_real_square_icon_and_og_with_true_sizes(self):
+        icon = bj.APP_ICON
+        w, h = self.png_size(REPO / "app-icon.png")
+        self.assertEqual((icon["width"], icon["height"]), (w, h))
+        self.assertEqual(w, h)
+        self.assertGreaterEqual(w, 512)
+        self.assertEqual((bj.OG_IMAGE["width"], bj.OG_IMAGE["height"]), self.png_size(REPO / "og-image.png"))
+        brand = {b["@type"]: b for b in self.blocks((REPO / "index.html").read_text(encoding="utf-8"))}["Brand"]
+        self.assertEqual(brand["logo"], icon)
+
+    def test_generated_pages_point_at_the_same_id(self):
+        self.assertEqual(bj.ORG_ID, self.ORG_ID)
+        s = Site(self)
+        s.post("a", "2026-10-25T14:00-04:00")
+        bj.build(s.root, NOW)
+        post = {b["@type"]: b for b in self.blocks(s.read("journal/en/a/index.html"))}["BlogPosting"]
+        for key in ("author", "publisher"):
+            self.assertEqual(post[key]["@id"], self.ORG_ID)
+            self.assertEqual(post[key]["name"], "ipe()")
+            self.assertEqual(post[key]["url"], "https://ipe.rest/")
+            self.assertEqual(post[key]["brand"]["name"], "Pawstcard")
+        self.assertEqual(post["publisher"]["logo"], bj.APP_ICON)
+        self.assertEqual(post["image"], bj.OG_IMAGE)
+        blog = {b["@type"]: b for b in self.blocks(s.read("journal/index.html"))}["Blog"]
+        self.assertEqual(blog["publisher"]["@id"], self.ORG_ID)
+        self.assertEqual(blog["publisher"]["logo"], bj.APP_ICON)
+        entry = blog["blogPost"][0]
+        self.assertEqual(entry["author"], {"@id": self.ORG_ID})
+        self.assertEqual(entry["description"], "About a.")
+        self.assertEqual(entry["image"], bj.OG_IMAGE)
+
+    def test_custom_hero_image_is_an_image_object_with_url(self):
+        s = Site(self)
+        s.post("a", "2026-10-25T14:00-04:00", image="/journal/assets/a/hero.jpg")
+        bj.build(s.root, NOW)
+        post = {b["@type"]: b for b in self.blocks(s.read("journal/en/a/index.html"))}["BlogPosting"]
+        self.assertEqual(post["image"], {"@type": "ImageObject", "url": "https://pawstcard.ipe.rest/journal/assets/a/hero.jpg"})
 
 
 if __name__ == "__main__":
