@@ -71,7 +71,12 @@ OG_IMAGE_SIZE = (1200, 630)  # pixels of /og-image.png
 OG_IMAGE_ALT = "Pawstcard: an AI-written pet-sitting report card on a phone"
 IMG_NS = "http://www.google.com/schemas/sitemap-image/1.1"
 XHTML_NS = "http://www.w3.org/1999/xhtml"
-ORG = {"@type": "Organization", "name": "Pawstcard", "url": SITE + "/"}
+ORG_ID = "https://ipe.rest/#organization"   # the company node: ipe.rest defines it, this landing page and every journal page point at it
+BRAND_ID = SITE + "/#brand"                 # the product (defined on the landing page)
+ORG = {"@type": "Organization", "@id": ORG_ID, "name": "ipe()", "url": "https://ipe.rest/",
+       "brand": {"@type": "Brand", "@id": BRAND_ID, "name": "Pawstcard"}}
+OG_IMAGE = {"@type": "ImageObject", "url": SITE + "/og-image.png", "width": 1200, "height": 630}   # tests pin these to the real file
+APP_ICON = {"@type": "ImageObject", "url": SITE + "/app-icon.png", "width": 1024, "height": 1024}  # square app icon = publisher logo
 SM_START, SM_END = "<!-- journal:start -->", "<!-- journal:end -->"
 LLMS_START, LLMS_END = "<!-- journal:llms:start -->", "<!-- journal:llms:end -->"
 CSS_REL = "journal/assets/journal.css"
@@ -418,6 +423,11 @@ def hero(p):
     return abs_url(p["image"]) if p.get("image") else DEFAULT_OG_IMAGE
 
 
+def hero_object(p):
+    """JSON-LD image: ImageObject. Only the default og-image has known dimensions; a per-post image carries its url only."""
+    return dict(OG_IMAGE) if not p.get("image") else {"@type": "ImageObject", "url": hero(p)}
+
+
 def head(title, desc, canonical, v, noindex=False, extra="", og_type="website", image=None, alternates="", image_alt=None):
     # same text as the landing page's og:image:alt; width/height are only known for the default /og-image.png
     image = image or DEFAULT_OG_IMAGE
@@ -540,10 +550,10 @@ def render_post(p, v):
         "datePublished": iso_sec(p["_pub"]), "dateModified": iso_sec(modified),
         "inLanguage": "en",
         "mainEntityOfPage": {"@type": "WebPage", "@id": url}, "url": url,
-        "image": hero(p),
+        "image": hero_object(p),
         "wordCount": len(plain_text(p["_html"]).split()),
         "author": dict(ORG),
-        "publisher": dict(ORG, logo={"@type": "ImageObject", "url": SITE + "/og-image.png"}),
+        "publisher": dict(ORG, logo=dict(APP_ICON)),
         "isPartOf": {"@type": "Blog", "name": "Pawstcard Journal", "url": SITE + "/journal/"},
     }
     if p.get("category"):
@@ -584,9 +594,10 @@ def render_post(p, v):
 def render_list(posts, v):
     url = SITE + "/journal/"
     data = {"@context": "https://schema.org", "@type": "Blog", "name": "Pawstcard Journal", "url": url,
-            "description": BLOG_DESC, "inLanguage": "en", "publisher": dict(ORG),
+            "description": BLOG_DESC, "inLanguage": "en", "publisher": dict(ORG, logo=dict(APP_ICON)),
             "blogPost": [{"@type": "BlogPosting", "headline": p["title"], "url": post_url(p),
-                          "datePublished": iso_sec(p["_pub"]), "inLanguage": "en"} for p in posts]}
+                          "datePublished": iso_sec(p["_pub"]), "inLanguage": "en",
+                          "description": p["description"], "image": hero_object(p), "author": {"@id": ORG_ID}} for p in posts]}
     itemlist = {"@context": "https://schema.org", "@type": "ItemList", "name": "Pawstcard Journal", "url": url,
                 "numberOfItems": len(posts), "itemListOrder": "https://schema.org/ItemListOrderDescending",
                 "itemListElement": [{"@type": "ListItem", "position": i + 1, "url": post_url(p), "name": p["title"]}

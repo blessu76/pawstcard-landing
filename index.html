@@ -34,9 +34,25 @@
 {
   "@context": "https://schema.org",
   "@type": "Organization",
+  "@id": "https://ipe.rest/#organization",
+  "name": "ipe()",
+  "url": "https://ipe.rest/",
+  "brand": { "@id": "https://pawstcard.ipe.rest/#brand" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Brand",
+  "@id": "https://pawstcard.ipe.rest/#brand",
   "name": "Pawstcard",
   "url": "https://pawstcard.ipe.rest/",
-  "logo": "https://pawstcard.ipe.rest/og-image.png",
+  "logo": {
+    "@type": "ImageObject",
+    "url": "https://pawstcard.ipe.rest/app-icon.png",
+    "width": 1024,
+    "height": 1024
+  },
   "description": "Pawstcard is an AI-powered visit report-card builder for independent pet sitters and dog walkers. Snap a few photos and Pawstcard writes a warm, professional update clients can open with no app or account."
 }
 </script>
@@ -44,18 +60,22 @@
 {
   "@context": "https://schema.org",
   "@type": "WebSite",
+  "@id": "https://pawstcard.ipe.rest/#website",
   "name": "Pawstcard",
   "url": "https://pawstcard.ipe.rest/",
   "inLanguage": "en",
   "description": "Early-access landing page for Pawstcard — the AI report-card builder for independent pet sitters and dog walkers.",
-  "publisher": { "@type": "Organization", "name": "Pawstcard" }
+  "publisher": { "@id": "https://ipe.rest/#organization" }
 }
 </script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
+  "@id": "https://pawstcard.ipe.rest/#app",
   "name": "Pawstcard",
+  "brand": { "@id": "https://pawstcard.ipe.rest/#brand" },
+  "publisher": { "@id": "https://ipe.rest/#organization" },
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "iOS, Android",
   "url": "https://pawstcard.ipe.rest/",
