@@ -850,5 +850,60 @@ class OrganizationHub(unittest.TestCase):
         self.assertEqual(post["image"], {"@type": "ImageObject", "url": "https://pawstcard.ipe.rest/journal/assets/a/hero.jpg"})
 
 
+class SeoBasics(unittest.TestCase):
+    ICONS = ('rel="icon" href="/favicon.ico"', 'rel="apple-touch-icon" href="/apple-touch-icon.png"')
+
+    def test_post_title_gets_a_short_suffix_only_when_it_fits(self):
+        self.assertEqual(bj.post_title("Short title"), "Short title | Pawstcard")
+        long_title = "x" * 60
+        self.assertEqual(bj.post_title(long_title), long_title)
+
+    def test_titles_and_no_duplicate_h2(self):
+        s = Site(self)
+        s.post("a", "2026-10-25T14:00-04:00")  # md() body starts with '# Heading', unlike the title
+        s.post("b", "2026-10-25T14:00-04:00")
+        f = s.root / "journal" / "queue" / "b.md"
+        f.write_text(f.read_text(encoding="utf-8").replace("# Heading", "# Title of b") + "\n## Real section\n\ntext\n", encoding="utf-8")
+        bj.build(s.root, NOW)
+        page_a, page_b = s.read("journal/en/a/index.html"), s.read("journal/en/b/index.html")
+        self.assertIn("<title>Title of a | Pawstcard</title>", page_a)
+        self.assertIn("<h2>Heading</h2>", page_a)             # a different first heading is content, keep it
+        self.assertNotIn("<h2>Title of b</h2>", page_b)       # a copy of the h1 is dropped
+        self.assertIn("<h2>Real section</h2>", page_b)
+        self.assertIn("<title>%s</title>" % bj.LIST_TITLE, s.read("journal/index.html"))
+        self.assertTrue(40 <= len(bj.LIST_TITLE) <= 60)
+
+    def test_icons_are_linked_everywhere_and_exist(self):
+        for name in ("favicon.ico", "apple-touch-icon.png", "icon-192.png"):
+            self.assertTrue((REPO / name).is_file(), name)
+        s = Site(self)
+        s.post("a", "2026-10-25T14:00-04:00")
+        bj.build(s.root, NOW)
+        pages = [s.read("journal/en/a/index.html"), s.read("journal/index.html"),
+                 (REPO / "index.html").read_text(encoding="utf-8"), (REPO / "404.html").read_text(encoding="utf-8")]
+        for page in pages:
+            for needle in self.ICONS:
+                self.assertIn(needle, page)
+
+    def test_404_page_is_noindex_and_self_contained(self):
+        page = (REPO / "404.html").read_text(encoding="utf-8")
+        self.assertIn('content="noindex, follow"', page)
+        self.assertIn('href="/"', page)
+        self.assertIn('href="/journal/"', page)
+        self.assertNotIn("googletagmanager", page)
+
+    def test_landing_reserves_the_typed_text_height_and_defers_third_parties(self):
+        landing = (REPO / "index.html").read_text(encoding="utf-8")
+        self.assertIn('id="typed-ghost"', landing)
+        self.assertIn("document.getElementById('typed-ghost')", landing)
+        # no render-blocking stylesheet, no eager third-party <script src>
+        self.assertNotIn('rel="stylesheet">\n<style>', landing)
+        self.assertNotRegex(landing, r'<script[^>]+src="https://www\.googletagmanager\.com')
+        self.assertNotIn("<script async src=\"https://connect.facebook.net", landing)
+        for needle in ("fbq('init'", "fbq('track', 'PageView')", "gtag('config', 'G-XG4BH800J0')",
+                       "https://www.googletagmanager.com/gtag/js?id=G-XG4BH800J0", "https://connect.facebook.net/en_US/fbevents.js"):
+            self.assertIn(needle, landing)
+
+
 if __name__ == "__main__":
     unittest.main()
