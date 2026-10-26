@@ -30,6 +30,7 @@ Pawstcard is built for solo, one-person pet-sitting and dog-walking businesses �
 ## Journal
 Practical notes for independent pet sitters and dog walkers. Index: https://pawstcard.ipe.rest/journal/ · Feed: https://pawstcard.ipe.rest/journal/feed.xml
 
+- [Pet Sitting Meet-and-Greet Checklist: What to Ask and Observe](https://pawstcard.ipe.rest/journal/en/pet-sitting-meet-and-greet-checklist/) — A practical meet-and-greet checklist for pet sitters and dog walkers: what to ask, what to watch, and what to agree on before the first visit. (2026-10-27)
 - [How Independent Pet Sitters Build Client Trust (and Keep It)](https://pawstcard.ipe.rest/journal/en/how-independent-pet-sitters-build-client-trust/) — Trust is built before, during, and after each job. A practical checklist for independent pet sitters, including how to report problems well. (2026-10-26)
 - [What to Write in Pet Sitting Updates When Nothing New Happens](https://pawstcard.ipe.rest/journal/en/what-to-write-in-pet-sitting-updates-long-stays/) — Long stays make updates repetitive. Nine ideas for fresh, honest pet sitter notes, plus how to keep them short when the day was uneventful. (2026-10-26)
 - [Pet Sitter Photo Updates: How Many to Send and What to Shoot](https://pawstcard.ipe.rest/journal/en/pet-sitter-photo-updates-how-many-and-what-to-shoot/) — How many photos to send per visit, which three shots matter, and how to take them quickly without letting your phone take over the visit. (2026-10-25)
