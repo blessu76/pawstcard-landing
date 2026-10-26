@@ -317,6 +317,14 @@ def inline(text):
     return "".join(out)
 
 
+def drop_title_h1(body, title):
+    """The page template owns the <h1>; a leading '# <same title>' in the manuscript would come out as a duplicate <h2>."""
+    m = re.match(r"\s*#\s+(.+?)\s*\n", body)
+    if m and re.sub(r"\s+", " ", m.group(1)).strip() == re.sub(r"\s+", " ", title).strip():
+        return body[m.end():]
+    return body
+
+
 FIG_RE = re.compile(r'^!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)$')
 
 
@@ -419,6 +427,16 @@ def abs_url(u):
     return SITE + u if u.startswith("/") else u
 
 
+TITLE_SUFFIX = " | Pawstcard"
+TITLE_MAX = 65
+LIST_TITLE = "Pawstcard Journal — Tips for Independent Pet Sitters"  # 52 chars
+
+
+def post_title(title):
+    """<title>: the post title plus a short brand suffix, unless that would run past ~65 chars (then the title alone)."""
+    return title + TITLE_SUFFIX if len(title) + len(TITLE_SUFFIX) <= TITLE_MAX else title
+
+
 def hero(p):
     return abs_url(p["image"]) if p.get("image") else DEFAULT_OG_IMAGE
 
@@ -491,6 +509,9 @@ fbq('track', 'PageView');
 src="https://www.facebook.com/tr?id={PIXEL_ID}&ev=PageView&noscript=1"/></noscript>
 <!-- End Meta Pixel -->
 
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -568,7 +589,7 @@ def render_post(p, v):
     cat = ' <span aria-hidden="true">·</span> <span>%s</span>' % esc(p["category"]) if p.get("category") else ""
     hero_img = ('    <figure class="hero-img"><img src="%s" alt="%s"></figure>\n' % (esc(p["image"]), esc(p.get("image_alt", "")))
                 if p.get("image") else "")
-    return (head("%s — Pawstcard Journal" % p["title"], p["description"], url, v, p["draft"], extra, "article", hero(p), alt_links(url),
+    return (head(post_title(p["title"]), p["description"], url, v, p["draft"], extra, "article", hero(p), alt_links(url),
                  p.get("image_alt") if p.get("image") else None)
             + f"""<main class="wrap article-wrap">
   <article class="article">
@@ -611,7 +632,7 @@ def render_list(posts, v):
         body = '    <ol class="j-list">\n%s\n    </ol>' % items
     else:
         body = '    <p class="empty-note">The first post is coming soon.</p>'
-    return (head("Journal — Pawstcard", BLOG_DESC, url, v, not posts,
+    return (head(LIST_TITLE, BLOG_DESC, url, v, not posts,
                  ld(data) + ld(itemlist) + ld(breadcrumb()), alternates=alt_links(url))
             + f"""<main class="wrap list-wrap">
   <div class="page-head">
@@ -815,7 +836,7 @@ def build(root, now, drafts_ok=False, check_only=False, queue_dir=None):
         return report
     v = asset_v(root)
     for p in due:
-        p["_html"] = markdown(p["_body"])
+        p["_html"] = markdown(drop_title_h1(p["_body"], p["title"]))
     written = set()
 
     def write(path, text):

@@ -92,34 +92,45 @@
 </script>
 
 <!-- reused ipe.rest GA4 property; filter reports by hostname=pawstcard.ipe.rest -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XG4BH800J0"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-XG4BH800J0');
+  /* gtag.js itself loads after the load event (events and the pageview above wait in dataLayer) */
 </script>
 
-<!-- Meta Pixel -->
+<!-- Meta Pixel (fbq queue is set up now, fbevents.js is loaded after the load event) -->
 <script>
 !function(f,b,e,v,n,t,s)
 {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
 n.callMethod.apply(n,arguments):n.queue.push(arguments)};
 if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
+n.queue=[];}(window, document);
 fbq('init', '1932639057434633');
 fbq('track', 'PageView');
+/* third-party loader: gtag.js + fbevents.js once the page has loaded and the browser is idle */
+(function(){
+  function load(src){var t=document.createElement('script');t.async=true;t.src=src;document.head.appendChild(t);}
+  function go(){
+    load('https://www.googletagmanager.com/gtag/js?id=G-XG4BH800J0');
+    load('https://connect.facebook.net/en_US/fbevents.js');
+  }
+  function later(){ if('requestIdleCallback' in window){ requestIdleCallback(go,{timeout:1500}); } else { setTimeout(go,200); } }
+  if(document.readyState === 'complete'){ later(); } else { window.addEventListener('load', later); }
+})();
 </script>
 <noscript><img height="1" width="1" style="display:none"
 src="https://www.facebook.com/tr?id=1932639057434633&ev=PageView&noscript=1"/></noscript>
 <!-- End Meta Pixel -->
 
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Caveat:wght@600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Caveat:wght@600&display=swap"></noscript>
 <style>
   :root{
     --paper:#F4F7F1;
@@ -221,6 +232,11 @@ src="https://www.facebook.com/tr?id=1932639057434633&ev=PageView&noscript=1"/></
   }
   .pc-note .ai-tag .dot{width:7px;height:7px;border-radius:50%;background:var(--ball);animation:pulse 1.4s ease-in-out infinite}
   @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+  /* the invisible ghost holds the finished text so the card never grows while typing (CLS) */
+  .typed-wrap{display:grid}
+  .typed-wrap > *{grid-area:1/1}
+  .typed-ghost{visibility:hidden}
+  .typed-ghost::after{content:"▍"}
   #typed::after{content:"▍";color:var(--forest);animation:blink 1s steps(1) infinite}
   #typed.done::after{content:""}
   @keyframes blink{50%{opacity:0}}
@@ -429,7 +445,10 @@ src="https://www.facebook.com/tr?id=1932639057434633&ev=PageView&noscript=1"/></
         </div>
         <div class="pc-note">
           <span class="ai-tag"><span class="dot"></span>Pawstcard is writing…</span>
-          <div id="typed" aria-live="polite"></div>
+          <div class="typed-wrap">
+            <div id="typed" aria-live="polite"></div>
+            <div class="typed-ghost" id="typed-ghost" aria-hidden="true">Bella crushed her afternoon walk today! 🐾 We did two laps around the park and she made a very dignified new friend (a golden named Max). Two successful potty breaks, dinner finished to the last kibble, and she's now snoozing in her favorite sunny spot. See you tomorrow, sweet girl!</div>
+          </div>
         </div>
         <div class="pc-stats">
           <span class="chip">💧 Fresh water</span>
@@ -608,7 +627,8 @@ src="https://www.facebook.com/tr?id=1932639057434633&ev=PageView&noscript=1"/></
 <script>
 /* --- self-writing report card --- */
 (function(){
-  var text = "Bella crushed her afternoon walk today! 🐾 We did two laps around the park and she made a very dignified new friend (a golden named Max). Two successful potty breaks, dinner finished to the last kibble, and she's now snoozing in her favorite sunny spot. See you tomorrow, sweet girl!";
+  var ghost = document.getElementById('typed-ghost');
+  var text = ghost.textContent;
   var el = document.getElementById('typed');
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(reduced){ el.textContent = text; el.classList.add('done'); return; }
