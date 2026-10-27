@@ -11,11 +11,21 @@
   <!-- journal:start -->
   <url>
     <loc>https://pawstcard.ipe.rest/journal/</loc>
-    <lastmod>2026-10-27T03:11:00+09:00</lastmod>
+    <lastmod>2026-10-27T20:30:00+09:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/"/>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/en/what-to-collect-from-pet-parents-before-a-sitting-job/</loc>
+    <lastmod>2026-10-27T20:30:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/what-to-collect-from-pet-parents-before-a-sitting-job/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/what-to-collect-from-pet-parents-before-a-sitting-job/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://pawstcard.ipe.rest/journal/en/pet-sitting-meet-and-greet-checklist/</loc>
