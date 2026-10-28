@@ -11,11 +11,21 @@
   <!-- journal:start -->
   <url>
     <loc>https://pawstcard.ipe.rest/journal/</loc>
-    <lastmod>2026-10-28T20:20:00+09:00</lastmod>
+    <lastmod>2026-10-29T03:37:00+09:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/"/>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/en/pet-sitter-house-key-handoff-and-home-access-checklist/</loc>
+    <lastmod>2026-10-29T03:37:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/pet-sitter-house-key-handoff-and-home-access-checklist/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/pet-sitter-house-key-handoff-and-home-access-checklist/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://pawstcard.ipe.rest/journal/en/pet-sitting-emergency-plan-what-to-put-in-writing/</loc>

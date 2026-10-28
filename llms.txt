@@ -30,6 +30,7 @@ Pawstcard is built for solo, one-person pet-sitting and dog-walking businesses �
 ## Journal
 Practical notes for independent pet sitters and dog walkers. Index: https://pawstcard.ipe.rest/journal/ · Feed: https://pawstcard.ipe.rest/journal/feed.xml
 
+- [Pet Sitter House Key Handoff: A Home Access Checklist](https://pawstcard.ipe.rest/journal/en/pet-sitter-house-key-handoff-and-home-access-checklist/) — How pet sitters can handle house keys and entry codes: agree how access is shared, test it before the trip, and write down the return plan. (2026-10-29)
 - [Pet Sitting Emergency Plan: What to Put in Writing Before a Stay](https://pawstcard.ipe.rest/journal/en/pet-sitting-emergency-plan-what-to-put-in-writing/) — What a pet sitting emergency plan should cover: vet contacts, spending authorization, backup people, and how to message a client in a crisis. (2026-10-28)
 - [How to Manage Holiday Pet Sitting Bookings Without Burning Out](https://pawstcard.ipe.rest/journal/en/how-to-manage-holiday-pet-sitting-bookings/) — How independent pet sitters can plan holiday bookings: set limits, clear policies, and a booking calendar so busy weeks stay manageable. (2026-10-28)
 - [What Information Should a Pet Sitter Collect From Pet Parents?](https://pawstcard.ipe.rest/journal/en/what-to-collect-from-pet-parents-before-a-sitting-job/) — A pet sitter's intake list: the details to collect from pet parents before a job, how to store them, and what to keep out of your records. (2026-10-27)
