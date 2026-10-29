@@ -81,6 +81,49 @@ class BlogPostingJsonLd(unittest.TestCase):
                     self.assertLessEqual(parse_iso(m.group(1)), now, "%s: %s" % (page.relative_to(REPO), m.group(1)))
 
 
+ALL_PAGES = [REPO / "index.html", REPO / "journal" / "index.html"] + POST_PAGES  # every indexable page
+SITE_PAGES = ALL_PAGES + [REPO / "404.html"]
+
+
+def url_of(page):
+    rel = page.relative_to(REPO).as_posix()
+    return bj.SITE + "/" + rel[: -len("index.html")] if rel.endswith("index.html") else bj.SITE + "/" + rel
+
+
+def meta(html, pattern):
+    m = re.search(pattern, html, re.S)
+    return m.group(1) if m else None
+
+
+class CanonicalAndRobots(unittest.TestCase):
+    """P0-5: canonical = the page's own absolute https URL on every indexable page; noindex only on the 404."""
+
+    def test_canonical_is_the_pages_own_absolute_url(self):
+        for page in ALL_PAGES:
+            html = page.read_text(encoding="utf-8")
+            canon = re.findall(r'<link rel="canonical" href="([^"]+)"', html)
+            self.assertEqual(canon, [url_of(page)], page.relative_to(REPO))
+            self.assertTrue(canon[0].startswith("https://"), page)
+
+    def test_noindex_only_on_the_404(self):
+        for page in SITE_PAGES:
+            robots = meta(page.read_text(encoding="utf-8"), r'<meta name="robots" content="([^"]+)"')
+            if page.name == "404.html":
+                self.assertIn("noindex", robots)
+            else:
+                self.assertTrue(robots is None or "noindex" not in robots, page.relative_to(REPO))
+
+    def test_the_404_has_no_canonical(self):  # one canonical for every unknown URL would be wrong
+        self.assertNotIn('rel="canonical"', (REPO / "404.html").read_text(encoding="utf-8"))
+
+    def test_journal_pages_carry_a_self_referencing_hreflang_and_x_default(self):
+        for page in POST_PAGES + [REPO / "journal" / "index.html"]:
+            html = page.read_text(encoding="utf-8")
+            url = url_of(page)
+            self.assertIn('<link rel="alternate" hreflang="en" href="%s">' % url, html, page)
+            self.assertIn('<link rel="alternate" hreflang="x-default" href="%s">' % url, html, page)
+
+
 class Sitemap(unittest.TestCase):
     """P0-4: every indexable URL is listed, each maps to a real file (= 200 on Pages), no duplicates, lastmod == dateModified."""
     NS = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}
