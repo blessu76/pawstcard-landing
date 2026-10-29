@@ -21,6 +21,12 @@ def ld_blocks(html):
     return [json.loads(b.replace("<\\/", "</")) for b in LD_RE.findall(html)]  # every block must parse
 
 
+def now():
+    """The clock of check.sh: PAWSTCARD_NOW (the unattended publisher fakes/stamps it) or the real time."""
+    import os
+    return bj.parse_now(os.environ["PAWSTCARD_NOW"]).astimezone(dt.timezone.utc) if os.environ.get("PAWSTCARD_NOW") else dt.datetime.now(dt.timezone.utc)
+
+
 def parse_iso(s):
     d = dt.datetime.fromisoformat(s)
     assert d.tzinfo is not None, "date without offset: " + s
@@ -36,7 +42,7 @@ class BlogPostingJsonLd(unittest.TestCase):
         self.assertGreaterEqual(len(POST_PAGES), 1)
 
     def test_every_post_has_the_complete_blogposting(self):
-        now = dt.datetime.now(dt.timezone.utc)
+        now_ = now()
         for page in POST_PAGES:
             html = page.read_text(encoding="utf-8")
             by_type = {b["@type"]: b for b in ld_blocks(html)}
@@ -54,7 +60,7 @@ class BlogPostingJsonLd(unittest.TestCase):
             self.assertIn(post["headline"].replace("&amp;", "&"), title, slug)  # headline is a part of <title>
             pub, mod = parse_iso(post["datePublished"]), parse_iso(post["dateModified"])
             self.assertLessEqual(pub, mod, slug)
-            self.assertLessEqual(mod, now, "%s: dateModified is in the future" % slug)
+            self.assertLessEqual(mod, now_, "%s: dateModified is in the future" % slug)
             for node in (post["author"], post["publisher"]):
                 self.assertEqual(node["@id"], bj.ORG_ID, slug)
                 self.assertEqual(node["name"], "ipe()", slug)
@@ -73,12 +79,12 @@ class BlogPostingJsonLd(unittest.TestCase):
             self.assertEqual(items[-1]["item"], "%s/journal/en/%s/" % (bj.SITE, slug), slug)
 
     def test_no_future_date_anywhere_in_the_generated_json_ld(self):
-        now = dt.datetime.now(dt.timezone.utc)
+        now_ = now()
         pages = [REPO / "index.html", REPO / "journal" / "index.html"] + POST_PAGES
         for page in pages:
             for m in re.finditer(r'"(?:datePublished|dateModified|dateCreated)":\s*"([^"]+)"', page.read_text(encoding="utf-8")):
                 if re.match(r"\d{4}-\d{2}-\d{2}T", m.group(1)):
-                    self.assertLessEqual(parse_iso(m.group(1)), now, "%s: %s" % (page.relative_to(REPO), m.group(1)))
+                    self.assertLessEqual(parse_iso(m.group(1)), now_, "%s: %s" % (page.relative_to(REPO), m.group(1)))
 
 
 ALL_PAGES = [REPO / "index.html", REPO / "journal" / "index.html"] + POST_PAGES  # every indexable page
@@ -262,9 +268,9 @@ class Sitemap(unittest.TestCase):
         newest = max(parse_iso(v) for k, v in self.entries.items() if "/journal/en/" in k)
         self.assertEqual(parse_iso(self.entries[bj.SITE + "/"]), newest)
         self.assertEqual(parse_iso(self.entries[bj.SITE + "/journal/"]), newest)
-        now = dt.datetime.now(dt.timezone.utc)
+        now_ = now()
         for url, last in self.entries.items():
-            self.assertLessEqual(parse_iso(last), now, url)
+            self.assertLessEqual(parse_iso(last), now_, url)
 
     def test_robots_txt_points_at_the_sitemap(self):
         lines = (REPO / "robots.txt").read_text(encoding="utf-8").splitlines()
@@ -280,7 +286,7 @@ class GeneratedFilesInSync(unittest.TestCase):
         for name in ("index.html", "sitemap.xml", "llms.txt"):
             shutil.copy(REPO / name, tmp / name)
         shutil.copytree(REPO / "journal", tmp / "journal")
-        bj.build(tmp, dt.datetime.now(dt.timezone.utc), queue_dir=tmp / "no-queue")
+        bj.build(tmp, now(), queue_dir=tmp / "no-queue")
         stale = [str(p.relative_to(REPO)) for p in sorted((REPO / "journal").rglob("*"))
                  if p.is_file() and p.name != "feed.xml" and p.read_bytes() != (tmp / p.relative_to(REPO)).read_bytes()]
         stale += [n for n in ("index.html", "sitemap.xml", "llms.txt") if (REPO / n).read_bytes() != (tmp / n).read_bytes()]
