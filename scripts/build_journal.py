@@ -750,7 +750,7 @@ def render_sitemap_block(posts):
     xl = lambda u: ('    <xhtml:link rel="alternate" hreflang="en" href="%s"/>\n'
                     '    <xhtml:link rel="alternate" hreflang="x-default" href="%s"/>\n' % (u, u))
     hub = SITE + "/journal/"
-    last = iso_sec(max(p["_updated"] or p["_pub"] for p in posts))
+    last = newest_modified(posts)
     rows = ["  <url>\n    <loc>%s</loc>\n    <lastmod>%s</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.6</priority>\n%s  </url>"
             % (hub, last, xl(hub))]
     for p in posts:
@@ -760,8 +760,13 @@ def render_sitemap_block(posts):
     return "\n".join(rows) + "\n"
 
 
-def merge_sitemap(text, block):
-    """Replace the journal block; insert the markers before </urlset> on first run. Everything else is left byte-for-byte."""
+def newest_modified(posts):
+    return iso_sec(max(p["_updated"] or p["_pub"] for p in posts)) if posts else None
+
+
+def merge_sitemap(text, block, home_lastmod=None):
+    """Replace the journal block; insert the markers before </urlset> on first run. Everything else is left byte-for-byte,
+    except the landing page's <lastmod>, which follows the newest post (the home page shows the newest cards)."""
     new = "  %s\n%s  %s\n" % (SM_START, block, SM_END)
     if SM_START in text and SM_END in text:
         s = text.index(SM_START)
@@ -773,6 +778,8 @@ def merge_sitemap(text, block):
         if "</urlset>" not in text:
             raise ValueError("sitemap.xml has no </urlset>")
         text = text.replace("</urlset>", new + "</urlset>", 1)
+    if home_lastmod:
+        text = re.sub(r"(<loc>%s/</loc>\s*<lastmod>)[^<]*(</lastmod>)" % re.escape(SITE), lambda m: m.group(1) + home_lastmod + m.group(2), text, count=1)
     for prefix, ns in (("xhtml", XHTML_NS), ("image", IMG_NS)):
         if block and ("xmlns:%s=" % prefix) not in text:
             text = text.replace("<urlset ", '<urlset xmlns:%s="%s"\n        ' % (prefix, ns), 1)
@@ -851,7 +858,7 @@ def build(root, now, drafts_ok=False, check_only=False, queue_dir=None):
     sweep_generated(root, written)
 
     sm = root / "sitemap.xml"
-    sm.write_text(merge_sitemap(sm.read_text(encoding="utf-8"), render_sitemap_block(due)), encoding="utf-8")
+    sm.write_text(merge_sitemap(sm.read_text(encoding="utf-8"), render_sitemap_block(due), newest_modified(due)), encoding="utf-8")
     llms = root / "llms.txt"
     llms.write_text(merge_llms(llms.read_text(encoding="utf-8"), render_llms_block(due)), encoding="utf-8")
 

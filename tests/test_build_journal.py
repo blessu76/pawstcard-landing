@@ -455,8 +455,9 @@ class SitemapMerge(unittest.TestCase):
         s.post("b", "2026-10-25T07:00-04:00", updated="2026-10-25T22:00+09:00")
         bj.build(s.root, NOW)
         sm = s.read("sitemap.xml")
-        self.assertIn(SEED_SITEMAP.split("</urlset>")[0].split("<urlset")[1].split(">", 1)[1], sm)  # landing <url> byte-for-byte
-        self.assertIn("<lastmod>2026-07-18</lastmod>", sm)
+        landing = SEED_SITEMAP.split("</urlset>")[0].split("<urlset")[1].split(">", 1)[1]
+        self.assertIn(landing.replace("2026-07-18", "2026-10-25T22:00:00+09:00"), sm)  # landing <url> byte-for-byte, but lastmod = newest post
+        self.assertNotIn("2026-07-18", sm)
         for loc in ("https://pawstcard.ipe.rest/", "https://pawstcard.ipe.rest/journal/",
                     "https://pawstcard.ipe.rest/journal/en/a/", "https://pawstcard.ipe.rest/journal/en/b/"):
             self.assertIn("<loc>%s</loc>" % loc, sm)
