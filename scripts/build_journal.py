@@ -9,7 +9,7 @@ Writes  journal/en/<slug>/index.html      one page per published post (Article J
         journal/index.html                list page (Blog + ItemList JSON-LD)
         journal/feed.xml                  RSS 2.0
         sitemap.xml                       journal URLs between <!-- journal:start --> / <!-- journal:end -->
-                                          (hreflang + lastmod + image); the landing entry is never touched
+                                          (hreflang + lastmod + image); the landing entry is untouched except its lastmod = newest post
         llms.txt                          "Journal" section between <!-- journal:llms:start --> / <!-- journal:llms:end -->
         index.html                        landing page: the "Journal" card section (newest HOME_CARDS = 3 published posts) between
                                           <!-- journal:home:start --> / <!-- journal:home:end -->; the rest of the file is never touched.
