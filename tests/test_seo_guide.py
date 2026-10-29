@@ -124,6 +124,43 @@ class CanonicalAndRobots(unittest.TestCase):
             self.assertIn('<link rel="alternate" hreflang="x-default" href="%s">' % url, html, page)
 
 
+class UniqueMeta(unittest.TestCase):
+    """P0-7: unique <title> and description on every page, exactly one <h1>, <html lang>."""
+
+    def pages(self):
+        for page in SITE_PAGES:
+            yield page, page.read_text(encoding="utf-8")
+
+    def test_titles_are_unique_and_non_empty(self):
+        titles = {}
+        for page, html in self.pages():
+            t = meta(html, r"<title>(.*?)</title>")
+            self.assertTrue(t and t.strip(), page)
+            titles.setdefault(t, []).append(page.relative_to(REPO).as_posix())
+        self.assertEqual({t: v for t, v in titles.items() if len(v) > 1}, {})
+
+    def test_descriptions_are_unique_and_non_empty(self):
+        descs = {}
+        for page, html in self.pages():
+            d = meta(html, r'<meta name="description" content="([^"]*)"')
+            self.assertTrue(d and d.strip(), page)
+            descs.setdefault(d, []).append(page.relative_to(REPO).as_posix())
+        self.assertEqual({d: v for d, v in descs.items() if len(v) > 1}, {})
+
+    def test_exactly_one_h1_and_a_language(self):
+        for page, html in self.pages():
+            self.assertEqual(len(re.findall(r"<h1[\s>]", html)), 1, page.relative_to(REPO))
+            self.assertRegex(html, r'<html lang="en">', page.relative_to(REPO))
+
+    def test_post_h1_is_the_post_title_and_og_title_matches_the_title_tag(self):
+        for page in POST_PAGES:
+            html = page.read_text(encoding="utf-8")
+            post = {b["@type"]: b for b in ld_blocks(html)}["BlogPosting"]
+            h1 = meta(html, r"<h1>(.*?)</h1>")
+            self.assertEqual(h1.replace("&amp;", "&"), post["headline"].replace("&amp;", "&"), page)
+            self.assertEqual(meta(html, r'<meta property="og:title" content="([^"]*)"'), meta(html, r"<title>(.*?)</title>"), page)
+
+
 class Sitemap(unittest.TestCase):
     """P0-4: every indexable URL is listed, each maps to a real file (= 200 on Pages), no duplicates, lastmod == dateModified."""
     NS = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}
