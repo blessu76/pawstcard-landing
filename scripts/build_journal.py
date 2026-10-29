@@ -562,7 +562,31 @@ def alt_links(url):
 
 
 # ---------------------------------------------------------------- pages
-def render_post(p, v):
+RELATED_POSTS = 3  # "More from the journal": the newest N other posts
+
+
+def post_links(p, posts):
+    """Previous / next post (older / newer neighbour in `posts`, newest first) and the newest RELATED_POSTS others, as HTML."""
+    i = next((k for k, x in enumerate(posts) if x["slug"] == p["slug"]), None)
+    if i is None or len(posts) < 2:
+        return ""
+    newer = posts[i - 1] if i > 0 else None
+    older = posts[i + 1] if i + 1 < len(posts) else None
+    cell = lambda cls, label, q: ('<a class="%s" href="%s" rel="%s"><span class="post-nav__label">%s</span><span class="post-nav__title">%s</span></a>'
+                                  % (cls, post_path(q), "prev" if cls.endswith("prev") else "next", label, esc(q["title"])))
+    nav = ""
+    if older or newer:
+        nav = ('    <nav class="post-nav" aria-label="Previous and next posts">\n'
+               + ("      " + cell("post-nav__prev", "← Previous post", older) + "\n" if older else "")
+               + ("      " + cell("post-nav__next", "Next post →", newer) + "\n" if newer else "")
+               + "    </nav>\n")
+    others = [q for q in posts if q["slug"] != p["slug"]][:RELATED_POSTS]
+    items = "\n".join('        <li><a href="%s">%s</a></li>' % (post_path(q), esc(q["title"])) for q in others)
+    related = ('    <section class="related" aria-labelledby="related-h">\n      <h2 id="related-h">More from the journal</h2>\n      <ul>\n%s\n      </ul>\n    </section>\n' % items) if others else ""
+    return nav + related
+
+
+def render_post(p, v, posts=()):
     url = post_url(p)
     modified = p["_updated"] or p["_pub"]
     data = {
@@ -606,7 +630,7 @@ def render_post(p, v):
       <p>Pawstcard is in early access — snap 3 photos on a visit and its AI writes the update for your client. Free during the founding-sitter beta.</p>
       <a class="btn" href="/#signup">Join the waitlist</a>
     </aside>
-    <p class="back"><a href="/journal/"><span aria-hidden="true">←</span> All posts</a></p>
+{post_links(p, posts)}    <p class="back"><a href="/journal/"><span aria-hidden="true">←</span> All posts</a></p>
   </article>
 </main>
 """ + footer())
@@ -852,7 +876,7 @@ def build(root, now, drafts_ok=False, check_only=False, queue_dir=None):
         written.add(path)
 
     for p in due:
-        write(root / post_path(p).strip("/") / "index.html", render_post(p, v))
+        write(root / post_path(p).strip("/") / "index.html", render_post(p, v, due))
     write(root / "journal" / "index.html", render_list(due, v))
     (root / "journal" / "feed.xml").write_text(render_feed(due, now), encoding="utf-8")
     sweep_generated(root, written)

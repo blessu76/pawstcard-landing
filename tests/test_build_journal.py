@@ -881,6 +881,45 @@ class OrganizationHub(unittest.TestCase):
         self.assertEqual(post["image"], {"@type": "ImageObject", "url": "https://pawstcard.ipe.rest/journal/assets/a/hero.jpg"})
 
 
+class PostLinks(unittest.TestCase):
+    def build(self, n):
+        s = Site(self)
+        for i in range(n):
+            s.post("p%d" % i, "2026-10-%02dT07:00-04:00" % (10 + i))
+        bj.build(s.root, NOW)
+        return s
+
+    def test_single_post_has_no_links_block(self):
+        page = self.build(1).read("journal/en/p0/index.html")
+        self.assertNotIn("post-nav", page)
+        self.assertNotIn("related", page)
+
+    def test_middle_post_has_prev_older_next_newer_and_three_related_newest_first(self):
+        s = self.build(5)  # p4 newest ... p0 oldest
+        page = s.read("journal/en/p2/index.html")
+        self.assertIn('class="post-nav__prev" href="/journal/en/p1/" rel="prev"', page)
+        self.assertIn('class="post-nav__next" href="/journal/en/p3/" rel="next"', page)
+        related = page[page.index('class="related"'):]
+        self.assertEqual(re.findall(r'<li><a href="(/journal/en/p\d/)"', related), ["/journal/en/p4/", "/journal/en/p3/", "/journal/en/p1/"])
+
+    def test_newest_has_no_next_and_oldest_has_no_previous(self):
+        s = self.build(3)
+        newest, oldest = s.read("journal/en/p2/index.html"), s.read("journal/en/p0/index.html")
+        self.assertNotIn("post-nav__next", newest)
+        self.assertIn("post-nav__prev", newest)
+        self.assertNotIn("post-nav__prev", oldest)
+        self.assertIn("post-nav__next", oldest)
+
+    def test_titles_in_links_are_escaped(self):
+        s = Site(self)
+        s.post("a", "2026-10-24T07:00-04:00", title="A <b> & B")
+        s.post("b", "2026-10-25T07:00-04:00")
+        bj.build(s.root, NOW)
+        page = s.read("journal/en/b/index.html")
+        self.assertIn("A &lt;b&gt; &amp; B", page)
+        self.assertNotIn("<b>", page.split('class="post-nav"')[1])
+
+
 class SeoBasics(unittest.TestCase):
     ICONS = ('rel="icon" href="/favicon.ico"', 'rel="apple-touch-icon" href="/apple-touch-icon.png"')
 

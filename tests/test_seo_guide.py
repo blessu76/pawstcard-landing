@@ -180,6 +180,49 @@ class NotFoundPage(unittest.TestCase):
         self.assertFalse((REPO / "_redirects").exists())
 
 
+class PostLinks(unittest.TestCase):
+    """P1-1: previous/next + more-from-the-journal on every post; every link target exists; no orphan."""
+
+    def links(self, page):
+        html = page.read_text(encoding="utf-8")
+        return set(re.findall(r'href="(/journal/en/[a-z0-9-]+/)"', html))
+
+    def test_every_post_links_to_at_least_three_other_posts(self):
+        if len(POST_PAGES) < 4:
+            self.skipTest("fewer than four posts")
+        for page in POST_PAGES:
+            own = "/journal/en/%s/" % page.parent.name
+            self.assertGreaterEqual(len(self.links(page) - {own}), 3, page.parent.name)
+
+    def test_every_link_target_exists_and_every_post_is_linked_from_another_post(self):
+        slugs = {p.parent.name for p in POST_PAGES}
+        linked = set()
+        for page in POST_PAGES:
+            for href in self.links(page):
+                slug = href.split("/")[3]
+                self.assertIn(slug, slugs, "%s -> %s" % (page.parent.name, href))
+                if slug != page.parent.name:
+                    linked.add(slug)
+        self.assertEqual(linked, slugs if len(slugs) > 1 else set())
+
+    def test_previous_and_next_are_each_others_inverse(self):
+        prev, nxt = {}, {}
+        for page in POST_PAGES:
+            html = page.read_text(encoding="utf-8")
+            m = re.search(r'class="post-nav__prev" href="/journal/en/([a-z0-9-]+)/" rel="prev"', html)
+            n = re.search(r'class="post-nav__next" href="/journal/en/([a-z0-9-]+)/" rel="next"', html)
+            if m:
+                prev[page.parent.name] = m.group(1)
+            if n:
+                nxt[page.parent.name] = n.group(1)
+        for slug, older in prev.items():
+            self.assertEqual(nxt.get(older), slug)
+        for slug, newer in nxt.items():
+            self.assertEqual(prev.get(newer), slug)
+        self.assertEqual(len(POST_PAGES) - 1, len(prev))  # a chain: all but the oldest have a previous
+        self.assertEqual(len(POST_PAGES) - 1, len(nxt))
+
+
 class Sitemap(unittest.TestCase):
     """P0-4: every indexable URL is listed, each maps to a real file (= 200 on Pages), no duplicates, lastmod == dateModified."""
     NS = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}
