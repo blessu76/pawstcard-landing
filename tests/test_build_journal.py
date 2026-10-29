@@ -881,6 +881,94 @@ class OrganizationHub(unittest.TestCase):
         self.assertEqual(post["image"], {"@type": "ImageObject", "url": "https://pawstcard.ipe.rest/journal/assets/a/hero.jpg"})
 
 
+class PrePublishLint(unittest.TestCase):
+    LONG = " ".join(["word"] * 320)
+
+    def lint(self, s, now=NOW):
+        posts, errors = bj.load_posts(s.root)
+        self.assertEqual(errors, [])
+        return bj.lint(posts, now.astimezone(dt.timezone.utc), s.root)
+
+    def body(self, s, slug, text):
+        f = s.root / "journal" / "queue" / (slug + ".md")
+        f.write_text(f.read_text(encoding="utf-8").split("\n---\n", 1)[0] + "\n---\n\n" + text + "\n", encoding="utf-8")
+
+    def test_clean_post_has_no_errors_and_no_warnings(self):
+        s = Site(self)
+        s.post("a", "2026-10-25T07:00-04:00")
+        self.body(s, "a", self.LONG)
+        self.assertEqual(self.lint(s), ([], []))
+
+    def test_short_long_title_and_long_description_warn_but_do_not_fail(self):
+        s = Site(self)
+        s.post("a", "2026-10-25T07:00-04:00", title="T" * 70, description="d" * 155)
+        errors, warnings = self.lint(s)
+        self.assertEqual(errors, [])
+        text = "\n".join(warnings)
+        self.assertIn("words (< 300)", text)
+        self.assertIn("<title> is 70 characters (> 60)", text)
+        s2 = Site(self)
+        s2.post("b", "2026-10-25T07:00-04:00")
+        self.assertEqual(bj.lint([dict(bj.load_posts(s2.root)[0][0], description="d" * 161)], NOW.astimezone(dt.timezone.utc))[1][-1],
+                         "b.md: description is 161 characters (> 160)")
+
+    def test_warnings_never_change_the_exit_code_of_check(self):
+        s = Site(self)
+        s.post("a", "2026-10-25T07:00-04:00", title="T" * 70)  # long title + short body
+        out = io.StringIO()
+        err = io.StringIO()
+        import contextlib
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = bj.main(["--root", str(s.root), "--check", "--now", "2026-10-25T14:00-04:00", "--queue", str(s.root / "journal" / "queue")])
+        self.assertEqual(code, 0, err.getvalue())
+        self.assertIn("warning: a.md: ", out.getvalue())
+
+    def test_duplicate_title_warns(self):
+        s = Site(self)
+        s.post("a", "2026-10-25T07:00-04:00", title="Same")
+        s.post("b", "2026-10-25T08:00-04:00", title="Same")
+        self.assertTrue(any("duplicate <title>" in w for w in self.lint(s)[1]))
+
+    def test_placeholder_text_fails(self):
+        s = Site(self)
+        s.post("a", "2026-10-25T07:00-04:00", description="TODO write this")
+        s.post("b", "2026-10-25T07:00-04:00")
+        self.body(s, "b", self.LONG + " published on YYYY-MM-DD")
+        errors, _ = self.lint(s)
+        self.assertEqual(sorted(errors), ["a.md: placeholder text in description", "b.md: placeholder text in the body"])
+
+    def test_stamped_date_in_the_future_fails_but_a_future_publish_at_floor_is_fine(self):
+        s = Site(self)
+        s.post("a", "2026-10-25T07:00-04:00", pub="2026-10-27T10:00+09:00")  # stamped, after NOW
+        s.post("b", "2026-10-30T07:00-04:00", pub=None)                       # unpublished, floor in the future: normal
+        errors, _ = self.lint(s)
+        self.assertEqual(errors, ["a.md: published_at 2026-10-27T10:00+09:00 is in the future"])
+
+    def test_missing_local_image_fails(self):
+        s = Site(self)
+        s.post("a", "2026-10-25T07:00-04:00", image="/journal/assets/a/hero.jpg")
+        self.assertEqual(self.lint(s)[0], ["a.md: image /journal/assets/a/hero.jpg does not exist"])
+        (s.root / "journal" / "assets" / "a").mkdir()
+        (s.root / "journal" / "assets" / "a" / "hero.jpg").write_bytes(b"x")
+        self.assertEqual(self.lint(s)[0], [])
+
+    def test_required_fields_and_duplicate_slugs_are_still_rejected_by_the_loader(self):
+        s = Site(self)
+        (s.root / "journal" / "queue" / "a.md").write_text("---\nslug: a\ntitle: T\n---\nbody\n", encoding="utf-8")
+        posts, errors = bj.load_posts(s.root)
+        self.assertIn("missing front matter: description, publish_at", errors[0])
+
+    def test_publish_refuses_a_placeholder_before_stamping_anything(self):
+        s = Site(self)
+        s.post("a", "2026-10-25T07:00-04:00", pub=None, description="TBD")
+        out = []
+        code = pj.run(s.root, NOW, out=out.append)
+        self.assertEqual(code, 1)
+        self.assertIn("placeholder text in description", "\n".join(out))
+        self.assertTrue(s.exists("journal/queue/a.md"))
+        self.assertFalse(s.exists("journal/posts/a.md"))
+
+
 class PostLinks(unittest.TestCase):
     def build(self, n):
         s = Site(self)

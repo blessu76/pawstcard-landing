@@ -257,6 +257,44 @@ def load_posts(root, queue_dir=None):
     return posts, errors
 
 
+WORDS_MIN = 300
+TITLE_LONG = 60   # SEO guide v1: a <title> over ~60 characters is cut off in results
+DESC_LONG = 160
+PLACEHOLDER_RE = re.compile(r"\b(?:TODO|TBD|FIXME|lorem ipsum)\b|YYYY-MM-DD|\[(?:slug|title|description)\]", re.I)
+
+
+def lint(posts, now, root=None):
+    """SEO guide v1, pre-publish checks on every manuscript -> (errors, warnings).
+    errors (stop the build/publish): placeholder text, a stamped date in the future, a local image that does not exist.
+    (Required fields, bad dates, duplicate/reserved slugs are already rejected by load_posts.)
+    warnings (printed, never fail): body < WORDS_MIN words, <title> > TITLE_LONG, description > DESC_LONG, duplicate <title>."""
+    errors, warnings, titles = [], [], {}
+    for p in sorted(posts, key=lambda x: x["slug"]):
+        name = p["_src"]
+        for field in ("title", "description"):
+            if PLACEHOLDER_RE.search(p[field]):
+                errors.append("%s: placeholder text in %s" % (name, field))
+        if PLACEHOLDER_RE.search(p["_body"]):
+            errors.append("%s: placeholder text in the body" % name)
+        for field, value in (("published_at", p["_pub"]), ("updated", p["_updated"])):
+            if value is not None and value > now and not p["draft"]:
+                errors.append("%s: %s %s is in the future" % (name, field, stamp_str(value)))
+        img = p.get("image")
+        if img and img.startswith("/") and root is not None and not (Path(root) / img.lstrip("/")).is_file():
+            errors.append("%s: image %s does not exist" % (name, img))
+        words = len(plain_text(markdown(drop_title_h1(p["_body"], p["title"]))).split())
+        if words < WORDS_MIN:
+            warnings.append("%s: %d words (< %d)" % (name, words, WORDS_MIN))
+        shown = post_title(p["title"])
+        if len(shown) > TITLE_LONG:
+            warnings.append("%s: <title> is %d characters (> %d)" % (name, len(shown), TITLE_LONG))
+        if len(p["description"]) > DESC_LONG:
+            warnings.append("%s: description is %d characters (> %d)" % (name, len(p["description"]), DESC_LONG))
+        titles.setdefault(shown, []).append(name)
+    warnings += ["duplicate <title> %r in %s" % (t, ", ".join(n)) for t, n in titles.items() if len(n) > 1]
+    return errors, warnings
+
+
 def split_due(posts, now, drafts_ok=False):
     """-> (live, waiting, ready). live = stamped with published_at <= now (drafts only with drafts_ok, shown at publish_at).
     ready = waiting posts whose publish_at has passed but that publish_journal.py has not stamped yet."""
@@ -860,7 +898,7 @@ def build(root, now, drafts_ok=False, check_only=False, queue_dir=None):
     if errors:
         raise JournalError(errors)
     due, waiting, ready = split_due(posts, now, drafts_ok)
-    report = {"due": [p["slug"] for p in due], "_live": due, "waiting": [(p["slug"], p["publish_at"]) for p in waiting],
+    report = {"due": [p["slug"] for p in due], "_live": due, "_all": posts, "waiting": [(p["slug"], p["publish_at"]) for p in waiting],
               "ready": [p["slug"] for p in ready],
               "new": [p["slug"] for p in due if not (root / post_path(p).strip("/") / "index.html").exists()]}
     if check_only:
@@ -903,6 +941,9 @@ def main(argv=None):
     try:
         now = parse_now(a.now) if a.now else dt.datetime.now(dt.timezone.utc)
         rep = build(a.root, now, a.drafts, a.check, a.queue)
+        problems, warnings = lint(rep["_all"], now.astimezone(dt.timezone.utc), Path(a.root).resolve())
+        if problems:
+            raise JournalError(problems)
         if a.check and not a.drafts:  # the landing page's card block must match the published posts
             problems = check_home(Path(a.root).resolve(), rep["_live"])
             if problems:
@@ -910,6 +951,8 @@ def main(argv=None):
     except (JournalError, ValueError) as ex:
         print("journal: errors\n  " + "\n  ".join(getattr(ex, "errors", [str(ex)])), file=sys.stderr)
         return 1
+    for w in warnings:
+        print("  warning: " + w)
     print("journal: %s — %d published, %d scheduled (now %s = %s)" % ("OK" if a.check else "built", len(rep["due"]), len(rep["waiting"]), stamp_str(now), et_stamp_str(now)))
     for slug, at in rep["waiting"]:
         print("  waiting: %s @ %s%s" % (slug, at, "  (due — run scripts/publish_journal.py to stamp it)" if slug in rep["ready"] else ""))

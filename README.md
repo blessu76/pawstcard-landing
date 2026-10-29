@@ -49,6 +49,12 @@ git add journal sitemap.xml llms.txt index.html && git commit && git push
 Not-yet-due or unstamped manuscripts are validated but never rendered, listed, or put in the sitemap/llms.txt/feed.
 Note: Pages serves the whole repo root, so a manuscript committed to `main` is readable at its URL before it is published.
 
+### Pre-publish checks (SEO guide v1)
+
+`build_journal.py` (every run), `--check` (part of `check.sh`) and `publish_journal.py` run `lint()` over every manuscript, queue included.
+**Fails** (nothing is stamped or built): placeholder text (`TODO`, `TBD`, `YYYY-MM-DD`, …) in title/description/body, a stamped `published_at`/`updated` in the future, a missing local `image`
+— on top of the loader's own errors (required fields, bad dates, duplicate/reserved slug). **Warns only**: body < 300 words, `<title>` > 60 characters, description > 160, duplicate `<title>`.
+
 ### IndexNow
 
 `deploy.yml` runs `scripts/indexnow.py --changed-since <before>` after the Pages deploy (any push to `main`, including the unattended publisher's): only the indexable pages
