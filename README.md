@@ -53,7 +53,10 @@ Note: Pages serves the whole repo root, so a manuscript committed to `main` is r
 
 `build_journal.py` (every run), `--check` (part of `check.sh`) and `publish_journal.py` run `lint()` over every manuscript, queue included.
 **Fails** (nothing is stamped or built): placeholder text (`TODO`, `TBD`, `YYYY-MM-DD`, …) in title/description/body, a stamped `published_at`/`updated` in the future, a missing local `image`
-— on top of the loader's own errors (required fields, bad dates, duplicate/reserved slug). **Warns only**: body < 300 words, `<title>` > 60 characters, description > 160, duplicate `<title>`.
+— on top of the loader's own errors (required fields, bad dates, duplicate/reserved slug). **Warns only**: body < 400 words (target), `<title>` > 60 characters, description > 160, duplicate `<title>`.
+Body length (P0-9; CJK counts 2 characters = 1 word, so 800 characters = 400 words): `python3 scripts/build_journal.py --check-queue` is the **pre-publish queue check** —
+a NEW manuscript under 300 words is an error there (run it when a manuscript lands in the queue; the unattended publisher never runs it). In `check.sh` and in publishing, the same post is only a loud
+`WARN:` line and **publishing goes ahead** (the unattended publisher must never silently drop a post); published posts under 300 words only warn.
 
 ### IndexNow
 

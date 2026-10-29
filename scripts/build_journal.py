@@ -38,6 +38,7 @@ Usage:
     python3 scripts/build_journal.py                      # build into this repo (real clock)
     python3 scripts/build_journal.py --now 2026-10-25T07:13-04:00
     python3 scripts/build_journal.py --check              # validate only, write nothing
+    python3 scripts/build_journal.py --check-queue        # --check, and a NEW manuscript under 300 words is an error (run when a manuscript lands in the queue)
     python3 scripts/build_journal.py --root /tmp/preview --drafts
 """
 import argparse
@@ -257,17 +258,29 @@ def load_posts(root, queue_dir=None):
     return posts, errors
 
 
-WORDS_MIN = 300
+WORDS_TARGET = 400  # SEO guide v1 P0-9: below this -> warning
+WORDS_MIN = 300     # a NEW (unpublished) manuscript below this fails the queue check (--check-queue); publishing it still goes ahead, with a WARN
+CJK_CHARS_PER_WORD = 2  # guide v1: 400 words == 800 CJK characters (Hangul/Kana/Han), so 300 words == 600 characters
+CJK_RE = re.compile(r"[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uac00-\ud7af]")
 TITLE_LONG = 60   # SEO guide v1: a <title> over ~60 characters is cut off in results
 DESC_LONG = 160
 PLACEHOLDER_RE = re.compile(r"\b(?:TODO|TBD|FIXME|lorem ipsum)\b|YYYY-MM-DD|\[(?:slug|title|description)\]", re.I)
 
 
-def lint(posts, now, root=None):
+def word_count(text):
+    """Words of plain text; CJK characters count CJK_CHARS_PER_WORD to a word (guide v1 conversion), everything else by whitespace."""
+    cjk = len(CJK_RE.findall(text))
+    return len(CJK_RE.sub(" ", text).split()) + -(-cjk // CJK_CHARS_PER_WORD)
+
+
+def lint(posts, now, root=None, queue_check=False):
     """SEO guide v1, pre-publish checks on every manuscript -> (errors, warnings).
     errors (stop the build/publish): placeholder text, a stamped date in the future, a local image that does not exist.
     (Required fields, bad dates, duplicate/reserved slugs are already rejected by load_posts.)
-    warnings (printed, never fail): body < WORDS_MIN words, <title> > TITLE_LONG, description > DESC_LONG, duplicate <title>."""
+    Body length (P0-9): every post under WORDS_TARGET words warns. A NEW manuscript (not yet published) under WORDS_MIN is an
+    error only with queue_check=True (`build_journal.py --check-queue`, the pre-publish queue check); in the normal/publish path it is
+    a loud "WARN:" line and publishing goes on, so the unattended publisher never silently drops a post. Published posts under WORDS_MIN only warn.
+    Other warnings (never fail): <title> > TITLE_LONG, description > DESC_LONG, duplicate <title>."""
     errors, warnings, titles = [], [], {}
     for p in sorted(posts, key=lambda x: x["slug"]):
         name = p["_src"]
@@ -282,9 +295,16 @@ def lint(posts, now, root=None):
         img = p.get("image")
         if img and img.startswith("/") and root is not None and not (Path(root) / img.lstrip("/")).is_file():
             errors.append("%s: image %s does not exist" % (name, img))
-        words = len(plain_text(markdown(drop_title_h1(p["_body"], p["title"]))).split())
-        if words < WORDS_MIN:
-            warnings.append("%s: %d words (< %d)" % (name, words, WORDS_MIN))
+        words = word_count(plain_text(markdown(drop_title_h1(p["_body"], p["title"]))))
+        if words < WORDS_MIN and p["_pub"] is None:
+            if queue_check:
+                errors.append("%s: %d words — a new post needs at least %d (target %d)" % (name, words, WORDS_MIN, WORDS_TARGET))
+            else:
+                warnings.append("WARN: %s: only %d words (< %d minimum, target %d) — it is published anyway; fix it with an `updated:` edit" % (name, words, WORDS_MIN, WORDS_TARGET))
+        elif words < WORDS_MIN:
+            warnings.append("%s: %d words (< %d minimum, target %d)" % (name, words, WORDS_MIN, WORDS_TARGET))
+        elif words < WORDS_TARGET:
+            warnings.append("%s: %d words (< %d target)" % (name, words, WORDS_TARGET))
         shown = post_title(p["title"])
         if len(shown) > TITLE_LONG:
             warnings.append("%s: <title> is %d characters (> %d)" % (name, len(shown), TITLE_LONG))
@@ -936,12 +956,14 @@ def main(argv=None):
     ap.add_argument("--now", help="clock as ISO 8601 with offset, e.g. 2026-10-25T07:13-04:00 (default: real clock)")
     ap.add_argument("--drafts", action="store_true", help="include draft posts (preview only — never commit the result)")
     ap.add_argument("--check", action="store_true", help="validate manuscripts only, write nothing")
+    ap.add_argument("--check-queue", action="store_true", help="--check, and a NEW manuscript under %d words is an error (the pre-publish queue check; never used by the publisher)" % WORDS_MIN)
     ap.add_argument("--queue", default=str(default_queue_dir()), help="unpublished manuscripts (outside the repo); default ~/pawstcard-journal-queue or $%s" % QUEUE_ENV)
     a = ap.parse_args(argv)
     try:
         now = parse_now(a.now) if a.now else dt.datetime.now(dt.timezone.utc)
+        a.check = a.check or a.check_queue
         rep = build(a.root, now, a.drafts, a.check, a.queue)
-        problems, warnings = lint(rep["_all"], now.astimezone(dt.timezone.utc), Path(a.root).resolve())
+        problems, warnings = lint(rep["_all"], now.astimezone(dt.timezone.utc), Path(a.root).resolve(), a.check_queue)
         if problems:
             raise JournalError(problems)
         if a.check and not a.drafts:  # the landing page's card block must match the published posts
@@ -952,7 +974,7 @@ def main(argv=None):
         print("journal: errors\n  " + "\n  ".join(getattr(ex, "errors", [str(ex)])), file=sys.stderr)
         return 1
     for w in warnings:
-        print("  warning: " + w)
+        print("  " + (w if w.startswith("WARN:") else "warning: " + w))
     print("journal: %s — %d published, %d scheduled (now %s = %s)" % ("OK" if a.check else "built", len(rep["due"]), len(rep["waiting"]), stamp_str(now), et_stamp_str(now)))
     for slug, at in rep["waiting"]:
         print("  waiting: %s @ %s%s" % (slug, at, "  (due — run scripts/publish_journal.py to stamp it)" if slug in rep["ready"] else ""))

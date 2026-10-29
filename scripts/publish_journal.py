@@ -62,7 +62,7 @@ def run(root, now, slug=None, dry_run=False, out=print, queue_dir=None):
             p["_file"].unlink()
     rep = bj.build(root, now, check_only=dry_run, queue_dir=queue_dir)
     for w in warnings:
-        out("  warning: " + w)
+        out("  " + (w if w.startswith("WARN:") else "warning: " + w))
     out("publish: now %s = %s%s" % (bj.stamp_str(now), bj.et_stamp_str(now), " (dry run, nothing written)" if dry_run else ""))
     out("  %s: %s" % ("would publish" if dry_run else "newly published", ", ".join(p["slug"] for p in todo) or "—"))
     out("  live in total:   %d" % (len(rep["due"]) + (len(todo) if dry_run else 0)))

@@ -882,7 +882,7 @@ class OrganizationHub(unittest.TestCase):
 
 
 class PrePublishLint(unittest.TestCase):
-    LONG = " ".join(["word"] * 320)
+    LONG = " ".join(["word"] * 420)
 
     def lint(self, s, now=NOW):
         posts, errors = bj.load_posts(s.root)
@@ -905,7 +905,7 @@ class PrePublishLint(unittest.TestCase):
         errors, warnings = self.lint(s)
         self.assertEqual(errors, [])
         text = "\n".join(warnings)
-        self.assertIn("words (< 300)", text)
+        self.assertIn("a.md: 8 words (< 300 minimum, target 400)", text)
         self.assertIn("<title> is 70 characters (> 60)", text)
         s2 = Site(self)
         s2.post("b", "2026-10-25T07:00-04:00")
@@ -922,6 +922,69 @@ class PrePublishLint(unittest.TestCase):
             code = bj.main(["--root", str(s.root), "--check", "--now", "2026-10-25T14:00-04:00", "--queue", str(s.root / "journal" / "queue")])
         self.assertEqual(code, 0, err.getvalue())
         self.assertIn("warning: a.md: ", out.getvalue())
+
+    def words(self, n):
+        return " ".join(["word"] * n)
+
+    def test_word_count_converts_cjk_two_characters_to_a_word(self):
+        self.assertEqual(bj.word_count("one two three"), 3)
+        self.assertEqual(bj.word_count("가" * 800), 400)
+        self.assertEqual(bj.word_count("가" * 600), 300)
+        self.assertEqual(bj.word_count("가" * 599), 300)   # rounds up
+        self.assertEqual(bj.word_count("日本語 のテスト ok"), 4 + 1)  # 7 CJK characters -> 4 words (rounded up), plus "ok"
+        self.assertEqual(bj.word_count(""), 0)
+
+    def test_target_boundaries_for_a_published_post(self):
+        for n, expect in ((399, "(< 400 target)"), (400, None), (299, "(< 300 minimum, target 400)"), (300, "(< 400 target)")):
+            s = Site(self)
+            s.post("a", "2026-10-25T07:00-04:00")  # stamped = published
+            self.body(s, "a", self.words(n))
+            errors, warnings = self.lint(s)
+            self.assertEqual(errors, [])
+            joined = "\n".join(w for w in warnings if " words " in w)
+            if expect is None:
+                self.assertEqual(joined, "", n)
+            else:
+                self.assertIn(expect, joined, n)
+                self.assertNotIn("WARN:", joined, "a published post only warns quietly")
+
+    def test_new_post_under_300_is_an_error_only_in_the_queue_check(self):
+        s = Site(self)
+        s.post("short", "2026-10-25T07:00-04:00", pub=None)
+        self.body(s, "short", self.words(299))
+        s.post("ok", "2026-10-25T07:00-04:00", pub=None)
+        self.body(s, "ok", self.words(300))
+        posts, _ = bj.load_posts(s.root)
+        now = NOW.astimezone(dt.timezone.utc)
+        errors, warnings = bj.lint(posts, now, s.root, queue_check=True)
+        self.assertEqual(errors, ["short.md: 299 words — a new post needs at least 300 (target 400)"])
+        errors, warnings = bj.lint(posts, now, s.root)  # normal / publish path: no error, a loud WARN instead
+        self.assertEqual(errors, [])
+        self.assertTrue(any(w.startswith("WARN: short.md: only 299 words") and "published anyway" in w for w in warnings))
+        self.assertFalse(any("ok.md" in w and w.startswith("WARN:") for w in warnings))
+
+    def test_check_queue_exit_code_but_plain_check_stays_green(self):
+        import contextlib
+        s = Site(self)
+        s.post("short", "2026-10-25T07:00-04:00", pub=None)
+        self.body(s, "short", self.words(120))
+        args = ["--root", str(s.root), "--now", "2026-10-25T14:00-04:00", "--queue", str(s.root / "journal" / "queue")]
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            self.assertEqual(bj.main(args + ["--check"]), 0)
+            self.assertEqual(bj.main(args + ["--check-queue"]), 1)
+        self.assertIn("short.md: 120 words", err.getvalue())
+        self.assertIn("WARN: short.md", out.getvalue())
+
+    def test_publish_goes_ahead_with_a_warn_for_a_short_new_post(self):
+        s = Site(self)
+        s.post("short", "2026-10-25T07:00-04:00", pub=None)
+        self.body(s, "short", self.words(120))
+        out = []
+        self.assertEqual(pj.run(s.root, NOW, out=out.append), 0)
+        self.assertTrue(s.exists("journal/posts/short.md"))
+        self.assertTrue(s.exists("journal/en/short/index.html"))
+        self.assertTrue(any(l.strip().startswith("WARN: short.md: only 120 words") for l in out), out)
 
     def test_duplicate_title_warns(self):
         s = Site(self)
