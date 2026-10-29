@@ -161,6 +161,25 @@ class UniqueMeta(unittest.TestCase):
             self.assertEqual(meta(html, r'<meta property="og:title" content="([^"]*)"'), meta(html, r"<title>(.*?)</title>"), page)
 
 
+class NotFoundPage(unittest.TestCase):
+    """P0-10: GitHub Pages serves /404.html for every unknown URL with HTTP 404 — the file must be there, noindex, with ways back."""
+
+    def test_404_is_a_root_file_noindex_with_home_and_journal_links(self):
+        html = (REPO / "404.html").read_text(encoding="utf-8")
+        self.assertIn('<meta name="robots" content="noindex, follow">', html)
+        self.assertRegex(html, r'<a [^>]*href="/"')
+        self.assertRegex(html, r'<a [^>]*href="/journal/"')
+
+    def test_404_uses_root_absolute_asset_paths_so_it_renders_at_any_depth(self):
+        html = (REPO / "404.html").read_text(encoding="utf-8")
+        for ref in re.findall(r'(?:href|src)="([^"#][^"]*)"', html):
+            self.assertTrue(ref.startswith(("/", "https://", "mailto:")), ref)
+
+    def test_404_is_not_in_the_sitemap_or_a_redirect_file(self):
+        self.assertNotIn("404", (REPO / "sitemap.xml").read_text(encoding="utf-8"))
+        self.assertFalse((REPO / "_redirects").exists())
+
+
 class Sitemap(unittest.TestCase):
     """P0-4: every indexable URL is listed, each maps to a real file (= 200 on Pages), no duplicates, lastmod == dateModified."""
     NS = {"s": "http://www.sitemaps.org/schemas/sitemap/0.9"}
