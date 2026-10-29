@@ -66,6 +66,9 @@ STAMP_RE = re.compile(r"^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})([+-]\d{2}:\d{2})$")
 KST_STAMP_RE = re.compile(r"^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})\+09:00$")
 TZ = ZoneInfo("America/New_York")  # the scheduling clock: publish_at floors are Eastern Time (EDT -04:00 / EST -05:00)
 OUT_TZ = ZoneInfo("Asia/Seoul")    # everything that is shown or recorded (published_at, JSON-LD, sitemap, feed, page text) is KST +09:00
+DEFAULT_OG_IMAGE = SITE + "/og-image.png"
+OG_IMAGE_SIZE = (1200, 630)  # pixels of /og-image.png
+OG_IMAGE_ALT = "Pawstcard: an AI-written pet-sitting report card on a phone"
 IMG_NS = "http://www.google.com/schemas/sitemap-image/1.1"
 XHTML_NS = "http://www.w3.org/1999/xhtml"
 ORG = {"@type": "Organization", "name": "Pawstcard", "url": SITE + "/"}
@@ -412,11 +415,19 @@ def abs_url(u):
 
 
 def hero(p):
-    return abs_url(p["image"]) if p.get("image") else SITE + "/og-image.png"
+    return abs_url(p["image"]) if p.get("image") else DEFAULT_OG_IMAGE
 
 
-def head(title, desc, canonical, v, noindex=False, extra="", og_type="website", image=None, alternates=""):
-    image = image or SITE + "/og-image.png"
+def head(title, desc, canonical, v, noindex=False, extra="", og_type="website", image=None, alternates="", image_alt=None):
+    # same text as the landing page's og:image:alt; width/height are only known for the default /og-image.png
+    image = image or DEFAULT_OG_IMAGE
+    if image == DEFAULT_OG_IMAGE:
+        size = ('<meta property="og:image:width" content="%d">\n<meta property="og:image:height" content="%d">\n'
+                % OG_IMAGE_SIZE)
+        image_alt = image_alt or OG_IMAGE_ALT
+    else:
+        size = ""
+        image_alt = image_alt or title
     robots = "noindex, follow" if noindex else "index, follow, max-image-preview:large"
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -436,11 +447,13 @@ def head(title, desc, canonical, v, noindex=False, extra="", og_type="website", 
 <meta property="og:description" content="{esc(desc)}">
 <meta property="og:url" content="{esc(canonical)}">
 <meta property="og:image" content="{esc(image)}">
+{size}<meta property="og:image:alt" content="{esc(image_alt)}">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{esc(title)}">
 <meta name="twitter:description" content="{esc(desc)}">
 <meta name="twitter:image" content="{esc(image)}">
+<meta name="twitter:image:alt" content="{esc(image_alt)}">
 {extra}
 <!-- reused ipe.rest GA4 property; filter reports by hostname=pawstcard.ipe.rest (same tag as the landing page) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>
@@ -545,7 +558,8 @@ def render_post(p, v):
     cat = ' <span aria-hidden="true">·</span> <span>%s</span>' % esc(p["category"]) if p.get("category") else ""
     hero_img = ('    <figure class="hero-img"><img src="%s" alt="%s"></figure>\n' % (esc(p["image"]), esc(p.get("image_alt", "")))
                 if p.get("image") else "")
-    return (head("%s — Pawstcard Journal" % p["title"], p["description"], url, v, p["draft"], extra, "article", hero(p), alt_links(url))
+    return (head("%s — Pawstcard Journal" % p["title"], p["description"], url, v, p["draft"], extra, "article", hero(p), alt_links(url),
+                 p.get("image_alt") if p.get("image") else None)
             + f"""<main class="wrap article-wrap">
   <article class="article">
     <header class="article-head">

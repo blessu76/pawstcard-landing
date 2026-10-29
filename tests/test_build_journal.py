@@ -783,5 +783,35 @@ class HomeCards(unittest.TestCase):
         self.assertEqual(landing.count("data-localize"), 0)
 
 
+class ImageMeta(unittest.TestCase):
+    def build(self):
+        s = Site(self)
+        s.post("plain", "2026-10-24T07:00-04:00")
+        s.post("hero", "2026-10-24T08:00-04:00", image="/journal/assets/hero/x.jpg", image_alt='A "dog" & <cat>')
+        bj.build(s.root, NOW)
+        return s
+
+    def test_default_image_has_size_and_alt_on_every_page(self):
+        s = self.build()
+        for rel in ("journal/en/plain/index.html", "journal/index.html"):
+            h = s.read(rel)
+            self.assertIn('<meta property="og:image:width" content="1200">', h)
+            self.assertIn('<meta property="og:image:height" content="630">', h)
+            self.assertIn('<meta property="og:image:alt" content="%s">' % bj.OG_IMAGE_ALT, h)
+            self.assertIn('<meta name="twitter:image:alt" content="%s">' % bj.OG_IMAGE_ALT, h)
+
+    def test_custom_hero_uses_its_escaped_alt_and_no_default_size(self):
+        h = self.build().read("journal/en/hero/index.html")
+        alt = "A &quot;dog&quot; &amp; &lt;cat&gt;"
+        self.assertIn('<meta property="og:image:alt" content="%s">' % alt, h)
+        self.assertIn('<meta name="twitter:image:alt" content="%s">' % alt, h)
+        self.assertNotIn("og:image:width", h)
+        self.assertNotIn("og:image:height", h)
+
+    def test_default_size_matches_the_real_png(self):
+        png = (REPO / "og-image.png").read_bytes()
+        self.assertEqual((int.from_bytes(png[16:20], "big"), int.from_bytes(png[20:24], "big")), bj.OG_IMAGE_SIZE)
+
+
 if __name__ == "__main__":
     unittest.main()
