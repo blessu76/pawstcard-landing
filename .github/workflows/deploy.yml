@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2   # scripts/indexnow.py diffs against the push's "before" commit
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -35,6 +37,16 @@ jobs:
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
+
+      # IndexNow (Bing/Naver/Yandex — Google uses sitemap.xml): only pages that changed in this push. A failure here never fails the deploy.
+      - name: IndexNow — changed pages
+        if: success()
+        continue-on-error: true
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          git fetch --no-tags --depth=1 origin "$BEFORE_SHA" 2>/dev/null || true
+          python3 scripts/indexnow.py --changed-since "$BEFORE_SHA"
 
       - name: Notify Slack — success
         if: success() && env.SLACK_BOT_TOKEN != ''

@@ -49,6 +49,12 @@ git add journal sitemap.xml llms.txt index.html && git commit && git push
 Not-yet-due or unstamped manuscripts are validated but never rendered, listed, or put in the sitemap/llms.txt/feed.
 Note: Pages serves the whole repo root, so a manuscript committed to `main` is readable at its URL before it is published.
 
+### IndexNow
+
+`deploy.yml` runs `scripts/indexnow.py --changed-since <before>` after the Pages deploy (any push to `main`, including the unattended publisher's): only the indexable pages
+that changed in that push (landing, `/journal/`, `/journal/en/<slug>/`) are sent to IndexNow (Bing, Naver, Yandex; Google reads `sitemap.xml`). The step waits for the public
+key file (`/<32 hex>.txt` in the repo root) to be live, never fails the deploy (`continue-on-error`), and sends nothing when no page changed. `--dry-run` prints the payload without the key.
+
 ### Unattended publishing (Mac mini, launchd — lives OUTSIDE this repo)
 
 A launchd job on the Mac mini publishes the night editions. The plist and script are **not** in the repo (decision 2026-10-25); only this note is.
