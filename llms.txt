@@ -30,6 +30,7 @@ Pawstcard is built for solo, one-person pet-sitting and dog-walking businesses �
 ## Journal
 Practical notes for independent pet sitters and dog walkers. Index: https://pawstcard.ipe.rest/journal/ · Feed: https://pawstcard.ipe.rest/journal/feed.xml
 
+- [Pet Sitting Medication Log: How to Record Doses Clearly](https://pawstcard.ipe.rest/journal/en/pet-sitting-medication-log-how-to-record-doses-clearly/) — How pet sitters can handle medication instructions and keep a simple dose log: what to confirm, what to record, and when to call the client or vet. (2026-10-30)
 - [How Long Should a Pet Sitting Drop-In Visit Be? 15, 30, or 45](https://pawstcard.ipe.rest/journal/en/how-long-should-a-pet-sitting-drop-in-visit-be/) — How to choose and explain drop-in visit lengths: what fits in 15, 30, and 45 minutes, and how to avoid promising more than the visit can hold. (2026-10-30)
 - [How to Write a Pet Sitting Cancellation Policy Clients Respect](https://pawstcard.ipe.rest/journal/en/how-to-write-a-pet-sitting-cancellation-policy/) — A plain-language guide to pet sitting cancellation and late-change policies: what to include, how to word it kindly, and when to make exceptions. (2026-10-29)
 - [Pet Sitter House Key Handoff: A Home Access Checklist](https://pawstcard.ipe.rest/journal/en/pet-sitter-house-key-handoff-and-home-access-checklist/) — How pet sitters can handle house keys and entry codes: agree how access is shared, test it before the trip, and write down the return plan. (2026-10-29)
