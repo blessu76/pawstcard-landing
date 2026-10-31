@@ -567,11 +567,11 @@ class Pages(unittest.TestCase):
     def test_analytics_same_as_landing_and_nothing_new(self):
         landing = (REPO / "index.html").read_text(encoding="utf-8")
         for page in (self.post, self.lst):
-            self.assertIn("G-XG4BH800J0", page)
+            self.assertIn("G-CGW3MH2S00", page)
             self.assertIn("fbq('init', '1932639057434633')", page)
             self.assertIn("32d73b01c2de4d46a9de77a88952a654", page)
             self.assertNotIn("fbq('track', 'Lead'", page)
-        self.assertIn("G-XG4BH800J0", landing)
+        self.assertIn("G-CGW3MH2S00", landing)
         self.assertIn("1932639057434633", landing)
         self.assertIn("32d73b01c2de4d46a9de77a88952a654", landing)
         # the set of third-party script hosts must be exactly the landing page's analytics trio (+ fonts)
@@ -1121,8 +1121,8 @@ class SeoBasics(unittest.TestCase):
         self.assertNotIn('rel="stylesheet">\n<style>', landing)
         self.assertNotRegex(landing, r'<script[^>]+src="https://www\.googletagmanager\.com')
         self.assertNotIn("<script async src=\"https://connect.facebook.net", landing)
-        for needle in ("fbq('init'", "fbq('track', 'PageView')", "gtag('config', 'G-XG4BH800J0')",
-                       "https://www.googletagmanager.com/gtag/js?id=G-XG4BH800J0", "https://connect.facebook.net/en_US/fbevents.js"):
+        for needle in ("fbq('init'", "fbq('track', 'PageView')", "gtag('config', 'G-CGW3MH2S00')",
+                       "https://www.googletagmanager.com/gtag/js?id=G-CGW3MH2S00", "https://connect.facebook.net/en_US/fbevents.js"):
             self.assertIn(needle, landing)
 
 
