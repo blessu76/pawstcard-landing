@@ -30,6 +30,7 @@ Pawstcard is built for solo, one-person pet-sitting and dog-walking businesses �
 ## Journal
 Practical notes for independent pet sitters and dog walkers. Index: https://pawstcard.ipe.rest/journal/ · Feed: https://pawstcard.ipe.rest/journal/feed.xml
 
+- [How Should an Independent Pet Sitter Set Rates?](https://pawstcard.ipe.rest/journal/en/how-should-independent-pet-sitters-set-their-rates/) — A practical way for independent pet sitters to set rates: count your costs and time, price by visit type, explain the number, and review it once a year. (2026-11-01)
 - [How Pet Sitters Can Ask for Reviews and Referrals Without Awkwardness](https://pawstcard.ipe.rest/journal/en/how-pet-sitters-can-ask-for-reviews-and-referrals/) — When and how independent pet sitters can ask clients for reviews and referrals: good timing, short sample messages, and what to avoid. (2026-10-31)
 - [Sitting Multiple Pets: How to Update Clients on Each One](https://pawstcard.ipe.rest/journal/en/pet-sitting-multiple-pets-how-to-update-clients-on-each-one/) — How to plan visits and write updates for multi-pet households: separate routines, one note per pet, and how to handle tension between pets. (2026-10-31)
 - [Pet Sitting Medication Log: How to Record Doses Clearly](https://pawstcard.ipe.rest/journal/en/pet-sitting-medication-log-how-to-record-doses-clearly/) — How pet sitters can handle medication instructions and keep a simple dose log: what to confirm, what to record, and when to call the client or vet. (2026-10-30)
