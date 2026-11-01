@@ -846,6 +846,12 @@ def newest_modified(posts):
     return iso_sec(max(p["_updated"] or p["_pub"] for p in posts)) if posts else None
 
 
+def root_hreflang_sitemap():
+    u = SITE + "/"
+    return ('    <xhtml:link rel="alternate" hreflang="en" href="%s"/>\n'
+            '    <xhtml:link rel="alternate" hreflang="x-default" href="%s"/>\n' % (u, u))
+
+
 def merge_sitemap(text, block, home_lastmod=None):
     """Replace the journal block; insert the markers before </urlset> on first run. Everything else is left byte-for-byte,
     except the landing page's <lastmod>, which follows the newest post (the home page shows the newest cards)."""
@@ -862,6 +868,10 @@ def merge_sitemap(text, block, home_lastmod=None):
         text = text.replace("</urlset>", new + "</urlset>", 1)
     if home_lastmod:
         text = re.sub(r"(<loc>%s/</loc>\s*<lastmod>)[^<]*(</lastmod>)" % re.escape(SITE), lambda m: m.group(1) + home_lastmod + m.group(2), text, count=1)
+    if block:  # the landing entry carries en + x-default like every journal entry (same URL as its <loc>; sitemap addresses unchanged)
+        text = re.sub(r"(<loc>%s/</loc>(?:(?!</url>).)*?)(\n?[ \t]*</url>)" % re.escape(SITE),
+                      lambda m: m.group(0) if "<xhtml:link" in m.group(1) else m.group(1).rstrip("\n") + "\n" + root_hreflang_sitemap() + m.group(2).lstrip("\n"),
+                      text, count=1, flags=re.S)
     for prefix, ns in (("xhtml", XHTML_NS), ("image", IMG_NS)):
         if block and ("xmlns:%s=" % prefix) not in text:
             text = text.replace("<urlset ", '<urlset xmlns:%s="%s"\n        ' % (prefix, ns), 1)

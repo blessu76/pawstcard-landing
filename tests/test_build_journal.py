@@ -456,7 +456,12 @@ class SitemapMerge(unittest.TestCase):
         bj.build(s.root, NOW)
         sm = s.read("sitemap.xml")
         landing = SEED_SITEMAP.split("</urlset>")[0].split("<urlset")[1].split(">", 1)[1]
-        self.assertIn(landing.replace("2026-07-18", "2026-10-25T22:00:00+09:00"), sm)  # landing <url> byte-for-byte, but lastmod = newest post
+        root_xl = ('    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/"/>\n'
+                   '    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/"/>\n')
+        want = landing.replace("2026-07-18", "2026-10-25T22:00:00+09:00").replace("  </url>", root_xl + "  </url>")
+        self.assertIn(want, sm)  # landing <url> unchanged (same <loc>), but lastmod = newest post and en/x-default hreflang added
+        bj.build(s.root, NOW)
+        self.assertEqual(s.read("sitemap.xml"), sm)  # second run: no duplicate hreflang
         self.assertNotIn("2026-07-18", sm)
         for loc in ("https://pawstcard.ipe.rest/", "https://pawstcard.ipe.rest/journal/",
                     "https://pawstcard.ipe.rest/journal/en/a/", "https://pawstcard.ipe.rest/journal/en/b/"):
@@ -1072,6 +1077,18 @@ class PostLinks(unittest.TestCase):
 
 
 class SeoBasics(unittest.TestCase):
+    def test_landing_has_hreflang_en_and_x_default_matching_canonical(self):
+        html = (REPO / "index.html").read_text(encoding="utf-8")
+        url = bj.SITE + "/"
+        self.assertIn('<link rel="canonical" href="%s">' % url, html)
+        self.assertIn('<link rel="alternate" hreflang="en" href="%s">' % url, html)
+        self.assertIn('<link rel="alternate" hreflang="x-default" href="%s">' % url, html)
+        self.assertEqual(html.count("hreflang="), 2)
+        sm = (REPO / "sitemap.xml").read_text(encoding="utf-8")
+        entry = sm.split("<loc>%s</loc>" % url, 1)[1].split("</url>", 1)[0]
+        self.assertIn('hreflang="en" href="%s"' % url, entry)
+        self.assertIn('hreflang="x-default" href="%s"' % url, entry)
+
     ICONS = ('rel="icon" href="/favicon.ico"', 'rel="apple-touch-icon" href="/apple-touch-icon.png"')
 
     def test_post_title_gets_a_short_suffix_only_when_it_fits(self):
