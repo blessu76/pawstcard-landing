@@ -30,6 +30,7 @@ Pawstcard is built for solo, one-person pet-sitting and dog-walking businesses �
 ## Journal
 Practical notes for independent pet sitters and dog walkers. Index: https://pawstcard.ipe.rest/journal/ · Feed: https://pawstcard.ipe.rest/journal/feed.xml
 
+- [Cat Drop-In Visits: What to Check and Report](https://pawstcard.ipe.rest/journal/en/cat-sitting-drop-in-visits-what-to-check-and-report/) — A checklist for independent pet sitters doing cat drop-in visits: what to check, how to notice changes, and how to write a short, useful update. (2026-11-02)
 - [What to Send a New Pet Sitting Client After the First Visit](https://pawstcard.ipe.rest/journal/en/what-to-send-a-new-pet-sitting-client-after-the-first-visit/) — How independent pet sitters can follow up after a first visit: what to say in the first update, what to ask, and how to set up the next booking. (2026-11-01)
 - [How Should an Independent Pet Sitter Set Rates?](https://pawstcard.ipe.rest/journal/en/how-should-independent-pet-sitters-set-their-rates/) — A practical way for independent pet sitters to set rates: count your costs and time, price by visit type, explain the number, and review it once a year. (2026-11-01)
 - [How Pet Sitters Can Ask for Reviews and Referrals Without Awkwardness](https://pawstcard.ipe.rest/journal/en/how-pet-sitters-can-ask-for-reviews-and-referrals/) — When and how independent pet sitters can ask clients for reviews and referrals: good timing, short sample messages, and what to avoid. (2026-10-31)
