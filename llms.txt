@@ -30,6 +30,7 @@ Pawstcard is built for solo, one-person pet-sitting and dog-walking businesses �
 ## Journal
 Practical notes for independent pet sitters and dog walkers. Index: https://pawstcard.ipe.rest/journal/ · Feed: https://pawstcard.ipe.rest/journal/feed.xml
 
+- [What to Do If a Pet Gets Out During a Visit](https://pawstcard.ipe.rest/journal/en/what-to-do-if-a-pet-gets-out-during-a-sitting-visit/) — How pet sitters and dog walkers can prevent escapes and respond calmly if a pet slips out: immediate steps, who to call, and how to update the client. (2026-11-05)
 - [Pet Sitting Service Agreement: What to Include](https://pawstcard.ipe.rest/journal/en/pet-sitting-service-agreement-what-to-include/) — What independent pet sitters and dog walkers can put in a simple service agreement: services, schedule, access, emergencies, payment, and cancellations. (2026-11-04)
 - [Overnight Pet Sitting: How to Plan and Document a Stay](https://pawstcard.ipe.rest/journal/en/overnight-pet-sitting-how-to-plan-and-document-a-stay/) — A practical guide for pet sitters offering overnight stays: what to confirm, how to structure the evening and morning, and what to tell the client. (2026-11-04)
 - [How to Reply to a Pet Sitting Inquiry and Get a Booking](https://pawstcard.ipe.rest/journal/en/how-to-reply-to-a-pet-sitting-inquiry-and-turn-it-into-a-booking/) — How independent pet sitters can answer booking inquiries: reply fast, ask a few key questions, share prices plainly, and offer a meet-and-greet. (2026-11-03)
