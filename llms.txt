@@ -30,6 +30,7 @@ Pawstcard is built for solo, one-person pet-sitting and dog-walking businesses �
 ## Journal
 Practical notes for independent pet sitters and dog walkers. Index: https://pawstcard.ipe.rest/journal/ · Feed: https://pawstcard.ipe.rest/journal/feed.xml
 
+- [Senior Pet Sitting: What to Note on Every Visit](https://pawstcard.ipe.rest/journal/en/senior-pet-sitting-what-to-note-on-every-visit/) — How pet sitters can care for older pets: questions to ask the owner, what to observe and record on each visit, and when to suggest a call to the vet. (2026-11-06)
 - [Pet Sitter Invoices and Deposits Made Simple](https://pawstcard.ipe.rest/journal/en/pet-sitter-invoices-and-deposits-a-simple-process/) — A simple process for pet sitters to handle invoices and deposits: what to include, when to send, and how to follow up politely on late payments. (2026-11-05)
 - [What to Do If a Pet Gets Out During a Visit](https://pawstcard.ipe.rest/journal/en/what-to-do-if-a-pet-gets-out-during-a-sitting-visit/) — How pet sitters and dog walkers can prevent escapes and respond calmly if a pet slips out: immediate steps, who to call, and how to update the client. (2026-11-05)
 - [Pet Sitting Service Agreement: What to Include](https://pawstcard.ipe.rest/journal/en/pet-sitting-service-agreement-what-to-include/) — What independent pet sitters and dog walkers can put in a simple service agreement: services, schedule, access, emergencies, payment, and cancellations. (2026-11-04)
