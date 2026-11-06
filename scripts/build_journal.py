@@ -52,6 +52,10 @@ import sys
 from pathlib import Path
 from zoneinfo import ZoneInfo  # Python 3.9+
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "vendor"))  # ipe_web_kit, a tag-pinned copy (vendor/ipe_web_kit/KIT_VERSION)
+from ipe_web_kit import localtime as kit_localtime  # noqa: E402
+from ipe_web_kit.seo import alternate_links, esc, iso_kst  # noqa: E402
+
 SITE = "https://pawstcard.ipe.rest"
 GA_ID = "G-CGW3MH2S00"
 CF_TOKEN = "32d73b01c2de4d46a9de77a88952a654"
@@ -90,10 +94,6 @@ class JournalError(Exception):
     def __init__(self, errors):
         super().__init__("\n".join(errors))
         self.errors = errors
-
-
-def esc(s):
-    return html.escape(str(s), quote=True)
 
 
 # ---------------------------------------------------------------- time
@@ -164,8 +164,7 @@ def et_stamp_str(d):
     return d.strftime("%Y-%m-%dT%H:%M") + offset_str(d)
 
 
-def iso_sec(d):
-    return kst(d).strftime("%Y-%m-%dT%H:%M:%S") + "+09:00"
+iso_sec = iso_kst  # 2026-10-25T20:13:00+09:00 (kit seo.iso_kst: same bytes as the old strftime)
 
 
 def fmt_date(d):
@@ -613,10 +612,9 @@ src="https://www.facebook.com/tr?id={PIXEL_ID}&ev=PageView&noscript=1"/></noscri
 """
 
 
-# ipe-localtime v2 — canonical copy of ipe-rest/shared/ipe-localtime.js (SHA-256 57326449…f74b8), kept byte-for-byte and
-# inlined before </body>. Never edit it here; replace the file with the next canonical version and update the hash in tests.
-LOCALTIME_JS_PATH = Path(__file__).resolve().parent / "ipe-localtime.js"
-LOCALIZE_JS = "<script>" + LOCALTIME_JS_PATH.read_bytes().decode("utf-8") + "</script>\n"
+# ipe-localtime v2 — the kit's byte copy of ipe-rest/shared/ipe-localtime.js (kit asserts its SHA-256), inlined before </body>.
+# Never edit it here; take the next canonical version with a new kit tag.
+LOCALIZE_JS = kit_localtime.script_tag() + "\n"
 
 
 def footer():
@@ -639,7 +637,7 @@ def breadcrumb(name=None, url=None):
 
 
 def alt_links(url):
-    return ('<link rel="alternate" hreflang="en" href="%s">\n<link rel="alternate" hreflang="x-default" href="%s">\n' % (esc(url), esc(url)))
+    return alternate_links([("en", url)], x_default=url) + "\n"
 
 
 # ---------------------------------------------------------------- pages

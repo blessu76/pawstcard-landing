@@ -320,7 +320,7 @@ class EasternTime(unittest.TestCase):
             self.assertNotIn("-0400", text)
 
     def test_repo_copy_of_ipe_localtime_is_the_canonical_bytes(self):
-        raw = (REPO / "scripts" / "ipe-localtime.js").read_bytes()
+        raw = (REPO / "vendor" / "ipe_web_kit" / "assets" / "ipe-localtime.js").read_bytes()  # the kit copy is what the builder inlines
         self.assertEqual(len(raw), 1639)
         self.assertEqual(hashlib.sha256(raw).hexdigest(), IPE_LOCALTIME_SHA256)
         self.assertTrue(raw.endswith(b"\n"))
@@ -784,7 +784,7 @@ class HomeCards(unittest.TestCase):
 
     def test_real_landing_inlines_the_canonical_localtime_script(self):
         landing = (REPO / "index.html").read_text(encoding="utf-8")
-        raw = (REPO / "scripts" / "ipe-localtime.js").read_bytes()
+        raw = (REPO / "vendor" / "ipe_web_kit" / "assets" / "ipe-localtime.js").read_bytes()  # the kit copy is what the builder inlines
         self.assertEqual(hashlib.sha256(raw).hexdigest(), IPE_LOCALTIME_SHA256)
         self.assertEqual(landing.count("<script>" + raw.decode("utf-8") + "</script>"), 1)  # byte-identical, exactly once
         self.assertEqual(landing.count("data-localize"), 0)
