@@ -30,6 +30,7 @@ Pawstcard is built for solo, one-person pet-sitting and dog-walking businesses �
 ## Journal
 Practical notes for independent pet sitters and dog walkers. Index: https://pawstcard.ipe.rest/journal/ · Feed: https://pawstcard.ipe.rest/journal/feed.xml
 
+- [How to Respond to a Pet Sitting Client Complaint](https://pawstcard.ipe.rest/journal/en/how-to-respond-to-a-pet-sitting-client-complaint/) — A calm, practical way for pet sitters to handle a complaint: listen first, check your records, reply in writing, and agree on what happens next. (2026-11-07)
 - [Puppy Drop-In Visits: How Pet Sitters Plan Them](https://pawstcard.ipe.rest/journal/en/puppy-drop-in-visits-how-pet-sitters-plan-them/) — How independent pet sitters can plan puppy drop-in visits: what to ask the owner, how to structure potty breaks and play, and what to report back. (2026-11-06)
 - [Senior Pet Sitting: What to Note on Every Visit](https://pawstcard.ipe.rest/journal/en/senior-pet-sitting-what-to-note-on-every-visit/) — How pet sitters can care for older pets: questions to ask the owner, what to observe and record on each visit, and when to suggest a call to the vet. (2026-11-06)
 - [Pet Sitter Invoices and Deposits Made Simple](https://pawstcard.ipe.rest/journal/en/pet-sitter-invoices-and-deposits-a-simple-process/) — A simple process for pet sitters to handle invoices and deposits: what to include, when to send, and how to follow up politely on late payments. (2026-11-05)
