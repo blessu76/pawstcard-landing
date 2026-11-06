@@ -44,6 +44,9 @@ def url_for(path):
         return SITE + "/"
     if path == "journal/index.html":
         return SITE + "/journal/"
+    m = re.fullmatch(r"(privacy|terms|about|contact)/index\.html", path)
+    if m:
+        return "%s/%s/" % (SITE, m.group(1))
     m = re.fullmatch(r"journal/en/([a-z0-9-]+)/index\.html", path)
     return "%s/journal/en/%s/" % (SITE, m.group(1)) if m else None
 

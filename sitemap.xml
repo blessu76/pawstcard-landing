@@ -10,6 +10,38 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/"/>
   </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/privacy/</loc>
+    <lastmod>2026-11-06T00:00:00+09:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/privacy/"/>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/terms/</loc>
+    <lastmod>2026-11-06T00:00:00+09:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/terms/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/terms/"/>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/about/</loc>
+    <lastmod>2026-11-06T00:00:00+09:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/about/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/about/"/>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/contact/</loc>
+    <lastmod>2026-11-06T00:00:00+09:00</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/contact/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/contact/"/>
+  </url>
   <!-- journal:start -->
   <url>
     <loc>https://pawstcard.ipe.rest/journal/</loc>

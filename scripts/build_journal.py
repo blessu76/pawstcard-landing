@@ -383,6 +383,16 @@ def drop_title_h1(body, title):
     return body
 
 
+TABLE_SEP_RE = re.compile(r"^\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)*\|?$")
+
+
+def table_cells(row):
+    row = row.strip()
+    row = row[1:] if row.startswith("|") else row
+    row = row[:-1] if row.endswith("|") else row
+    return [c.strip() for c in row.split("|")]
+
+
 FIG_RE = re.compile(r'^!\[([^\]]*)\]\(([^)\s]+)(?:\s+"([^"]*)")?\)$')
 
 
@@ -438,6 +448,18 @@ def markdown(src):
                 quote.append(lines[i].strip()[1:].strip())
                 i += 1
             out.append("<blockquote><p>%s</p></blockquote>" % inline(" ".join(quote)))
+            continue
+        if st.startswith("|") and i + 1 < len(lines) and TABLE_SEP_RE.match(lines[i + 1].strip()):
+            flush()
+            head_cells = table_cells(st)
+            i += 2
+            rows = []
+            while i < len(lines) and lines[i].strip().startswith("|"):
+                rows.append(table_cells(lines[i]))
+                i += 1
+            out.append('<div class="table-wrap"><table><thead><tr>%s</tr></thead><tbody>%s</tbody></table></div>' % (
+                "".join("<th>%s</th>" % inline(c) for c in head_cells),
+                "".join("<tr>%s</tr>" % "".join("<td>%s</td>" % inline(c) for c in r) for r in rows)))
             continue
         if re.match(r"^[-*+]\s+", st) or re.match(r"^\d+[.)]\s+", st):
             flush()
@@ -602,6 +624,7 @@ def footer():
   <div class="wrap">
     <p>Pawstcard · Made with 🐾 for independent pet sitters</p>
     <p class="foot-links"><a href="/">Home</a> · <a href="/journal/">Journal</a> · <a href="/journal/feed.xml">RSS</a> · <a href="/#signup">Join the waitlist</a></p>
+    <p class="foot-links"><a href="/about/">About</a> · <a href="/contact/">Contact</a> · <a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a></p>
   </div>
 </footer>
 """ + LOCALIZE_JS + """</body>

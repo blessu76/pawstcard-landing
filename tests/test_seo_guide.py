@@ -87,7 +87,9 @@ class BlogPostingJsonLd(unittest.TestCase):
                     self.assertLessEqual(parse_iso(m.group(1)), now_, "%s: %s" % (page.relative_to(REPO), m.group(1)))
 
 
-ALL_PAGES = [REPO / "index.html", REPO / "journal" / "index.html"] + POST_PAGES  # every indexable page
+LEGAL_SLUGS = ("privacy", "terms", "about", "contact")
+LEGAL_PAGES = [REPO / slug / "index.html" for slug in LEGAL_SLUGS]
+ALL_PAGES = [REPO / "index.html", REPO / "journal" / "index.html"] + POST_PAGES + LEGAL_PAGES  # every indexable page
 SITE_PAGES = ALL_PAGES + [REPO / "404.html"]
 
 
@@ -254,7 +256,8 @@ class Sitemap(unittest.TestCase):
             self.assertTrue(self.file_of(loc).is_file(), loc)
 
     def test_every_indexable_page_is_listed_and_the_404_is_not(self):
-        expected = {bj.SITE + "/", bj.SITE + "/journal/"} | {"%s/journal/en/%s/" % (bj.SITE, p.parent.name) for p in POST_PAGES}
+        expected = ({bj.SITE + "/", bj.SITE + "/journal/"} | {"%s/journal/en/%s/" % (bj.SITE, p.parent.name) for p in POST_PAGES}
+                    | {"%s/%s/" % (bj.SITE, slug) for slug in LEGAL_SLUGS})
         self.assertEqual(set(self.locs), expected)
         self.assertNotIn("404", " ".join(self.locs))
 
