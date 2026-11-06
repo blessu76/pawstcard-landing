@@ -6,8 +6,9 @@
 
 Same page shell, markdown subset, styles and ?v= cache-busting as the journal (it imports scripts/build_journal.py).
 The text of a page is its legal/<slug>.md as written, minus the leading '# Title' (the template owns the <h1>) and
-minus everything from a '## Differences' heading on (reviewer notes that are never published).
-`[Davy 확인 …]` markers are open legal questions: the build prints a warning for each page that still has any.
+minus everything from a '## Differences' or '## Legal review pending' heading on (reviewer notes that are never published).
+Internal notes must never reach a page: the build FAILS if the published part still has a `[Davy …]` marker, the word
+"Davy", or any Korean text (pages are English only). Open legal questions live in the '## Legal review pending' list.
 """
 import argparse
 import re
@@ -19,7 +20,7 @@ import build_journal as bj  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC_DIR = "legal"
-OPEN_MARK = "[Davy 확인"
+INTERNAL_RE = re.compile(r"Davy|[\u3131-\u318e\uac00-\ud7a3]")
 PAGES = [
     # slug, <h1>, <title>, meta description
     ("privacy", "Privacy Policy", "Privacy Policy — Pawstcard",
@@ -31,7 +32,7 @@ PAGES = [
     ("contact", "Contact", "Contact — Pawstcard",
      "How to reach the Pawstcard team, and how to ask for your waitlist data to be removed or corrected."),
 ]
-DIFF_RE = re.compile(r"^##\s+Differences\b.*$", re.M)
+DIFF_RE = re.compile(r"^##\s+(?:Differences|Legal review pending)\b.*$", re.M)
 
 
 def page_url(slug):
@@ -44,8 +45,9 @@ def page_body(src):
     return src[:m.start()] if m else src
 
 
-def open_questions(src):
-    return page_body(src).count(OPEN_MARK)
+def internal_notes(src):
+    """Owner-only text that slipped into the published part of a manuscript (empty list = clean)."""
+    return sorted(set(INTERNAL_RE.findall(page_body(src))))
 
 
 def render_page(slug, h1, title, desc, src, v):
@@ -92,9 +94,9 @@ def build(root, check_only=False):
         else:
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(out, encoding="utf-8")
-        n = open_questions(src)
-        if n:
-            warnings.append("%s: %d open `%s` marker(s) in the page text — resolve them before this goes public" % (slug, n, OPEN_MARK + "]"))
+        leaked = internal_notes(src)
+        if leaked:
+            problems.append("%s.md: internal note in the published text (%s) — move it under '## Legal review pending'" % (slug, ", ".join(leaked[:5])))
     return problems, warnings
 
 

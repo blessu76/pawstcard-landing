@@ -1,9 +1,9 @@
 # Terms of Use
 
-- **Effective date:** [Davy 확인: set on publication]
+- **Effective date:** November 7, 2026
 - **Website:** https://pawstcard.ipe.rest (the "Site")
-- **Operator:** ipe() — [Davy 확인: legal entity name and postal address]
-- **Contact:** ipe.haven@gmail.com — [Davy 확인: confirm the address to publish]
+- **Operator:** ipe()
+- **Contact:** ipe.haven@gmail.com
 
 These terms apply to your use of **this website**: the Pawstcard information page, the Journal and the early-access waitlist. They do **not** apply to the Pawstcard app. The app is not released yet; it will come with its own terms, which you will accept separately. By using the Site you agree to these terms. If you do not agree, please do not use the Site.
 
@@ -15,7 +15,7 @@ The Site tells you about Pawstcard, a report-card tool for pet sitters, publishe
 
 Joining the waitlist means you would like to be invited to the beta. It is not an account, a purchase, or a contract for the app. We may change, delay or cancel the beta or the launch, and we do not promise an invitation or a date.
 
-Prices and "founding" rates shown on the Site (for example "$12/month, locked in for life for early-access members" and "free during beta") describe our current plans. They are not a binding offer until you accept the app's own terms. [Davy 확인: confirm the founding-rate wording and what "for life" means before anything is made binding.]
+Prices and "founding" rates shown on the Site (for example "$12/month, locked in for life for early-access members" and "free during beta") describe our current plans. They are not a binding offer until you accept the app's own terms.
 
 How we handle your email address is described in our [Privacy Policy](/privacy/).
 
@@ -25,7 +25,6 @@ So that nobody is surprised later, this is what we say today about the app. The 
 
 - Pawstcard drafts a visit note from your photos and taps. You can edit every word, and nothing is sent until you approve it.
 - Medication entries use fixed wording instead of AI.
-- [Davy 확인: new sentence — "A drafted note can contain mistakes. You are responsible for reading it before you send it." Keep, change or drop before publishing; it goes beyond the store-listing wording.]
 
 ## 4. Journal content: general guidance only
 
@@ -37,7 +36,7 @@ Do not misuse the Site. For example, do not submit a false email address or some
 
 ## 6. Intellectual property
 
-The Site, the Pawstcard name and logo, and the text, design and images on it belong to the operator or its licensors. You may view the Site, share links to it, and quote short excerpts with attribution. Any other copying or reuse needs our written permission. [Davy 확인: whether the Journal should carry an open licence such as Creative Commons.]
+The Site, the Pawstcard name and logo, and the text, design and images on it belong to the operator or its licensors. You may view the Site, share links to it, and quote short excerpts with attribution. Any other copying or reuse needs our written permission.
 
 ## 7. Links and third-party services
 
@@ -49,7 +48,7 @@ The Site and its content are provided "as is" and "as available", without warran
 
 ## 9. Limitation of liability
 
-To the extent the law allows, the operator is not liable for indirect or consequential losses arising from your use of the Site or from relying on Journal content. Nothing in these terms limits liability that cannot be limited by law. [Davy 확인: whether to add a liability cap — lawyer review.]
+To the extent the law allows, the operator is not liable for indirect or consequential losses arising from your use of the Site or from relying on Journal content. Nothing in these terms limits liability that cannot be limited by law.
 
 ## 10. Changes
 
@@ -57,13 +56,29 @@ We may change the Site or these terms. The updated terms will be posted on this 
 
 ## 11. Governing law
 
-[Davy 확인: governing law and venue — to be decided by Davy.]
+Nothing in these terms takes away any rights you have under mandatory consumer-protection law where you live.
 
 ## 12. Contact
 
-ipe() — ipe.haven@gmail.com. [Davy 확인: operator name, postal address, contact email.]
+ipe() — ipe.haven@gmail.com.
+
+## Legal review pending
+
+> 2026-11-06 20:05 KST Davy 결정: 법무 검토는 나중에, 개인정보·약관 먼저 게시. 2026-11-07 게시 때 아래 항목을 페이지 본문에서 걷어냈다(빌더는 본문에 `Davy` 표시가 남으면 실패한다). 본문의 해당 자리는 지금 중립 문구다. 검토가 끝나면 이 목록을 보고 문안을 확정하고, 이 문서와 repo `legal/*.md` 를 같이 고친다.
+
+- Effective date: set to the publication date (2026-11-07) — confirm.
+- Operator: only "ipe()" is published — legal entity name and postal address.
+- Contact: ipe.haven@gmail.com is published — confirm, or use a Pawstcard-specific address.
+- confirm the founding-rate wording and what "for life" means before anything is made binding.
+- DROPPED from §3 (published text keeps the store-listing wording only): new sentence — "A drafted note can contain mistakes. You are responsible for reading it before you send it." Keep, change or drop before publishing; it goes beyond the store-listing wording.
+- whether the Journal should carry an open licence such as Creative Commons.
+- whether to add a liability cap — lawyer review.
+- Governing law and venue: §11 now only says mandatory consumer rights are untouched — decide the real clause.
+- §12 operator block: same as Operator/Contact above.
 
 ## Differences from the existing drafts (not part of the published page)
+
+> 2026-11-07 갱신: 게시 시 `[Davy 확인]` 표시를 본문에서 제거했다 — 항목은 위 "Legal review pending" 목록에 있다.
 
 기준: `terms-draft.md`(Quill 초안) 대비. 이 절은 페이지에 싣지 않는다 — 빌더가 `## Differences` 줄부터 잘라낸다.
 

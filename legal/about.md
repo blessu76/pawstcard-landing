@@ -16,8 +16,15 @@ The [Journal](/journal/) is where we publish practical articles for independent 
 
 ## Who is behind it
 
-Pawstcard is built and published by ipe() ([ipe.rest](https://ipe.rest/)). [Davy 확인: add a sentence about who we are and where we are based, or leave it out.]
+Pawstcard is built and published by ipe() ([ipe.rest](https://ipe.rest/)).
 
 ## Get in touch
 
 Questions, feedback or a request about your data? See [Contact](/contact/). How we handle your data is in the [Privacy Policy](/privacy/).
+
+## Legal review pending
+
+> 2026-11-06 20:05 KST Davy 결정: 법무 검토는 나중에, 개인정보·약관 먼저 게시. 2026-11-07 게시 때 아래 항목을 페이지 본문에서 걷어냈다(빌더는 본문에 `Davy` 표시가 남으면 실패한다). 본문의 해당 자리는 지금 중립 문구다. 검토가 끝나면 이 목록을 보고 문안을 확정하고, 이 문서와 repo `legal/*.md` 를 같이 고친다.
+
+- add a sentence about who we are and where we are based, or leave it out.
+

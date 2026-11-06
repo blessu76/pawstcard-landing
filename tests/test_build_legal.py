@@ -50,15 +50,32 @@ class Pages(unittest.TestCase):
         self.assertIn("nothing is sent until you approve it", terms)
         self.assertIn("Medication entries use fixed wording instead of AI", terms)
 
-    def test_open_questions_are_reported_not_hidden(self):
-        problems, warnings = bl.build(REPO, check_only=True)
-        self.assertEqual(problems, [])
-        self.assertTrue(all("Davy 확인" in w for w in warnings))
+    def test_no_owner_note_reaches_a_published_page(self):
+        for slug in SLUGS:
+            html = read("%s/index.html" % slug)
+            text = html[html.index('<div class="prose">'):html.index("</article>")]   # the shell's own script carries Korean comments
+            self.assertNotIn("Davy", html, slug)
+            self.assertNotRegex(text, r"[\u3131-\u318e\uac00-\ud7a3]", slug)
 
-    def test_differences_section_is_cut_and_markers_counted_only_in_the_published_part(self):
-        src = "# T\n\nbody [Davy 확인: x]\n\n## Differences from the old drafts\n\nnote [Davy 확인: y]\n"
-        self.assertNotIn("note", bl.page_body(src))
-        self.assertEqual(bl.open_questions(src), 1)
+    def test_leaked_internal_notes_fail_the_build(self):
+        self.assertEqual(bl.internal_notes("# T\n\nclean body\n"), [])
+        self.assertIn("Davy", bl.internal_notes("# T\n\nbody [Davy 확인: x]\n"))
+        self.assertEqual(sorted(bl.internal_notes("# T\n\n한국어\n")), sorted("한국어"))
+        d = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, d, True)
+        shutil.copytree(REPO / "legal", d / "legal")
+        (d / "legal" / "about.md").write_text("# About\n\nbody [Davy 확인: x]\n", encoding="utf-8")
+        problems, _ = bl.build(d, check_only=True)
+        self.assertTrue(any(p.startswith("about.md: internal note") for p in problems), problems)
+
+    def test_differences_and_review_pending_sections_are_cut_before_the_check(self):
+        src = "# T\n\nbody\n\n## Legal review pending\n\n- [Davy 확인: x]\n\n## Differences from the old drafts\n\nnote 한국어\n"
+        self.assertEqual(bl.page_body(src).strip(), "# T\n\nbody")
+        self.assertEqual(bl.internal_notes(src), [])
+
+    def test_the_manuscripts_keep_their_review_pending_list(self):
+        for slug in SLUGS:
+            self.assertIn("## Legal review pending", read("legal/%s.md" % slug), slug)
 
 
 class Links(unittest.TestCase):
