@@ -30,6 +30,7 @@ Pawstcard is built for solo, one-person pet-sitting and dog-walking businesses �
 ## Journal
 Practical notes for independent pet sitters and dog walkers. Index: https://pawstcard.ipe.rest/journal/ · Feed: https://pawstcard.ipe.rest/journal/feed.xml
 
+- [Small Pet Sitting: What to Record for Rabbits & Guinea Pigs](https://pawstcard.ipe.rest/journal/en/small-pet-sitting-visits-what-to-record-for-rabbits-and-guinea-pigs/) — How pet sitters can handle visits for small pets such as rabbits, guinea pigs, and hamsters: what to ask the owner, what to check, and what to write down. (2026-11-09)
 - [Nervous Dogs: What Sitters Should Ask and Record](https://pawstcard.ipe.rest/journal/en/pet-sitting-for-nervous-dogs-what-to-ask-and-record/) — How pet sitters can prepare for a shy or fearful dog: what to ask the owner, how to pace the first visits, and how to record progress in plain words. (2026-11-09)
 - [How to Plan a Pet Sitting Day With Back-to-Back Visits](https://pawstcard.ipe.rest/journal/en/how-to-plan-a-pet-sitting-day-with-back-to-back-visits/) — A simple routine for pet sitters with a full day of visits: batching by area, allowing buffers, prepping notes, and sending updates without falling behind. (2026-11-08)
 - [How to Set Boundaries With Pet Sitting Clients](https://pawstcard.ipe.rest/journal/en/how-to-set-boundaries-with-pet-sitting-clients/) — Practical ways for pet sitters to set contact hours, response times, and scope of service with clients, kindly and in writing, without losing goodwill. (2026-11-08)
