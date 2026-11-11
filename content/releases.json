@@ -1,0 +1,23 @@
+{
+  "releases": [
+    {
+      "id": "0.1.0-25",
+      "version": "0.1.0",
+      "build": "25",
+      "status": "testflight",
+      "date": "2026-11-11",
+      "notes": {
+        "ko": [
+          "방문 유형이 방문 화면, 홈 목록, 캘린더 일정 제목에서 앱 언어로 표시돼요.",
+          "엽서의 고정 문구와 값(예: full bowl, refreshed, 기분), 날씨 칩이 보내는 사람의 앱 언어로 표시돼요.",
+          "수정: 지원하지 않는 기기 언어에서 앱이 아랍어로 열리던 문제를 고쳤어요. 이제 영어로 표시돼요."
+        ],
+        "en": [
+          "Visit types now show in your app language on the visit screen, the home list and calendar event titles.",
+          "The postcard's fixed labels and values (such as full bowl, refreshed, mood) and weather chips now follow the sender's app language.",
+          "Fixed: on a device language the app does not support, it opened in Arabic. It now shows English."
+        ]
+      }
+    }
+  ]
+}

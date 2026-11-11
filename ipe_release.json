@@ -1,0 +1,9 @@
+{
+  "releases_file": "content/releases.json",
+  "style": "releases",
+  "langs": ["en", "ko"],
+  "build": "python3 scripts/build_releases.py",
+  "check": "scripts/check.sh",
+  "commit_paths": ["content/releases.json", "releases/index.html"],
+  "branch": "main"
+}

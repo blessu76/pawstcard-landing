@@ -7,3 +7,5 @@ python3 -m unittest discover -s tests
 python3 scripts/build_journal.py --check ${PAWSTCARD_NOW:+--now "$PAWSTCARD_NOW"}
 # /privacy/ /terms/ /about/ /contact/ must match legal/*.md
 python3 scripts/build_legal.py --check
+# /releases/ must match content/releases.json (and the kit lint must pass)
+python3 scripts/build_releases.py --check
