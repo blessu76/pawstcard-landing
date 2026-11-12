@@ -28,6 +28,11 @@ class BuildLegalTest(unittest.TestCase):
         self.assertIn("DRAFT — not legally reviewed.", page)
         self.assertIsNone(bl.INTERNAL_RE.search(page.split("<main", 1)[1].split("<footer", 1)[0]))
 
+    def test_legal_pages_are_noindex_follow_while_draft(self):
+        for slug, h1, title, desc in bl.PAGES:
+            page = bl.render_page(slug, h1, title, desc, "## T\n", "0")
+            self.assertIn('<meta name="robots" content="noindex, follow">', page, slug)
+
     def test_tables_render_inside_scroll_wrapper(self):
         page = bl.render_page("privacy", "Privacy Policy", "Privacy Policy — Pawstcard", "d",
                               "## T\n\n| A | B |\n|---|---|\n| 1 | 2 |\n", "0")
