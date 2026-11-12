@@ -87,7 +87,9 @@ class BlogPostingJsonLd(unittest.TestCase):
                     self.assertLessEqual(parse_iso(m.group(1)), now_, "%s: %s" % (page.relative_to(REPO), m.group(1)))
 
 
-ALL_PAGES = [REPO / "index.html", REPO / "journal" / "index.html"] + POST_PAGES  # every indexable page
+LEGAL_SLUGS = ("privacy", "terms")
+LEGAL_PAGES = [REPO / slug / "index.html" for slug in LEGAL_SLUGS]
+ALL_PAGES = [REPO / "index.html", REPO / "journal" / "index.html"] + POST_PAGES + LEGAL_PAGES
 SITE_PAGES = ALL_PAGES + [REPO / "404.html"]
 
 
@@ -102,7 +104,7 @@ def meta(html, pattern):
 
 
 class CanonicalAndRobots(unittest.TestCase):
-    """P0-5: canonical = the page's own absolute https URL on every indexable page; noindex only on the 404."""
+    """P0-5: canonical = the page's own absolute https URL on every page; noindex only on the 404 and the legal drafts."""
 
     def test_canonical_is_the_pages_own_absolute_url(self):
         for page in ALL_PAGES:
@@ -114,7 +116,7 @@ class CanonicalAndRobots(unittest.TestCase):
     def test_noindex_only_on_the_404(self):
         for page in SITE_PAGES:
             robots = meta(page.read_text(encoding="utf-8"), r'<meta name="robots" content="([^"]+)"')
-            if page.name == "404.html":
+            if page.name == "404.html" or page in LEGAL_PAGES:
                 self.assertIn("noindex", robots)
             else:
                 self.assertTrue(robots is None or "noindex" not in robots, page.relative_to(REPO))

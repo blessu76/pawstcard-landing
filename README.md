@@ -13,6 +13,7 @@ Meta ads drive traffic here; UTM tags split channels; GA4 measures conversion.
 
 - Static HTML landing (`index.html`, hand-written, no build step)
 - Journal (`/journal/`): generated static pages — `scripts/build_journal.py` (stdlib Python)
+- `vendor/ipe_web_kit/` — ipe web kit, a tag-pinned copy (see `KIT_VERSION`; never edit — re-`install` a new tag from the kit clone). Used for `esc`, hreflang links, `iso_kst`, the ipe-localtime script. `deploy.yml` removes `vendor/` before the Pages upload.
 - [Web3Forms](https://web3forms.com) — email capture (free, unlimited; no backend)
 - [GA4](https://analytics.google.com) — traffic + custom events (`cta_click`, `email_signup`)
 - GitHub Pages — hosting

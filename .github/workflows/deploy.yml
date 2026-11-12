@@ -29,6 +29,9 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      - name: Keep the vendored kit out of the site
+        run: rm -rf vendor   # vendor/ipe_web_kit is build input (a tag copy of a private repo), not site content
+
       - name: Upload site (repo root)
         uses: actions/upload-pages-artifact@v3
         with:
