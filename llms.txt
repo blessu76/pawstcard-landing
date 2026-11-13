@@ -30,6 +30,7 @@ Pawstcard is built for solo, one-person pet-sitting and dog-walking businesses �
 ## Journal
 Practical notes for independent pet sitters and dog walkers. Index: https://pawstcard.ipe.rest/journal/ · Feed: https://pawstcard.ipe.rest/journal/feed.xml
 
+- [How Pet Sitters Handle a Late or Missed Visit](https://pawstcard.ipe.rest/journal/en/how-pet-sitters-handle-a-late-or-missed-visit/) — How to warn a client when you will be late, what to do when a visit is missed, and the follow-up that keeps trust after a hiccup. (2026-11-14)
 - [Pet Sitter Photo Permission and Client Privacy](https://pawstcard.ipe.rest/journal/en/pet-sitter-photo-permission-and-client-privacy/) — Practical etiquette for asking permission before taking or sharing pet photos, and the details to keep out of every photo you send. (2026-11-13)
 - [How to Write an End-of-Stay Pet Sitting Summary](https://pawstcard.ipe.rest/journal/en/how-to-write-a-pet-sitting-visit-summary-at-the-end-of-a-stay/) — A structure for the end-of-stay summary after a multi-day sit: daily patterns, notable moments, home status, and a sample you can adapt. (2026-11-13)
 - [A Weekly Admin Routine for Solo Pet Sitters](https://pawstcard.ipe.rest/journal/en/pet-sitter-weekly-admin-routine-for-solo-businesses/) — A short weekly routine that keeps bookings, invoices, and reports from piling up, with a task list you can run in about an hour. (2026-11-12)
