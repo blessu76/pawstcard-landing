@@ -621,7 +621,7 @@ def footer():
     return """<footer>
   <div class="wrap">
     <p>Pawstcard · Made with 🐾 for independent pet sitters</p>
-    <p class="foot-links"><a href="/">Home</a> · <a href="/journal/">Journal</a> · <a href="/journal/feed.xml">RSS</a> · <a href="/#signup">Join the waitlist</a> · <a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a></p>
+    <p class="foot-links"><a href="/">Home</a> · <a href="/journal/">Journal</a> · <a href="/journal/feed.xml">RSS</a> · <a href="/#signup">Join the waitlist</a> · <a href="https://ipe.rest/en/legal/privacy/">Privacy</a> · <a href="https://ipe.rest/en/legal/terms/">Terms</a></p>
   </div>
 </footer>
 """ + LOCALIZE_JS + """</body>

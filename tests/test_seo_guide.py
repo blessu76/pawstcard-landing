@@ -89,7 +89,8 @@ class BlogPostingJsonLd(unittest.TestCase):
 
 LEGAL_SLUGS = ("privacy", "terms")
 LEGAL_PAGES = [REPO / slug / "index.html" for slug in LEGAL_SLUGS]
-ALL_PAGES = [REPO / "index.html", REPO / "journal" / "index.html"] + POST_PAGES + LEGAL_PAGES
+SELF_CANONICAL_PAGES = [REPO / "index.html", REPO / "journal" / "index.html"] + POST_PAGES
+ALL_PAGES = SELF_CANONICAL_PAGES + LEGAL_PAGES
 SITE_PAGES = ALL_PAGES + [REPO / "404.html"]
 
 
@@ -107,11 +108,18 @@ class CanonicalAndRobots(unittest.TestCase):
     """P0-5: canonical = the page's own absolute https URL on every page; noindex only on the 404 and the legal drafts."""
 
     def test_canonical_is_the_pages_own_absolute_url(self):
-        for page in ALL_PAGES:
+        for page in SELF_CANONICAL_PAGES:
             html = page.read_text(encoding="utf-8")
             canon = re.findall(r'<link rel="canonical" href="([^"]+)"', html)
             self.assertEqual(canon, [url_of(page)], page.relative_to(REPO))
             self.assertTrue(canon[0].startswith("https://"), page)
+
+    def test_legal_redirects_point_canonical_at_ipe_rest(self):
+        for slug in LEGAL_SLUGS:
+            html = (REPO / slug / "index.html").read_text(encoding="utf-8")
+            url = "https://ipe.rest/en/legal/%s/" % slug
+            self.assertEqual(re.findall(r'<link rel="canonical" href="([^"]+)"', html), [url], slug)
+            self.assertIn('<meta http-equiv="refresh" content="0; url=%s">' % url, html, slug)
 
     def test_noindex_only_on_the_404(self):
         for page in SITE_PAGES:

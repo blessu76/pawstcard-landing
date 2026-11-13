@@ -582,7 +582,8 @@ class Pages(unittest.TestCase):
         # the set of third-party script hosts must be exactly the landing page's analytics trio (+ fonts)
         hosts = set(re.findall(r'(?:src|href)="https?://([^/"]+)', self.post))
         allowed = {"www.googletagmanager.com", "connect.facebook.net", "www.facebook.com", "static.cloudflareinsights.com",
-                   "fonts.googleapis.com", "fonts.gstatic.com", "pawstcard.ipe.rest", "example.com"}  # example.com = the body link in md()
+                   "fonts.googleapis.com", "fonts.gstatic.com", "pawstcard.ipe.rest", "example.com",  # example.com = the body link in md()
+                   "ipe.rest"}  # footer links to the legal pages on ipe.rest
         self.assertLessEqual(hosts, allowed)
 
     def test_css_cache_busting(self):
