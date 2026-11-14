@@ -323,7 +323,7 @@ class EasternTime(unittest.TestCase):
             self.assertNotIn("-0400", text)
 
     def test_repo_copy_of_ipe_localtime_is_the_canonical_bytes(self):
-        raw = (REPO / "scripts" / "ipe-localtime.js").read_bytes()
+        raw = (REPO / "vendor" / "ipe_web_kit" / "assets" / "ipe-localtime.js").read_bytes()  # the kit copy is what the builder inlines
         self.assertEqual(len(raw), 1639)
         self.assertEqual(hashlib.sha256(raw).hexdigest(), IPE_LOCALTIME_SHA256)
         self.assertTrue(raw.endswith(b"\n"))
@@ -585,7 +585,8 @@ class Pages(unittest.TestCase):
         # the set of third-party script hosts must be exactly the landing page's analytics trio (+ fonts)
         hosts = set(re.findall(r'(?:src|href)="https?://([^/"]+)', self.post))
         allowed = {"www.googletagmanager.com", "connect.facebook.net", "www.facebook.com", "static.cloudflareinsights.com",
-                   "fonts.googleapis.com", "fonts.gstatic.com", "pawstcard.ipe.rest", "example.com"}  # example.com = the body link in md()
+                   "fonts.googleapis.com", "fonts.gstatic.com", "pawstcard.ipe.rest", "example.com",  # example.com = the body link in md()
+                   "ipe.rest"}  # footer links to the legal pages on ipe.rest
         self.assertLessEqual(hosts, allowed)
 
     def test_css_cache_busting(self):
@@ -645,7 +646,7 @@ class RepoState(unittest.TestCase):
         landing = (REPO / "index.html").read_text(encoding="utf-8")
         self.assertEqual(landing.count(bj.HOME_START), 1)
         self.assertEqual(landing.count(bj.HOME_END), 1)
-        self.assertEqual(landing.count('href="/journal/"'), 2)  # "View all journal posts" in the card section + the footer link
+        self.assertEqual(landing.count('href="/journal/"'), 3)  # header nav + "View all journal posts" in the card section + the footer link
         self.assertGreater(landing.rindex('href="/journal/"'), landing.index("<footer>"))
         self.assertGreater(landing.index(bj.HOME_START), landing.index('id="signup"'))  # BELOW the signup section (Meta-ad conversion test), right before </main>
         self.assertLess(landing.index(bj.HOME_END), landing.index("</main>"))
@@ -787,7 +788,7 @@ class HomeCards(unittest.TestCase):
 
     def test_real_landing_inlines_the_canonical_localtime_script(self):
         landing = (REPO / "index.html").read_text(encoding="utf-8")
-        raw = (REPO / "scripts" / "ipe-localtime.js").read_bytes()
+        raw = (REPO / "vendor" / "ipe_web_kit" / "assets" / "ipe-localtime.js").read_bytes()  # the kit copy is what the builder inlines
         self.assertEqual(hashlib.sha256(raw).hexdigest(), IPE_LOCALTIME_SHA256)
         self.assertEqual(landing.count("<script>" + raw.decode("utf-8") + "</script>"), 1)  # byte-identical, exactly once
         self.assertEqual(landing.count("data-localize"), 0)

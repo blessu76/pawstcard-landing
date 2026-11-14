@@ -16,7 +16,7 @@ Writes  journal/en/<slug>/index.html      one page per published post (Article J
         journal/feed.xml                  RSS 2.0
         journal/<lang>/<slug>/index.html  the same three per language, for the translations that are live
         journal/<lang>/index.html         (only when that language has at least one live post); every page lists its live
-        journal/<lang>/feed.xml           language versions as hreflang + x-default (= English) and in the header's #ipe-langs JSON
+        journal/<lang>/feed.xml           language versions as hreflang + x-default (= English) and in the header's language select
         sitemap.xml                       journal URLs between <!-- journal:start --> / <!-- journal:end -->
                                           (hreflang + lastmod + image); the landing entry is untouched except its lastmod = newest post
         llms.txt                          "Journal" section between <!-- journal:llms:start --> / <!-- journal:llms:end -->
@@ -65,7 +65,10 @@ import sys
 from pathlib import Path
 from zoneinfo import ZoneInfo  # Python 3.9+
 
-import languages as LANGS  # the 12 site languages (same values as ipe_web_kit v0.7.1)
+import languages as LANGS  # the 12 site languages (scripts/languages.py; same values as the vendored ipe_web_kit languages)
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "vendor"))  # ipe_web_kit, a tag-pinned copy (vendor/ipe_web_kit/KIT_VERSION)
+from ipe_web_kit import langswitch, localtime as kit_localtime  # noqa: E402
+from ipe_web_kit.seo import esc, iso_kst  # noqa: E402
 
 SITE = "https://pawstcard.ipe.rest"
 GA_ID = "G-CGW3MH2S00"
@@ -112,10 +115,6 @@ class JournalError(Exception):
     def __init__(self, errors):
         super().__init__("\n".join(errors))
         self.errors = errors
-
-
-def esc(s):
-    return html.escape(str(s), quote=True)
 
 
 # ---------------------------------------------------------------- time
@@ -186,8 +185,7 @@ def et_stamp_str(d):
     return d.strftime("%Y-%m-%dT%H:%M") + offset_str(d)
 
 
-def iso_sec(d):
-    return kst(d).strftime("%Y-%m-%dT%H:%M:%S") + "+09:00"
+iso_sec = iso_kst  # 2026-10-25T20:13:00+09:00 (kit seo.iso_kst: same bytes as the old strftime)
 
 
 def fmt_date(d):
@@ -805,19 +803,25 @@ def txt(s):
     return html.escape(str(s), quote=False)
 
 
+LANG_JS_REL = "journal/assets/ipe-lang.js"  # a byte copy of the kit's assets/ipe-lang.js (written on every build, never edited here)
+
+
 def lang_menu(lang, S, versions):
-    """The header's language slot and its data (JOURNAL_I18N.md §6). This repo renders no control: webkit v0.7.2 fills the slot.
-    options = the language versions this page really has, in languages.SUPPORTED order."""
-    data = {"current": lang, "label": S["lang_label"],
-            "options": [{"lang": L, "name": LANGS.NAMES[L], "href": path} for L, path in versions]}
-    return ('      <span class="lang-slot" data-ipe-lang-slot></span>\n'
-            '      <script type="application/json" id="ipe-langs">%s</script>\n' % json.dumps(data, ensure_ascii=False).replace("</", "<\\/"))
+    """The header's language select (ipe_web_kit v0.7.2 langswitch). options = the language versions this page really has, in
+    languages.SUPPORTED order; one version only -> nothing is rendered (no control to choose between). The browser-language redirect
+    (data-redirect) is on the x-default pages only: the English list and the English posts. A /journal/<lang>/ page never redirects."""
+    if len(versions) < 2:
+        return ""
+    hrefs = dict(versions)
+    sel = langswitch.select_html(lang, lambda L: hrefs[L], langs=[L for L, _ in versions])
+    js = langswitch.script({"js": "/%s?v=%s" % (LANG_JS_REL, langswitch.asset_version())}, redirect=(lang == "en"))
+    return "      %s\n      %s\n" % (sel, js)
 
 
 def head(title, desc, canonical, v, noindex=False, extra="", og_type="website", image=None, alternates="", image_alt=None,
          lang="en", S=None, versions=None):
     """<head> + site header. lang / S (that language's UI strings, default English) / versions ([(lang, path)] of this page,
-    default just this one) drive <html lang>, og:locale(:alternate), the RSS link, the nav texts and the #ipe-langs data."""
+    default just this one) drive <html lang>, og:locale(:alternate), the RSS link, the nav texts and the header language select."""
     S = S or EN_UI
     versions = versions or [(lang, canonical[len(SITE):] if canonical.startswith(SITE) else canonical)]
     locale = ('<meta property="og:locale" content="%s">\n' % LANGS.OG_LOCALE[lang]
@@ -907,10 +911,9 @@ src="https://www.facebook.com/tr?id={PIXEL_ID}&ev=PageView&noscript=1"/></noscri
 """
 
 
-# ipe-localtime v2 — canonical copy of ipe-rest/shared/ipe-localtime.js (SHA-256 57326449…f74b8), kept byte-for-byte and
-# inlined before </body>. Never edit it here; replace the file with the next canonical version and update the hash in tests.
-LOCALTIME_JS_PATH = Path(__file__).resolve().parent / "ipe-localtime.js"
-LOCALIZE_JS = "<script>" + LOCALTIME_JS_PATH.read_bytes().decode("utf-8") + "</script>\n"
+# ipe-localtime v2 — the kit's byte copy of ipe-rest/shared/ipe-localtime.js (kit asserts its SHA-256), inlined before </body>.
+# Never edit it here; take the next canonical version with a new kit tag.
+LOCALIZE_JS = kit_localtime.script_tag() + "\n"
 
 
 def footer(lang="en", S=None):
@@ -918,7 +921,7 @@ def footer(lang="en", S=None):
     return f"""<footer>
   <div class="wrap">
     <p>{S['footer_tagline']}</p>
-    <p class="foot-links"><a href="/">{S['footer_home']}</a> · <a href="{list_path(lang)}">{S['footer_journal']}</a> · <a href="{feed_path(lang)}">{S['footer_rss']}</a> · <a href="/#signup">{S['footer_waitlist']}</a> · <a href="/privacy/">{S['footer_privacy']}</a> · <a href="/terms/">{S['footer_terms']}</a></p>
+    <p class="foot-links"><a href="/">{S['footer_home']}</a> · <a href="{list_path(lang)}">{S['footer_journal']}</a> · <a href="{feed_path(lang)}">{S['footer_rss']}</a> · <a href="/#signup">{S['footer_waitlist']}</a> · <a href="https://ipe.rest/en/legal/privacy/">{S['footer_privacy']}</a> · <a href="https://ipe.rest/en/legal/terms/">{S['footer_terms']}</a></p>
   </div>
 </footer>
 """ + LOCALIZE_JS + """</body>
@@ -1337,6 +1340,10 @@ def build(root, now, drafts_ok=False, check_only=False, queue_dir=None):
             write(root / post_path(q).strip("/") / "index.html", render_post(q, v, vs, ui[L]))
         write(root / "journal" / L / "index.html", render_list(vs, v, L, ui[L], hubs))
         write(root / "journal" / L / "feed.xml", render_feed(vs, now, L, ui[L]))
+    lj = root / LANG_JS_REL
+    lj.parent.mkdir(parents=True, exist_ok=True)
+    if not lj.exists() or lj.read_bytes() != langswitch.JS.read_bytes():
+        lj.write_bytes(langswitch.JS.read_bytes())
     sweep_generated(root, written)
 
     sm = root / "sitemap.xml"

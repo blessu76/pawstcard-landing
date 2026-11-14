@@ -26,6 +26,8 @@ class UrlMapping(unittest.TestCase):
         self.assertEqual(ix.url_for("index.html"), SITE + "/")
         self.assertEqual(ix.url_for("journal/index.html"), SITE + "/journal/")
         self.assertEqual(ix.url_for("journal/en/some-post-2/index.html"), SITE + "/journal/en/some-post-2/")
+        for slug in ("about", "contact"):
+            self.assertEqual(ix.url_for("%s/index.html" % slug), "%s/%s/" % (SITE, slug))
         self.assertEqual(ix.url_for("journal/ko/index.html"), SITE + "/journal/ko/")
         self.assertEqual(ix.url_for("journal/zh-Hant/some-post-2/index.html"), SITE + "/journal/zh-Hant/some-post-2/")
         self.assertEqual(ix.url_for("journal/pt-BR/index.html"), SITE + "/journal/pt-BR/")
@@ -37,7 +39,8 @@ class UrlMapping(unittest.TestCase):
 
     def test_everything_else_is_not_sent(self):
         for path in ("404.html", "sitemap.xml", "llms.txt", "robots.txt", "journal/feed.xml", "journal/assets/journal.css",
-                     "journal/posts/a.md", "scripts/build_journal.py", KEY + ".txt", "journal/en/a/other.html", "journal/en/A_b/index.html"):
+                     "journal/posts/a.md", "scripts/build_journal.py", KEY + ".txt", "journal/en/a/other.html", "journal/en/A_b/index.html",
+                     "legal/privacy.md", "privacy/index.html", "terms/index.html", "privacy/other.html", "privacy/x/index.html"):
             self.assertIsNone(ix.url_for(path), path)
 
 

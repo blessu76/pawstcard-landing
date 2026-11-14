@@ -167,6 +167,22 @@ src="https://www.facebook.com/tr?id=1932639057434633&ev=PageView&noscript=1"/></
     transition:background .2s,color .2s;
   }
   .nav a.cta-mini:hover,.nav a.cta-mini:focus-visible{background:var(--forest);color:#fff}
+  .nav-links{display:flex;align-items:center;gap:18px}
+  .nav-journal{font-size:.9rem;font-weight:600;color:var(--forest-deep);text-decoration:none}
+  .nav-journal:hover,.nav-journal:focus-visible{text-decoration:underline}
+  @media(max-width:400px){
+    .nav-links{gap:10px}
+    .nav-journal{font-size:.84rem}
+    .nav a.cta-mini{padding:7px 11px;font-size:.78rem}
+  }
+  @media(max-width:360px){
+    header.wrap{padding-left:14px;padding-right:14px}
+    .logo{font-size:1.05rem;gap:5px}
+    .logo .paw{width:24px;height:24px;font-size:12px}
+    .nav-links{gap:8px}
+    .nav-journal{font-size:.8rem}
+    .nav a.cta-mini{padding:7px 10px;font-size:.72rem;white-space:nowrap}
+  }
 
   /* ---------- hero ---------- */
   .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;padding:56px 0 72px}
@@ -341,6 +357,8 @@ src="https://www.facebook.com/tr?id=1932639057434633&ev=PageView&noscript=1"/></
 
   footer{border-top:1px solid var(--line);padding:26px 0;font-size:.82rem;color:var(--muted);text-align:center}
   footer a{color:inherit}
+  .foot-legal{margin-top:6px}
+  .privacy a{color:inherit}
 
   /* ---------- post-submit survey (progressive: shown after email captured) ---------- */
   .survey{display:none;margin-top:22px;text-align:left;max-width:430px;margin-left:auto;margin-right:auto}
@@ -409,7 +427,10 @@ src="https://www.facebook.com/tr?id=1932639057434633&ev=PageView&noscript=1"/></
 <header class="wrap">
   <nav class="nav">
     <a class="logo" href="#"><span class="paw">🐾</span>Pawstcard</a>
-    <a class="cta-mini" href="#signup">Get early access</a>
+    <span class="nav-links">
+      <a class="nav-journal" href="/journal/">Journal</a>
+      <a class="cta-mini" href="#signup">Get early access</a>
+    </span>
   </nav>
 </header>
 
@@ -542,7 +563,7 @@ src="https://www.facebook.com/tr?id=1932639057434633&ev=PageView&noscript=1"/></
         <button class="btn" type="submit">Get early access</button>
         <div class="form-msg" id="form-msg" role="status"></div>
       </form>
-      <p class="privacy">No spam, ever. One invite email — that's it.</p>
+      <p class="privacy">No spam, ever. One invite email — that's it.<br>By signing up you agree to our <a href="https://ipe.rest/en/legal/privacy/">Privacy Policy</a> and <a href="https://ipe.rest/en/legal/terms/">Terms</a>.</p>
 
       <!-- Step 2: optional survey — revealed only after a successful signup. -->
       <div class="survey" id="ea-survey" aria-live="polite">
@@ -582,29 +603,29 @@ src="https://www.facebook.com/tr?id=1932639057434633&ev=PageView&noscript=1"/></
     <p class="sub">Practical notes for independent pet sitters — while you wait for your invite.</p>
     <ol class="jgrid jgrid--3">
       <li class="jcard">
+        <div class="jart ph3" aria-hidden="true">🐾</div>
+        <div class="jbody">
+          <p class="jmeta"><time datetime="2026-11-14T04:49+09:00" data-ipe-time>2026-11-14 04:49 KST</time></p>
+          <h3><a class="jlink" href="/journal/en/how-pet-sitters-handle-a-late-or-missed-visit/">How Pet Sitters Handle a Late or Missed Visit</a></h3>
+          <p class="jex">How to warn a client when you will be late, what to do when a visit is missed, and the follow-up that keeps trust after a hiccup.</p>
+          <span class="jmore" aria-hidden="true">Read the post →</span>
+        </div>
+      </li>
+      <li class="jcard">
         <div class="jart ph1" aria-hidden="true">🐾</div>
         <div class="jbody">
-          <p class="jmeta"><time datetime="2026-11-06T04:52+09:00" data-ipe-time>2026-11-06 04:52 KST</time></p>
-          <h3><a class="jlink" href="/journal/en/senior-pet-sitting-what-to-note-on-every-visit/">Senior Pet Sitting: What to Note on Every Visit</a></h3>
-          <p class="jex">How pet sitters can care for older pets: questions to ask the owner, what to observe and record on each visit, and when to suggest a call to the vet.</p>
+          <p class="jmeta"><time datetime="2026-11-13T21:24+09:00" data-ipe-time>2026-11-13 21:24 KST</time></p>
+          <h3><a class="jlink" href="/journal/en/pet-sitter-photo-permission-and-client-privacy/">Pet Sitter Photo Permission and Client Privacy</a></h3>
+          <p class="jex">Practical etiquette for asking permission before taking or sharing pet photos, and the details to keep out of every photo you send.</p>
           <span class="jmore" aria-hidden="true">Read the post →</span>
         </div>
       </li>
       <li class="jcard">
-        <div class="jart ph3" aria-hidden="true">🐾</div>
+        <div class="jart ph2" aria-hidden="true">🐾</div>
         <div class="jbody">
-          <p class="jmeta"><time datetime="2026-11-05T21:35+09:00" data-ipe-time>2026-11-05 21:35 KST</time></p>
-          <h3><a class="jlink" href="/journal/en/pet-sitter-invoices-and-deposits-a-simple-process/">Pet Sitter Invoices and Deposits Made Simple</a></h3>
-          <p class="jex">A simple process for pet sitters to handle invoices and deposits: what to include, when to send, and how to follow up politely on late payments.</p>
-          <span class="jmore" aria-hidden="true">Read the post →</span>
-        </div>
-      </li>
-      <li class="jcard">
-        <div class="jart ph3" aria-hidden="true">🐾</div>
-        <div class="jbody">
-          <p class="jmeta"><time datetime="2026-11-05T04:21+09:00" data-ipe-time>2026-11-05 04:21 KST</time></p>
-          <h3><a class="jlink" href="/journal/en/what-to-do-if-a-pet-gets-out-during-a-sitting-visit/">What to Do If a Pet Gets Out During a Visit</a></h3>
-          <p class="jex">How pet sitters and dog walkers can prevent escapes and respond calmly if a pet slips out: immediate steps, who to call, and how to update the client.</p>
+          <p class="jmeta"><time datetime="2026-11-13T04:39+09:00" data-ipe-time>2026-11-13 04:39 KST</time></p>
+          <h3><a class="jlink" href="/journal/en/how-to-write-a-pet-sitting-visit-summary-at-the-end-of-a-stay/">How to Write an End-of-Stay Pet Sitting Summary</a></h3>
+          <p class="jex">A structure for the end-of-stay summary after a multi-day sit: daily patterns, notable moments, home status, and a sample you can adapt.</p>
           <span class="jmore" aria-hidden="true">Read the post →</span>
         </div>
       </li>
@@ -623,7 +644,7 @@ src="https://www.facebook.com/tr?id=1932639057434633&ev=PageView&noscript=1"/></
 </div>
 
 <footer>
-  <div class="wrap">Pawstcard · Made with 🐾 for independent pet sitters · <a href="/journal/">Journal</a> · <a href="/privacy/">Privacy</a> · <a href="/terms/">Terms</a></div>
+  <div class="wrap">Pawstcard · Made with 🐾 for independent pet sitters · <a href="/journal/">Journal</a> · <a href="https://ipe.rest/en/legal/privacy/">Privacy</a> · <a href="https://ipe.rest/en/legal/terms/">Terms</a></div>
 </footer>
 
 <script>

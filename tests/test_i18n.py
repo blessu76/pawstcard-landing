@@ -333,11 +333,13 @@ class Rendering(unittest.TestCase):
         self.assertIn(">저널<", h)
         self.assertIn("a title (ko)", h)
         self.assertNotIn("Title of b", h)  # the related list holds ko pages only
-        data = json.loads(re.search(r'<script type="application/json" id="ipe-langs">(.*?)</script>', h).group(1))
-        self.assertEqual(data["current"], "ko")
-        self.assertEqual([o["lang"] for o in data["options"]], ["en", "ko"])
-        self.assertEqual(data["options"][1], {"lang": "ko", "name": "한국어", "href": "/journal/ko/a/"})
-        self.assertIn('data-ipe-lang-slot', h)
+        self.assertIn('<select class="ipe-lang__select" id="ipe-lang-select"', h)
+        opts = re.findall(r'<option value="([^"]*)" lang="([^"]*)"( selected)?>', h)
+        self.assertEqual([(l, v) for v, l, _ in opts], [("en", "/journal/en/a/"), ("ko", "/journal/ko/a/")])
+        self.assertEqual([l for _, l, sel in opts if sel], ["ko"])
+        self.assertIn("/journal/assets/ipe-lang.js?v=", h)
+        self.assertNotIn("data-redirect", h)  # only the x-default (English) pages redirect on the browser language
+        self.assertNotIn("ipe-langs", h)
 
     def test_english_pages(self):
         a, b = self.s.read("journal/en/a/index.html"), self.s.read("journal/en/b/index.html")
@@ -348,6 +350,18 @@ class Rendering(unittest.TestCase):
         self.assertIn('<link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/b/">', b)
         lst = self.s.read("journal/index.html")
         self.assertIn('hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/"', lst)
+
+    def test_language_select_and_browser_detection_scope(self):
+        a, b = self.s.read("journal/en/a/index.html"), self.s.read("journal/en/b/index.html")
+        lst, ko_lst = self.s.read("journal/index.html"), self.s.read("journal/ko/index.html")
+        for h in (a, lst):  # x-default pages: select + redirect script
+            self.assertIn('id="ipe-lang-select"', h)
+            self.assertRegex(h, r'<script src="/journal/assets/ipe-lang\.js\?v=[^"]+" data-redirect defer></script>')
+        self.assertNotIn("data-redirect", ko_lst)  # a language page never redirects (no loop)
+        self.assertNotIn("ipe-lang-select", b)     # b exists in English only: nothing to choose
+        self.assertNotIn("ipe-lang.js", b)
+        kit = (Path(bj.__file__).resolve().parent.parent / "vendor/ipe_web_kit/assets/ipe-lang.js").read_bytes()
+        self.assertEqual((self.s.root / "journal/assets/ipe-lang.js").read_bytes(), kit)
 
     def test_language_list_and_feed(self):
         lst = self.s.read("journal/ko/index.html")

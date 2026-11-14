@@ -8,7 +8,7 @@ import build_legal as bl  # noqa: E402
 
 
 class BuildLegalTest(unittest.TestCase):
-    def test_generated_pages_are_current(self):
+    def test_generated_redirects_are_current(self):
         self.assertEqual(bl.build(ROOT, check_only=True), [])
 
     def test_sources_carry_no_internal_text(self):
@@ -16,27 +16,14 @@ class BuildLegalTest(unittest.TestCase):
             src = (ROOT / "legal" / (slug + ".md")).read_text(encoding="utf-8")
             self.assertEqual(bl.internal_problems(src), [], slug)
 
-    def test_open_questions_are_highlighted_not_removed(self):
-        src = (ROOT / "legal" / "privacy.md").read_text(encoding="utf-8")
-        page = bl.render_page("privacy", "Privacy Policy", "Privacy Policy — Pawstcard", "d", src, "0")
-        self.assertIn('<mark class="confirm">[confirm P1:', page)
-        self.assertEqual(page.count('<mark class="confirm">'), src.count("[confirm"))
-
-    def test_draft_banner_and_english_only_page(self):
-        src = (ROOT / "legal" / "terms.md").read_text(encoding="utf-8")
-        page = bl.render_page("terms", "Terms of Use", "Terms of Use — Pawstcard", "d", src, "0")
-        self.assertIn("DRAFT — not legally reviewed.", page)
-        self.assertIsNone(bl.INTERNAL_RE.search(page.split("<main", 1)[1].split("<footer", 1)[0]))
-
-    def test_legal_pages_are_noindex_follow_while_draft(self):
+    def test_redirect_points_at_the_ipe_rest_page(self):
         for slug, h1, title, desc in bl.PAGES:
-            page = bl.render_page(slug, h1, title, desc, "## T\n", "0")
-            self.assertIn('<meta name="robots" content="noindex, follow">', page, slug)
-
-    def test_tables_render_inside_scroll_wrapper(self):
-        page = bl.render_page("privacy", "Privacy Policy", "Privacy Policy — Pawstcard", "d",
-                              "## T\n\n| A | B |\n|---|---|\n| 1 | 2 |\n", "0")
-        self.assertIn('<div class="table-wrap"><table>', page)
+            page = bl.redirect_page(slug, h1, title, desc)
+            url = "https://ipe.rest/en/legal/%s/" % slug
+            self.assertIn('<meta http-equiv="refresh" content="0; url=%s">' % url, page, slug)
+            self.assertIn('<link rel="canonical" href="%s">' % url, page, slug)
+            self.assertIn('<meta name="robots" content="noindex,follow">', page, slug)
+            self.assertIn('<a href="%s">click here</a>' % url, page, slug)
 
 
 if __name__ == "__main__":

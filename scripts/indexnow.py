@@ -47,6 +47,9 @@ def url_for(path):
         return SITE + "/"
     if path == "journal/index.html":
         return SITE + "/journal/"
+    m = re.fullmatch(r"(about|contact)/index\.html", path)
+    if m:
+        return "%s/%s/" % (SITE, m.group(1))
     m = re.fullmatch(r"journal/([A-Za-z-]+)/(?:([a-z0-9-]+)/)?index\.html", path)
     if not m or m.group(1) not in LANGS.SUPPORTED or (m.group(1) == "en" and not m.group(2)):  # /journal/en/ itself is no page
         return None
