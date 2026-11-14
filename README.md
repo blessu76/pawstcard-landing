@@ -49,6 +49,15 @@ git add journal sitemap.xml llms.txt index.html && git commit && git push
 Not-yet-due or unstamped manuscripts are validated but never rendered, listed, or put in the sitemap/llms.txt/feed.
 Note: Pages serves the whole repo root, so a manuscript committed to `main` is readable at its URL before it is published.
 
+### Publish slot rules (1 post a day, KST 12:00-17:59)
+
+`publish_at` is a floor; `scripts/publish_journal.py` adds gates (`scripts/slot_rules.py`) evaluated on the real KST clock: **(1)** only 12:00-17:59 KST, **(2)** at most 1 post per KST day (by `published_at` date; also 1 per run),
+**(3)** the KST hour must differ from the previous published post's hour. A blocked run prints `held: <slug> (<reason>)` and exits 0 (`--slug` exits 3). No randomness at publish time: the writer randomizes when setting the floor.
+Every run ends with `queue depth: N (min 3)` (a `WARN:` below 3) and `next eligible publish: <KST>`; `build_journal.py --check` warns about queued manuscripts whose `publish_at` falls outside the slot or shares a KST day.
+
+**Writer: set `publish_at` with `python3 scripts/schedule_slot.py [--after YYYY-MM-DD] [--count N] [--seed S]`** — it prints the next valid random `publish_at` (ET offset, DST-correct; KST 12-17, the day after the last published/queued post, a different hour).
+`pawstcard_publish.sh` needs no change: it parses only the `would publish:` line, which now lists at most one slug.
+
 ### Pre-publish checks (SEO guide v1)
 
 `build_journal.py` (every run), `--check` (part of `check.sh`) and `publish_journal.py` run `lint()` over every manuscript, queue included.

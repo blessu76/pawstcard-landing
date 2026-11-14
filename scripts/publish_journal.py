@@ -11,6 +11,10 @@ Pages, sitemap lastmod, JSON-LD datePublished and the feed all carry that actual
     python3 scripts/publish_journal.py --dry-run        # report only, write nothing (no stamping)
     python3 scripts/publish_journal.py --now 2026-10-25T07:13-04:00   # test with a fixed clock
 
+Slot gates (slot_rules.py; CLI default on, --no-slot-gates = manual override): a post goes live only when the real KST time is 12:00-17:59,
+no post was published yet that KST day, and the KST hour differs from the previous post's. At most one post per run (oldest publish_at first).
+Blocked -> a `held:` line, exit 0 (--slug: REFUSED, exit 3). Every run ends with `queue depth: N (min 3)` (WARN below 3) and `next eligible publish: <KST>`.
+
 Exit codes: 0 ok · 1 bad manuscript / bad arguments · 2 unknown --slug · 3 --slug is not due / still draft (nothing written)
 
 This script only writes files (journal/**, sitemap.xml, llms.txt, and the published_at line of the manuscripts it publishes).
@@ -25,9 +29,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import build_journal as bj  # noqa: E402
+import slot_rules as sr  # noqa: E402
 
 
-def run(root, now, slug=None, dry_run=False, out=print, queue_dir=None):
+def run(root, now, slug=None, dry_run=False, out=print, queue_dir=None, slot_gates=False):
     root = Path(root).resolve()
     now = now.astimezone(dt.timezone.utc)
     posts, errors = bj.load_posts(root, queue_dir)
@@ -52,6 +57,14 @@ def run(root, now, slug=None, dry_run=False, out=print, queue_dir=None):
             return 3
     stamp = bj.stamp_str(now.replace(second=0, microsecond=0))
     todo = [p for p in posts if not p["draft"] and p["_pub"] is None and p["_at"] <= now and (not slug or p["slug"] == slug)]
+    held = []
+    if slot_gates:  # extra gates on top of the publish_at floor: KST 12-17 window, max 1 per KST day, hour != previous post's hour
+        first, held = sr.pick(posts, now)
+        if slug and held and not first:
+            out("publish: REFUSED — %s is held: %s" % (slug, held[0][1]))
+            return 3
+        todo = [first] if first and first in todo else []
+        held = [h for h in held if h[0] in {p["slug"] for p in posts if p["_pub"] is None}]
     if not dry_run:
         posts_dir = root.joinpath(*bj.POSTS_REL)
         posts_dir.mkdir(parents=True, exist_ok=True)
@@ -66,10 +79,15 @@ def run(root, now, slug=None, dry_run=False, out=print, queue_dir=None):
     out("publish: now %s = %s%s" % (bj.stamp_str(now), bj.et_stamp_str(now), " (dry run, nothing written)" if dry_run else ""))
     out("  %s: %s" % ("would publish" if dry_run else "newly published", ", ".join(p["slug"] for p in todo) or "—"))
     out("  live in total:   %d" % (len(rep["due"]) + (len(todo) if dry_run else 0)))
+    for s, why in held:
+        out("  held:            %s (%s)" % (s, why))
     for s, at in rep["waiting"]:
-        if dry_run and s in {p["slug"] for p in todo}:
+        if (dry_run and s in {p["slug"] for p in todo}) or s in {h[0] for h in held}:
             continue
         out("  not yet:         %s (publish_at %s)" % (s, at))
+    if slot_gates:
+        for line in sr.report([dict(p, _pub=p["_pub"] or (now if p in todo else None)) for p in posts], now):
+            out("  " + line)
     return 0
 
 
@@ -79,6 +97,7 @@ def main(argv=None):
     ap.add_argument("--now", help="ISO 8601 with offset (default: real clock)")
     ap.add_argument("--slug", help="publish only this post; refuse if it is not due")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--no-slot-gates", action="store_true", help="manual override: skip the KST 12-17 / 1-per-day / hour-differs gates (the unattended publisher never uses it)")
     ap.add_argument("--queue", default=str(bj.default_queue_dir()), help="unpublished manuscripts (outside the repo); default ~/pawstcard-journal-queue or $%s" % bj.QUEUE_ENV)
     a = ap.parse_args(argv)
     try:
@@ -86,7 +105,7 @@ def main(argv=None):
     except ValueError as ex:
         print(str(ex), file=sys.stderr)
         return 1
-    return run(a.root, now, a.slug, a.dry_run, queue_dir=a.queue)
+    return run(a.root, now, a.slug, a.dry_run, queue_dir=a.queue, slot_gates=not a.no_slot_gates)
 
 
 if __name__ == "__main__":

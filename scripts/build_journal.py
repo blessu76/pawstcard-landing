@@ -312,6 +312,8 @@ def lint(posts, now, root=None, queue_check=False):
             warnings.append("%s: description is %d characters (> %d)" % (name, len(p["description"]), DESC_LONG))
         titles.setdefault(shown, []).append(name)
     warnings += ["duplicate <title> %r in %s" % (t, ", ".join(n)) for t, n in titles.items() if len(n) > 1]
+    import slot_rules  # late: slot_rules imports this module
+    warnings += slot_rules.warn_manuscripts(posts)  # publish-slot hints (KST 12-17, 1/day); never errors: publish_at is only a floor
     return errors, warnings
 
 
