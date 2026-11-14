@@ -15,6 +15,9 @@ Slot gates (slot_rules.py; CLI default on, --no-slot-gates = manual override): a
 no post was published yet that KST day, and the KST hour differs from the previous post's. At most one post per run (oldest publish_at first).
 Blocked -> a `held:` line, exit 0 (--slug: REFUSED, exit 3). Every run ends with `queue depth: N (min 3)` (WARN below 3) and `next eligible publish: <KST>`.
 
+Copy-review gate (always on, also with --no-slot-gates): a not-yet-published post without `copy_review: iris` + `copy_review_date: YYYY-MM-DD` is never published.
+Due -> a `held: <slug> (copy review missing: …)` line, exit 0 (--slug: REFUSED, exit 3); every run prints `unreviewed: N`. Already published posts are grandfathered.
+
 Exit codes: 0 ok · 1 bad manuscript / bad arguments · 2 unknown --slug · 3 --slug is not due / still draft (nothing written)
 
 This script only writes files (journal/**, sitemap.xml, llms.txt, and the published_at line of the manuscripts it publishes).
@@ -39,10 +42,11 @@ def run(root, now, slug=None, dry_run=False, out=print, queue_dir=None, slot_gat
     if errors:
         out("journal: errors\n  " + "\n  ".join(errors))
         return 1
-    problems, warnings = bj.lint(posts, now, root)
+    problems, warnings = bj.lint(posts, now, root, review=False)  # unreviewed posts are held below, not an error
     if problems:
         out("journal: errors\n  " + "\n  ".join(problems))
         return 1
+    unrev = bj.unreviewed(posts)
     if slug:
         match = [p for p in posts if p["slug"] == slug]
         if not match:
@@ -55,16 +59,20 @@ def run(root, now, slug=None, dry_run=False, out=print, queue_dir=None, slot_gat
         if p["draft"]:
             out("publish: REFUSED — %s is still marked draft: true" % slug)
             return 3
+        if p in unrev:
+            out("publish: REFUSED — %s is held: copy review missing (%s)" % (slug, bj.review_problem(p)))
+            return 3
     stamp = bj.stamp_str(now.replace(second=0, microsecond=0))
     todo = [p for p in posts if not p["draft"] and p["_pub"] is None and p["_at"] <= now and (not slug or p["slug"] == slug)]
-    held = []
+    held = [(p["slug"], "copy review missing: %s" % bj.review_problem(p)) for p in unrev if p["_at"] <= now]
+    todo = [p for p in todo if p not in unrev]
     if slot_gates:  # extra gates on top of the publish_at floor: KST 12-17 window, max 1 per KST day, hour != previous post's hour
-        first, held = sr.pick(posts, now)
-        if slug and held and not first:
-            out("publish: REFUSED — %s is held: %s" % (slug, held[0][1]))
+        first, slot_held = sr.pick([p for p in posts if p not in unrev], now)
+        if slug and slot_held and not first:
+            out("publish: REFUSED — %s is held: %s" % (slug, slot_held[0][1]))
             return 3
         todo = [first] if first and first in todo else []
-        held = [h for h in held if h[0] in {p["slug"] for p in posts if p["_pub"] is None}]
+        held += [h for h in slot_held if h[0] in {p["slug"] for p in posts if p["_pub"] is None}]
     if not dry_run:
         posts_dir = root.joinpath(*bj.POSTS_REL)
         posts_dir.mkdir(parents=True, exist_ok=True)
@@ -85,6 +93,7 @@ def run(root, now, slug=None, dry_run=False, out=print, queue_dir=None, slot_gat
         if (dry_run and s in {p["slug"] for p in todo}) or s in {h[0] for h in held}:
             continue
         out("  not yet:         %s (publish_at %s)" % (s, at))
+    out("  unreviewed: %d" % len(unrev))
     if slot_gates:
         for line in sr.report([dict(p, _pub=p["_pub"] or (now if p in todo else None)) for p in posts], now):
             out("  " + line)

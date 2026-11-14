@@ -33,6 +33,8 @@ Front matter (between two `---` lines, `key: value` per line):
     image:        optional, hero image (/journal/assets/<slug>/x.jpg or https URL); default /og-image.png
     image_alt:    optional, alt text of the hero image
     draft:        optional, true -> skipped everywhere (use --drafts to preview on a COPY of the site)
+    copy_review:  `iris` + copy_review_date: YYYY-MM-DD — the copy review stamp. REQUIRED for every post that is not published yet:
+                  publish_journal.py holds an unreviewed one and `--check` fails on it. Published posts (stamped published_at) are grandfathered.
 
 Usage:
     python3 scripts/build_journal.py                      # build into this repo (real clock)
@@ -63,6 +65,7 @@ RESERVED_SLUGS = ("index", "feed", "assets", "queue", "posts")
 POSTS_REL = ("journal", "posts")  # published manuscripts (in the repo)
 QUEUE_ENV = "PAWSTCARD_JOURNAL_QUEUE"
 SLUG_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+REVIEWER = "iris"  # the only accepted `copy_review` value
 STAMP_RE = re.compile(r"^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})([+-]\d{2}:\d{2})$")
 KST_STAMP_RE = re.compile(r"^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})\+09:00$")
 TZ = ZoneInfo("America/New_York")  # the scheduling clock: publish_at floors are Eastern Time (EDT -04:00 / EST -05:00)
@@ -227,6 +230,29 @@ def parse_post(path):
     return meta
 
 
+def review_problem(meta):
+    """-> None when the copy-review stamp (copy_review: iris + copy_review_date: YYYY-MM-DD) is present and valid, else a short reason."""
+    who, day = (meta.get("copy_review") or "").strip(), (meta.get("copy_review_date") or "").strip()
+    if not who and not day:
+        return "no copy_review"
+    if who.lower() != REVIEWER:
+        return "copy_review must be %r (got %r)" % (REVIEWER, who) if who else "copy_review is missing (copy_review: %s)" % REVIEWER
+    if not day:
+        return "copy_review_date is missing (YYYY-MM-DD)"
+    try:
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", day):
+            raise ValueError
+        dt.date.fromisoformat(day)
+    except ValueError:
+        return "copy_review_date must be a real date like YYYY-MM-DD (got %r)" % day
+    return None
+
+
+def unreviewed(posts):
+    """unpublished, non-draft manuscripts without a valid copy-review stamp (published posts are grandfathered)"""
+    return [p for p in posts if p["_pub"] is None and not p["draft"] and review_problem(p)]
+
+
 def default_queue_dir():
     """Where unpublished manuscripts live (outside the repo): $PAWSTCARD_JOURNAL_QUEUE or ~/pawstcard-journal-queue."""
     return Path(os.environ.get(QUEUE_ENV) or Path.home() / "pawstcard-journal-queue")
@@ -273,13 +299,15 @@ def word_count(text):
     return len(CJK_RE.sub(" ", text).split()) + -(-cjk // CJK_CHARS_PER_WORD)
 
 
-def lint(posts, now, root=None, queue_check=False):
+def lint(posts, now, root=None, queue_check=False, review=True):
     """SEO guide v1, pre-publish checks on every manuscript -> (errors, warnings).
     errors (stop the build/publish): placeholder text, a stamped date in the future, a local image that does not exist.
     (Required fields, bad dates, duplicate/reserved slugs are already rejected by load_posts.)
     Body length (P0-9): every post under WORDS_TARGET words warns. A NEW manuscript (not yet published) under WORDS_MIN is an
     error only with queue_check=True (`build_journal.py --check-queue`, the pre-publish queue check); in the normal/publish path it is
     a loud "WARN:" line and publishing goes on, so the unattended publisher never silently drops a post. Published posts under WORDS_MIN only warn.
+    Copy review (review=True; publish_journal.py passes False and holds such posts instead): an unpublished, non-draft manuscript without a valid
+    `copy_review: iris` + `copy_review_date: YYYY-MM-DD` is an error; posts that already have `published_at` are grandfathered.
     Other warnings (never fail): <title> > TITLE_LONG, description > DESC_LONG, duplicate <title>."""
     errors, warnings, titles = [], [], {}
     for p in sorted(posts, key=lambda x: x["slug"]):
@@ -292,6 +320,8 @@ def lint(posts, now, root=None, queue_check=False):
         for field, value in (("published_at", p["_pub"]), ("updated", p["_updated"])):
             if value is not None and value > now and not p["draft"]:
                 errors.append("%s: %s %s is in the future" % (name, field, stamp_str(value)))
+        if review and unreviewed([p]):
+            errors.append("%s: copy review missing — %s (add `copy_review: iris` and `copy_review_date: YYYY-MM-DD` after Iris's review)" % (name, review_problem(p)))
         img = p.get("image")
         if img and img.startswith("/") and root is not None and not (Path(root) / img.lstrip("/")).is_file():
             errors.append("%s: image %s does not exist" % (name, img))

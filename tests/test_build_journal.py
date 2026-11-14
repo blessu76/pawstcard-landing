@@ -42,7 +42,7 @@ Cite as Pawstcard.
 def md(slug, at, **extra):
     fm = {"slug": slug, "title": "Title of %s" % slug, "description": "About %s." % slug, "publish_at": at}
     fm.update(extra)
-    return "---\n" + "\n".join("%s: %s" % kv for kv in fm.items()) + "\n---\n\n# Heading\n\nBody of **%s** with a [link](https://example.com/x).\n" % slug
+    return "---\n" + "\n".join("%s: %s" % kv for kv in fm.items() if kv[1] is not None) + "\n---\n\n# Heading\n\nBody of **%s** with a [link](https://example.com/x).\n" % slug
 
 
 class Site:
@@ -66,6 +66,9 @@ class Site:
                 pass
         elif pub:
             extra["published_at"] = pub
+        if not extra.get("published_at"):  # an unpublished manuscript carries the copy-review stamp unless a test sets copy_review=None
+            extra.setdefault("copy_review", "iris")
+            extra.setdefault("copy_review_date", "2026-10-24")
         (self.root / "journal" / "queue" / (slug + ".md")).write_text(md(slug, at, **extra), encoding="utf-8")
 
     def read(self, rel):
@@ -341,8 +344,8 @@ class ExternalQueue(unittest.TestCase):
         self.s = Site(self)
         self.q = Path(tempfile.mkdtemp())
         self.addCleanup(shutil.rmtree, self.q, True)
-        (self.q / "later.md").write_text(md("later", "2026-10-26T07:00-04:00"), encoding="utf-8")
-        (self.q / "due.md").write_text(md("due", "2026-10-25T07:00-04:00"), encoding="utf-8")
+        (self.q / "later.md").write_text(md("later", "2026-10-26T07:00-04:00", copy_review="iris", copy_review_date="2026-10-24"), encoding="utf-8")
+        (self.q / "due.md").write_text(md("due", "2026-10-25T07:00-04:00", copy_review="iris", copy_review_date="2026-10-24"), encoding="utf-8")
 
     def test_build_and_check_see_the_queue_but_publish_nothing(self):
         rep = bj.build(self.s.root, NOW, queue_dir=self.q)

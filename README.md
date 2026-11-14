@@ -34,6 +34,8 @@ Full front-matter spec: docstring of `scripts/build_journal.py`.
 slug: my-post                      # = file name
 title: Post title
 description: One sentence, <= 155 chars.
+copy_review: iris                  # required before publishing (see "Copy-review gate")
+copy_review_date: 2026-11-14       # YYYY-MM-DD
 publish_at: 2026-10-25T07:13-04:00 # floor in America/New_York; offset must be the real EDT/EST one (-04:00 until 2026-11-01, then -05:00); compared as instants
 tags: [pet sitting, visit reports]
 ---
@@ -57,6 +59,14 @@ Every run ends with `queue depth: N (min 3)` (a `WARN:` below 3) and `next eligi
 
 **Writer: set `publish_at` with `python3 scripts/schedule_slot.py [--after YYYY-MM-DD] [--count N] [--seed S]`** — it prints the next valid random `publish_at` (ET offset, DST-correct; KST 12-17, the day after the last published/queued post, a different hour).
 `pawstcard_publish.sh` needs no change: it parses only the `would publish:` line, which now lists at most one slug.
+
+### Copy-review gate (`copy_review: iris`)
+
+A post goes live only after the copy review (Iris). Front matter must carry both `copy_review: iris` and `copy_review_date: YYYY-MM-DD` (a real date).
+`publish_journal.py` **holds** a not-yet-published post without them (`held: <slug> (copy review missing: …)`, exit 0; `--slug` → REFUSED, exit 3; not bypassed by `--no-slot-gates`)
+and every run prints `unreviewed: N`. `check.sh` (`build_journal.py --check`) **fails** on such a post in the queue or a new one in `journal/posts/` (drafts are exempt).
+**Grandfathering:** the check applies only to posts without `published_at`. Everything already published (stamped) is exempt automatically, so no per-post marker or list is needed;
+a post's review stamp is only read until the moment it is published. `pawstcard_publish.sh` is unchanged (it parses only `would publish:`).
 
 ### Pre-publish checks (SEO guide v1)
 
