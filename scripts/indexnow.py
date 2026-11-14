@@ -7,7 +7,7 @@ Called by .github/workflows/deploy.yml AFTER the site is deployed (the key file 
     python3 scripts/indexnow.py URL [URL ...]               # only these URLs
     python3 scripts/indexnow.py --dry-run ...               # print the payload, send nothing
 
-Changed URLs = added/modified index.html pages (landing, /journal/, /journal/en/<slug>/) between <sha> and HEAD. Nothing else is sent:
+Changed URLs = added/modified index.html pages (landing, /journal/, /journal/<lang>/, /journal/<lang>/<slug>/ for the 12 site languages) between <sha> and HEAD. Nothing else is sent:
 not the sitemap, not the 404, not deleted pages. No changed page -> exit 0 without a request.
 The key is the repo-root file named <32 hex>.txt whose single line is the key itself (public by design). Standard library only.
 Exit 0 = sent (HTTP 200/202) or nothing to send; 1 = IndexNow refused / key file not live.
@@ -21,6 +21,9 @@ import time
 import urllib.error
 import urllib.request
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import languages as LANGS  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 SITE = "https://pawstcard.ipe.rest"
@@ -44,8 +47,10 @@ def url_for(path):
         return SITE + "/"
     if path == "journal/index.html":
         return SITE + "/journal/"
-    m = re.fullmatch(r"journal/en/([a-z0-9-]+)/index\.html", path)
-    return "%s/journal/en/%s/" % (SITE, m.group(1)) if m else None
+    m = re.fullmatch(r"journal/([A-Za-z-]+)/(?:([a-z0-9-]+)/)?index\.html", path)
+    if not m or m.group(1) not in LANGS.SUPPORTED or (m.group(1) == "en" and not m.group(2)):  # /journal/en/ itself is no page
+        return None
+    return "%s/journal/%s/%s" % (SITE, m.group(1), m.group(2) + "/" if m.group(2) else "")
 
 
 def changed_urls(since, root=ROOT):

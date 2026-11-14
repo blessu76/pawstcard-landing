@@ -68,6 +68,19 @@ and every run prints `unreviewed: N`. `check.sh` (`build_journal.py --check`) **
 **Grandfathering:** the check applies only to posts without `published_at`. Everything already published (stamped) is exempt automatically, so no per-post marker or list is needed;
 a post's review stamp is only read until the moment it is published. `pawstcard_publish.sh` is unchanged (it parses only `would publish:`).
 
+### 12 languages (`i18n/`, `<slug>.<lang>.md`)
+
+Design, interface and the translator rulebook: `_ipe/foundry/F-016_pawstcard/web/JOURNAL_I18N.md`. Languages (fixed order, `scripts/languages.py`, same values as ipe_web_kit):
+`en ko ja zh-Hant es pt-BR fr de id th vi tr` — never `zh`, `pt`, `zh-Hans`, `ru`, `ar`, `hi`. English URLs are unchanged (`/journal/`, `/journal/en/<slug>/`); a language lives at `/journal/<lang>/` and `/journal/<lang>/<slug>/`.
+- **UI strings:** `i18n/<lang>.json`, exactly the keys of `i18n/en.json` (the source) plus `_meta` with `copy_review: iris` + `copy_review_date`. An empty string or a missing review = that language is **not ready**: a warning, no pages in it, new posts wait — never an English fallback.
+- **Translations:** `<slug>.<lang>.md` next to the English manuscript (queue → `journal/posts/` on publishing) with `slug`, `lang`, `translation_of`, `title`, `description`, its own `copy_review`, optional `tags`/`image_alt`;
+  `publish_at`, `image`, `draft`, `category` are inherited and not allowed. The heading structure must match the English post.
+- **Gate:** `publish_journal.py` publishes a new post only together with a clean, reviewed translation for every enabled language and ready UI strings (`held: <slug> (langs 4/12 — missing: …)`); all files get the same `published_at`.
+  Posts published before the gate are grandfathered: each translation goes out on its own when it arrives (`newly published: old-post.ko`); until then the post is only in the English list.
+- **Pages:** each language has its posts, list, `feed.xml`; every page carries `<html lang>`, its own canonical, `hreflang` for each version + `x-default` (English), `og:locale`, JSON-LD `inLanguage`; `sitemap.xml` lists every version with `xhtml:link`.
+  The header has an empty `<span data-ipe-lang-slot>` and a `<script id="ipe-langs">` JSON (current, label, options) that ipe_web_kit v0.7.2 turns into the language menu — this repo renders no control and no browser detection.
+- **Tools:** `python3 scripts/journal_langs.py status` (✓/R/U/!/· per post and language) · `python3 scripts/journal_langs.py scaffold --lang ko --slug <slug> --out <drafts dir>` (never into the queue, never overwrites).
+
 ### Pre-publish checks (SEO guide v1)
 
 `build_journal.py` (every run), `--check` (part of `check.sh`) and `publish_journal.py` run `lint()` over every manuscript, queue included.
@@ -80,7 +93,7 @@ a NEW manuscript under 300 words is an error there (run it when a manuscript lan
 ### IndexNow
 
 `deploy.yml` runs `scripts/indexnow.py --changed-since <before>` after the Pages deploy (any push to `main`, including the unattended publisher's): only the indexable pages
-that changed in that push (landing, `/journal/`, `/journal/en/<slug>/`) are sent to IndexNow (Bing, Naver, Yandex; Google reads `sitemap.xml`). The step waits for the public
+that changed in that push (landing, `/journal/`, `/journal/<lang>/`, `/journal/<lang>/<slug>/`) are sent to IndexNow (Bing, Naver, Yandex; Google reads `sitemap.xml`). The step waits for the public
 key file (`/<32 hex>.txt` in the repo root) to be live, never fails the deploy (`continue-on-error`), and sends nothing when no page changed. `--dry-run` prints the payload without the key.
 
 ### Unattended publishing (Mac mini, launchd — lives OUTSIDE this repo)

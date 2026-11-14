@@ -26,6 +26,14 @@ class UrlMapping(unittest.TestCase):
         self.assertEqual(ix.url_for("index.html"), SITE + "/")
         self.assertEqual(ix.url_for("journal/index.html"), SITE + "/journal/")
         self.assertEqual(ix.url_for("journal/en/some-post-2/index.html"), SITE + "/journal/en/some-post-2/")
+        self.assertEqual(ix.url_for("journal/ko/index.html"), SITE + "/journal/ko/")
+        self.assertEqual(ix.url_for("journal/zh-Hant/some-post-2/index.html"), SITE + "/journal/zh-Hant/some-post-2/")
+        self.assertEqual(ix.url_for("journal/pt-BR/index.html"), SITE + "/journal/pt-BR/")
+
+    def test_unknown_languages_are_not_sent(self):
+        for path in ("journal/en/index.html", "journal/zh/a/index.html", "journal/pt/index.html", "journal/zh-Hans/a/index.html",
+                     "journal/posts/index.html", "journal/ko/feed.xml", "journal/ko/a/b/index.html"):
+            self.assertIsNone(ix.url_for(path), path)
 
     def test_everything_else_is_not_sent(self):
         for path in ("404.html", "sitemap.xml", "llms.txt", "robots.txt", "journal/feed.xml", "journal/assets/journal.css",

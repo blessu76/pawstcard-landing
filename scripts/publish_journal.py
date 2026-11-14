@@ -18,6 +18,13 @@ Blocked -> a `held:` line, exit 0 (--slug: REFUSED, exit 3). Every run ends with
 Copy-review gate (always on, also with --no-slot-gates): a not-yet-published post without `copy_review: iris` + `copy_review_date: YYYY-MM-DD` is never published.
 Due -> a `held: <slug> (copy review missing: …)` line, exit 0 (--slug: REFUSED, exit 3); every run prints `unreviewed: N`. Already published posts are grandfathered.
 
+12-language gate (on when i18n/<lang>.json files exist; design: _ipe/foundry/F-016_pawstcard/web/JOURNAL_I18N.md): a new post goes live only
+together with a translation for every enabled language (<slug>.<lang>.md in the queue: clean, with its own copy_review) and with every language's
+UI strings ready. Otherwise a `held: <slug> (langs 4/12 — missing: … · unreviewed: … · problems: … · ui strings: …)` line, exit 0 (--slug: exit 3).
+Publishing moves the English manuscript and its translations together, all with the same published_at.
+Backfill: a clean, reviewed queued translation of an ALREADY published post (grandfathered: it went out before the gate) is moved in with its own
+stamp as soon as its language's UI strings are ready — no slot gates (it is not a new post). The line then reads `would publish: new-post (+11 langs), old-post.ko`.
+
 Exit codes: 0 ok · 1 bad manuscript / bad arguments · 2 unknown --slug · 3 --slug is not due / still draft (nothing written)
 
 This script only writes files (journal/**, sitemap.xml, llms.txt, and the published_at line of the manuscripts it publishes).
@@ -38,7 +45,9 @@ import slot_rules as sr  # noqa: E402
 def run(root, now, slug=None, dry_run=False, out=print, queue_dir=None, slot_gates=False):
     root = Path(root).resolve()
     now = now.astimezone(dt.timezone.utc)
-    posts, errors = bj.load_posts(root, queue_dir)
+    posts, orphans, errors = bj.load_all(root, queue_dir)
+    _ui, ui_ready, ui_errors, ui_warnings = bj.load_ui(root)
+    errors = ui_errors + errors
     if errors:
         out("journal: errors\n  " + "\n  ".join(errors))
         return 1
@@ -46,7 +55,16 @@ def run(root, now, slug=None, dry_run=False, out=print, queue_dir=None, slot_gat
     if problems:
         out("journal: errors\n  " + "\n  ".join(problems))
         return 1
+    warnings = ui_warnings + ["%s — ignored until it is fixed" % o for o in orphans] + warnings
     unrev = bj.unreviewed(posts)
+    enabled = bj.enabled_langs(root)
+    langheld = {}  # slug -> "langs n/N — …" for new posts that may not go out yet (12-language gate)
+    if len(enabled) > 1:
+        for p in posts:
+            if p["_pub"] is None and not p["draft"] and p not in unrev:
+                complete, summary = bj.lang_status(p, enabled, ui_ready)
+                if not complete:
+                    langheld[p["slug"]] = summary
     if slug:
         match = [p for p in posts if p["slug"] == slug]
         if not match:
@@ -62,12 +80,32 @@ def run(root, now, slug=None, dry_run=False, out=print, queue_dir=None, slot_gat
         if p in unrev:
             out("publish: REFUSED — %s is held: copy review missing (%s)" % (slug, bj.review_problem(p)))
             return 3
+        if slug in langheld:
+            out("publish: REFUSED — %s is held: %s" % (slug, langheld[slug]))
+            return 3
     stamp = bj.stamp_str(now.replace(second=0, microsecond=0))
     todo = [p for p in posts if not p["draft"] and p["_pub"] is None and p["_at"] <= now and (not slug or p["slug"] == slug)]
     held = [(p["slug"], "copy review missing: %s" % bj.review_problem(p)) for p in unrev if p["_at"] <= now]
-    todo = [p for p in todo if p not in unrev]
+    held += [(s, why) for s, why in langheld.items() if next(p for p in posts if p["slug"] == s)["_at"] <= now]
+    todo = [p for p in todo if p not in unrev and p["slug"] not in langheld]
+    backfill, bf_held = [], []  # queued translations of posts that are already published
+    for p in posts:
+        if p["_pub"] is None or (slug and p["slug"] != slug):
+            continue
+        for L, t in sorted(p["_tr"].items()):
+            if t["_pub"] is not None:
+                continue
+            kinds = [k for k, _ in t["_problems"]]
+            if kinds:
+                bf_held.append(("%s.%s" % (p["slug"], L), "copy review missing: %s" % bj.review_problem(t) if kinds == ["review"]
+                                else "fix it first: " + ", ".join(dict.fromkeys(k for k in kinds if k != "review"))))
+            elif not ui_ready.get(L):
+                bf_held.append(("%s.%s" % (p["slug"], L), "ui strings for %s are not ready (i18n/%s.json)" % (L, L)))
+            else:
+                backfill.append(t)
+    held += bf_held
     if slot_gates:  # extra gates on top of the publish_at floor: KST 12-17 window, max 1 per KST day, hour != previous post's hour
-        first, slot_held = sr.pick([p for p in posts if p not in unrev], now)
+        first, slot_held = sr.pick([p for p in posts if p not in unrev and p["slug"] not in langheld], now)
         if slug and slot_held and not first:
             out("publish: REFUSED — %s is held: %s" % (slug, slot_held[0][1]))
             return 3
@@ -76,16 +114,19 @@ def run(root, now, slug=None, dry_run=False, out=print, queue_dir=None, slot_gat
     if not dry_run:
         posts_dir = root.joinpath(*bj.POSTS_REL)
         posts_dir.mkdir(parents=True, exist_ok=True)
-        for p in todo:  # move the manuscript from the queue into the repo, stamped; from here on it is public
-            dest = posts_dir / p["_src"]
-            shutil.copyfile(p["_file"], dest)
+        moves = [m for p in todo for m in [p] + [t for _, t in sorted(p["_tr"].items()) if t["_pub"] is None]] + backfill
+        for m in moves:  # move the manuscript (+ its translations) from the queue into the repo, stamped; from here on it is public
+            dest = posts_dir / m["_src"]
+            shutil.copyfile(m["_file"], dest)
             bj.stamp_published(dest, stamp)
-            p["_file"].unlink()
+            m["_file"].unlink()
     rep = bj.build(root, now, check_only=dry_run, queue_dir=queue_dir)
     for w in warnings:
         out("  " + (w if w.startswith("WARN:") else "warning: " + w))
     out("publish: now %s = %s%s" % (bj.stamp_str(now), bj.et_stamp_str(now), " (dry run, nothing written)" if dry_run else ""))
-    out("  %s: %s" % ("would publish" if dry_run else "newly published", ", ".join(p["slug"] for p in todo) or "—"))
+    names = (["%s%s" % (p["slug"], " (+%d langs)" % n if n else "") for p in todo for n in [sum(t["_pub"] is None for t in p["_tr"].values())]]
+             + ["%s.%s" % (t["slug"], t["_lang"]) for t in backfill])
+    out("  %s: %s" % ("would publish" if dry_run else "newly published", ", ".join(names) or "—"))
     out("  live in total:   %d" % (len(rep["due"]) + (len(todo) if dry_run else 0)))
     for s, why in held:
         out("  held:            %s (%s)" % (s, why))
@@ -94,6 +135,8 @@ def run(root, now, slug=None, dry_run=False, out=print, queue_dir=None, slot_gat
             continue
         out("  not yet:         %s (publish_at %s)" % (s, at))
     out("  unreviewed: %d" % len(unrev))
+    if len(enabled) > 1:
+        out("  languages: %d enabled (%s), ui ready: %s" % (len(enabled), " ".join(enabled), " ".join(L for L in enabled if ui_ready.get(L))))
     if slot_gates:
         for line in sr.report([dict(p, _pub=p["_pub"] or (now if p in todo else None)) for p in posts], now):
             out("  " + line)

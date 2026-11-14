@@ -1,0 +1,33 @@
+{
+  "_meta": {
+    "lang": "en",
+    "note": "Source strings (exempt from copy_review). Every other i18n/<lang>.json has exactly these keys; scripts/build_journal.py reads English from here."
+  },
+  "nav_journal": "Journal",
+  "nav_cta": "Get early access",
+  "lang_label": "Language",
+  "blog_name": "Pawstcard Journal",
+  "blog_desc": "Practical notes for independent pet sitters and dog walkers: client updates, visit report cards, and running a solo pet-care business.",
+  "list_title": "Pawstcard Journal — Tips for Independent Pet Sitters",
+  "list_h1": "Journal",
+  "list_empty": "The first post is coming soon.",
+  "list_cta_h": "Be first in line 🐾",
+  "list_cta_p": "Pawstcard is in early access. Leave your email and we'll invite you to the free beta.",
+  "post_cta_h": "The report card writes itself.",
+  "post_cta_p": "Pawstcard is in early access — snap 3 photos on a visit and its AI writes the update for your client. Free during the founding-sitter beta.",
+  "cta_button": "Join the waitlist",
+  "cta_aria": "Join the Pawstcard waitlist",
+  "post_nav_aria": "Previous and next posts",
+  "post_prev": "← Previous post",
+  "post_next": "Next post →",
+  "related_h": "More from the journal",
+  "back_all": "All posts",
+  "og_image_alt": "Pawstcard: an AI-written pet-sitting report card on a phone",
+  "footer_tagline": "Pawstcard · Made with 🐾 for independent pet sitters",
+  "footer_home": "Home",
+  "footer_journal": "Journal",
+  "footer_rss": "RSS",
+  "footer_waitlist": "Join the waitlist",
+  "footer_privacy": "Privacy",
+  "footer_terms": "Terms"
+}
