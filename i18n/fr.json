@@ -1,8 +1,8 @@
 {
   "_meta": {
     "lang": "fr",
-    "copy_review": "",
-    "copy_review_date": ""
+    "copy_review": "iris",
+    "copy_review_date": "2026-11-15"
   },
   "nav_journal": "Journal",
   "nav_cta": "Accès anticipé",
@@ -30,5 +30,5 @@
   "footer_rss": "RSS",
   "footer_waitlist": "Rejoindre la liste d'attente",
   "footer_privacy": "Confidentialité",
-  "footer_terms": "Conditions"
+  "footer_terms": "Conditions d'utilisation"
 }
