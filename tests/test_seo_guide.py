@@ -7,6 +7,7 @@ import sys
 import tempfile
 import unittest
 import xml.etree.ElementTree as ET
+from html import escape as html_escape, unescape
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
@@ -56,8 +57,8 @@ class BlogPostingJsonLd(unittest.TestCase):
             self.assertEqual(post["inLanguage"], "en", slug)
             self.assertEqual(post["image"]["@type"], "ImageObject", slug)
             self.assertTrue(post["image"]["url"].startswith("https://"), slug)
-            title = re.search(r"<title>(.*?)</title>", html).group(1).replace("&amp;", "&")
-            self.assertIn(post["headline"].replace("&amp;", "&"), title, slug)  # headline is a part of <title>
+            title = unescape(re.search(r"<title>(.*?)</title>", html).group(1))
+            self.assertIn(unescape(post["headline"]), title, slug)  # headline is a part of <title>
             pub, mod = parse_iso(post["datePublished"]), parse_iso(post["dateModified"])
             self.assertLessEqual(pub, mod, slug)
             self.assertLessEqual(mod, now_, "%s: dateModified is in the future" % slug)
@@ -173,8 +174,24 @@ class UniqueMeta(unittest.TestCase):
             html = page.read_text(encoding="utf-8")
             post = {b["@type"]: b for b in ld_blocks(html)}["BlogPosting"]
             h1 = meta(html, r"<h1>(.*?)</h1>")
-            self.assertEqual(h1.replace("&amp;", "&"), post["headline"].replace("&amp;", "&"), page)
-            self.assertEqual(meta(html, r'<meta property="og:title" content="([^"]*)"'), meta(html, r"<title>(.*?)</title>"), page)
+            self.assertEqual(unescape(h1), unescape(post["headline"]), page)
+            # HTML-escaping (e.g. an apostrophe -> &#x27;) must not make the same title compare unequal
+            self.assertEqual(unescape(meta(html, r'<meta property="og:title" content="([^"]*)"')), unescape(meta(html, r"<title>(.*?)</title>")), page)
+
+
+class ApostropheTitle(unittest.TestCase):
+    """Regression: a post title with an apostrophe (e.g. "Pet's") is escaped as &#x27; in <title>/og:title/<h1>,
+    but stays raw in JSON-LD headline. The title checks must compare the unescaped text, or the publisher HARD FAILs."""
+
+    TITLE = "How to Write About a Pet's Health Changes Without Diagnosing"
+
+    def test_escaped_apostrophe_title_matches_raw_headline(self):
+        escaped = html_escape(self.TITLE)  # what the generator writes into <title>, <h1>, og:title
+        self.assertIn("&#x27;", escaped)
+        self.assertNotEqual(escaped, self.TITLE)  # the raw comparison used to fail on this
+        self.assertIn(unescape(self.TITLE), unescape(escaped))  # JSON-LD headline check
+        self.assertEqual(unescape(escaped), unescape(self.TITLE))  # h1 / og:title vs headline
+        self.assertEqual(unescape(meta('<meta property="og:title" content="%s">' % escaped, r'<meta property="og:title" content="([^"]*)"')), unescape(self.TITLE))
 
 
 class NotFoundPage(unittest.TestCase):
