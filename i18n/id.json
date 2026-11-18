@@ -14,8 +14,8 @@
   "list_empty": "Tulisan pertama segera hadir.",
   "list_cta_h": "Jadi yang pertama 🐾",
   "list_cta_p": "Pawstcard sedang dalam akses awal. Tinggalkan email Anda dan kami akan mengundang Anda ke beta gratis.",
-  "post_cta_h": "Kartu laporan tertulis dengan sendirinya.",
-  "post_cta_p": "Pawstcard sedang dalam akses awal — ambil 3 foto saat kunjungan, lalu AI-nya menulis kabar untuk klien Anda. Gratis selama beta pet sitter perintis.",
+  "post_cta_h": "Kartu laporan yang hampir menulis sendiri.",
+  "post_cta_p": "Pawstcard sedang dalam akses awal — ambil 3 foto saat kunjungan, lalu AI menulis kabar untuk klien Anda. Gratis selama beta pet sitter perintis.",
   "cta_button": "Gabung daftar tunggu",
   "cta_aria": "Gabung daftar tunggu Pawstcard",
   "post_nav_aria": "Tulisan sebelumnya dan berikutnya",
@@ -29,6 +29,6 @@
   "footer_journal": "Jurnal",
   "footer_rss": "RSS",
   "footer_waitlist": "Gabung daftar tunggu",
-  "footer_privacy": "Privasi",
+  "footer_privacy": "Kebijakan Privasi",
   "footer_terms": "Ketentuan"
 }
