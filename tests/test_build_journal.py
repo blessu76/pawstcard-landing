@@ -57,8 +57,9 @@ class Site:
         (self.root / "journal" / "assets").mkdir()
         shutil.copy(REPO / "journal" / "assets" / "journal.css", self.root / "journal" / "assets" / "journal.css")
 
-    def post(self, slug, at, pub="same", **extra):
-        """pub="same": already published at `at`; pub=None: unstamped manuscript (publish_journal.py will stamp it)."""
+    def post(self, slug, at, pub="same", evidence=True, **extra):
+        """pub="same": already published at `at`; pub=None: unstamped manuscript (publish_journal.py will stamp it).
+        evidence=True: an unpublished manuscript also gets Iris's review evidence (reviews/<slug>.iris.json) written for the text as it is."""
         if pub == "same":
             try:
                 extra.setdefault("published_at", bj.stamp_str(bj.parse_stamp(at)))  # same instant, written the KST way
@@ -69,7 +70,10 @@ class Site:
         if not extra.get("published_at"):  # an unpublished manuscript carries the copy-review stamp unless a test sets copy_review=None
             extra.setdefault("copy_review", "iris")
             extra.setdefault("copy_review_date", "2026-10-24")
-        (self.root / "journal" / "queue" / (slug + ".md")).write_text(md(slug, at, **extra), encoding="utf-8")
+        path = self.root / "journal" / "queue" / (slug + ".md")
+        path.write_text(md(slug, at, **extra), encoding="utf-8")
+        if evidence and not extra.get("published_at"):
+            bj.write_iris_evidence(path, "test review record")
 
     def read(self, rel):
         return (self.root / rel).read_text(encoding="utf-8")
@@ -346,6 +350,8 @@ class ExternalQueue(unittest.TestCase):
         self.addCleanup(shutil.rmtree, self.q, True)
         (self.q / "later.md").write_text(md("later", "2026-10-26T07:00-04:00", copy_review="iris", copy_review_date="2026-10-24"), encoding="utf-8")
         (self.q / "due.md").write_text(md("due", "2026-10-25T07:00-04:00", copy_review="iris", copy_review_date="2026-10-24"), encoding="utf-8")
+        for slug in ("later", "due"):
+            bj.write_iris_evidence(self.q / (slug + ".md"), "test review record")
 
     def test_build_and_check_see_the_queue_but_publish_nothing(self):
         rep = bj.build(self.s.root, NOW, queue_dir=self.q)
@@ -901,6 +907,8 @@ class PrePublishLint(unittest.TestCase):
     def body(self, s, slug, text):
         f = s.root / "journal" / "queue" / (slug + ".md")
         f.write_text(f.read_text(encoding="utf-8").split("\n---\n", 1)[0] + "\n---\n\n" + text + "\n", encoding="utf-8")
+        if f.read_text(encoding="utf-8").count("copy_review:"):  # the body is part of the text Iris reviews: re-record the evidence for it
+            bj.write_iris_evidence(f, "test review record")
 
     def test_clean_post_has_no_errors_and_no_warnings(self):
         s = Site(self)

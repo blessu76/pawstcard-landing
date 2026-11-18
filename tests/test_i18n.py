@@ -41,6 +41,8 @@ def tr(s, slug, code, where="queue", body="# 제목\n\n번역된 본문입니다
     d.mkdir(parents=True, exist_ok=True)
     text = "---\n" + "\n".join("%s: %s" % kv for kv in fm.items() if kv[1] is not None) + "\n---\n\n" + body
     (d / ("%s.%s.md" % (slug, code))).write_text(text, encoding="utf-8")
+    if where == "queue":  # Iris's evidence for the text as written (a test that wants it missing or stale changes it afterwards)
+        bj.write_iris_evidence(d / ("%s.%s.md" % (slug, code)), "test review record")
     return d / ("%s.%s.md" % (slug, code))
 
 

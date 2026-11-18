@@ -46,6 +46,8 @@ Front matter (between two `---` lines, `key: value` per line):
     draft:        optional, true -> skipped everywhere (use --drafts to preview on a COPY of the site)
     copy_review:  `iris` + copy_review_date: YYYY-MM-DD — the copy review stamp. REQUIRED for every post that is not published yet:
                   publish_journal.py holds an unreviewed one and `--check` fails on it. Published posts (stamped published_at) are grandfathered.
+                  The stamp alone is not enough: Iris's evidence `<queue>/reviews/<slug>.iris.json` (reviewer iris + sha256 of the text without
+                  the stamp lines) must match the file, written by scripts/iris_review_evidence.py. A later body edit makes it stale.
 
 Usage:
     python3 scripts/build_journal.py                      # build into this repo (real clock)
@@ -315,12 +317,71 @@ def parse_translation(path, published):
             bad("placeholder", "placeholder text in %s" % field)
     if PLACEHOLDER_RE.search(body):
         bad("placeholder", "placeholder text in the body")
-    if not published and review_problem(meta):
-        bad("review", review_problem(meta))
+    if not published and review_problem(t):  # t carries _file (stamp from the front matter + the Iris evidence beside it)
+        bad("review", review_problem(t))
     return t
 
 
 def review_problem(meta):
+    """-> None when the copy review is complete, else a short reason. Two parts: the stamp (copy_review: iris + copy_review_date:
+    YYYY-MM-DD) and, for a manuscript that carries its file (meta["_file"], i.e. a queued post or translation), Iris's review
+    evidence next to it (evidence_problem). Used only for unpublished files; published posts are grandfathered by the callers."""
+    stamp = _stamp_problem(meta)
+    if stamp or not meta.get("_file"):
+        return stamp
+    return evidence_problem(meta["_file"])
+
+
+EVIDENCE_LINE_RE = re.compile(r"^copy_review(_date)?\s*:")  # the stamp lines: not part of what Iris reviewed
+
+
+def manuscript_sha256(path):
+    """sha256 of the manuscript text without its copy_review / copy_review_date lines (stamping a reviewed file keeps the hash)."""
+    text = Path(path).read_text(encoding="utf-8")
+    kept = "".join(ln for ln in text.splitlines(keepends=True) if not EVIDENCE_LINE_RE.match(ln))
+    return hashlib.sha256(kept.encode("utf-8")).hexdigest()
+
+
+def evidence_path(path):
+    """<queue dir>/reviews/<stem>.iris.json — the sidecar of a queued file (a translation keeps its lang: a.es.iris.json)."""
+    path = Path(path)
+    return path.parent / "reviews" / (path.stem + ".iris.json")
+
+
+def write_iris_evidence(path, note, reviewed_at=None):
+    """Write Iris's review evidence for a queued manuscript or translation: reviewer, sha256 of the text as it stands now,
+    the review date (default: today, KST) and `note` (the path of the review record). Returns the sidecar path."""
+    if not str(note or "").strip():
+        raise ValueError("note (the path of the review record) is required")
+    side = evidence_path(path)
+    side.parent.mkdir(parents=True, exist_ok=True)
+    rec = {"reviewer": REVIEWER, "sha256": manuscript_sha256(path),
+           "reviewed_at": reviewed_at or dt.datetime.now(OUT_TZ).date().isoformat(), "note": str(note).strip()}
+    side.write_text(json.dumps(rec, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return side
+
+
+def evidence_problem(path):
+    """-> None when the sidecar exists, names reviewer iris and its sha256 matches the text now; else a short reason.
+    A changed manuscript (body edited after the review) is stale and must be reviewed again."""
+    side = evidence_path(path)
+    if not side.is_file():
+        return "no Iris review evidence (reviews/%s missing)" % side.name
+    try:
+        rec = json.loads(side.read_text(encoding="utf-8"))
+    except ValueError:
+        return "Iris review evidence is unreadable (reviews/%s)" % side.name
+    if not isinstance(rec, dict):
+        return "Iris review evidence is unreadable (reviews/%s)" % side.name
+    who = str(rec.get("reviewer") or "").strip().lower()
+    if who != REVIEWER:
+        return "Iris review evidence names reviewer %r, not %r" % (rec.get("reviewer"), REVIEWER)
+    if rec.get("sha256") != manuscript_sha256(path):
+        return "review evidence stale (manuscript changed after review)"
+    return None
+
+
+def _stamp_problem(meta):
     """-> None when the copy-review stamp (copy_review: iris + copy_review_date: YYYY-MM-DD) is present and valid, else a short reason."""
     who, day = (meta.get("copy_review") or "").strip(), (meta.get("copy_review_date") or "").strip()
     if not who and not day:
@@ -545,7 +606,7 @@ def lint(posts, now, root=None, queue_check=False, review=True):
             if value is not None and value > now and not p["draft"]:
                 errors.append("%s: %s %s is in the future" % (name, field, stamp_str(value)))
         if review and unreviewed([p]):
-            errors.append("%s: copy review missing — %s (add `copy_review: iris` and `copy_review_date: YYYY-MM-DD` after Iris's review)" % (name, review_problem(p)))
+            errors.append("%s: copy review missing — %s (after Iris's review: `copy_review: iris` + `copy_review_date: YYYY-MM-DD`, and the evidence via scripts/iris_review_evidence.py)" % (name, review_problem(p)))
         img = p.get("image")
         if img and img.startswith("/") and root is not None and not (Path(root) / img.lstrip("/")).is_file():
             errors.append("%s: image %s does not exist" % (name, img))

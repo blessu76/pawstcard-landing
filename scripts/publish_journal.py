@@ -15,7 +15,8 @@ Slot gates (slot_rules.py; CLI default on, --no-slot-gates = manual override): a
 no post was published yet that KST day, and the KST hour differs from the previous post's. At most one post per run (oldest publish_at first).
 Blocked -> a `held:` line, exit 0 (--slug: REFUSED, exit 3). Every run ends with `queue depth: N (min 3)` (WARN below 3) and `next eligible publish: <KST>`.
 
-Copy-review gate (always on, also with --no-slot-gates): a not-yet-published post without `copy_review: iris` + `copy_review_date: YYYY-MM-DD` is never published.
+Copy-review gate (always on, also with --no-slot-gates): a not-yet-published post without `copy_review: iris` + `copy_review_date: YYYY-MM-DD` is never published,
+and the stamp alone is not enough: Iris's evidence `<queue>/reviews/<slug>.iris.json` must exist and its sha256 must match the text (scripts/iris_review_evidence.py).
 Due -> a `held: <slug> (copy review missing: …)` line, exit 0 (--slug: REFUSED, exit 3); every run prints `unreviewed: N`. Already published posts are grandfathered.
 
 12-language gate (on when i18n/<lang>.json files exist; design: _ipe/foundry/F-016_pawstcard/web/JOURNAL_I18N.md): a new post goes live only
