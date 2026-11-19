@@ -393,6 +393,8 @@ src="https://www.facebook.com/tr?id=1932639057434633&ev=PageView&noscript=1"/></
     /* compress hero so eyebrow+headline+offer+CTA fit the first screen */
     .hero{gap:22px;padding:16px 0 40px}
     h1{font-size:clamp(1.8rem,7.4vw,2.3rem);margin-bottom:14px}
+    /* keep the demo card title clear of the absolutely-positioned stamp (top:18px right:18px, 46px wide) */
+    .pc-head > div:last-child{padding-right:52px}
     .eyebrow{margin-bottom:12px}
     .hero p.lede{font-size:1rem;margin-bottom:18px}
     .offer-signal{margin-bottom:16px}
