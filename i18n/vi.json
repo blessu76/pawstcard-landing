@@ -1,8 +1,8 @@
 {
   "_meta": {
     "lang": "vi",
-    "copy_review": "",
-    "copy_review_date": ""
+    "copy_review": "iris",
+    "copy_review_date": "2026-11-25"
   },
   "nav_journal": "Nhật ký",
   "nav_cta": "Đăng ký dùng sớm",
@@ -15,7 +15,7 @@
   "list_cta_h": "Hãy là người đầu tiên 🐾",
   "list_cta_p": "Pawstcard đang trong giai đoạn dùng sớm. Hãy để lại email, chúng tôi sẽ mời bạn tham gia bản beta miễn phí.",
   "post_cta_h": "Thẻ báo cáo gần như tự viết.",
-  "post_cta_p": "Pawstcard đang trong giai đoạn dùng sớm — chụp 3 tấm ảnh trong buổi chăm sóc, AI sẽ viết bản cập nhật gửi khách của bạn. Miễn phí trong thời gian beta dành cho người trông thú cưng dùng thử đầu tiên.",
+  "post_cta_p": "Pawstcard đang trong giai đoạn dùng sớm — chụp 3 tấm ảnh trong buổi chăm sóc, AI sẽ viết bản cập nhật gửi khách của bạn. Miễn phí trong thời gian beta dành cho những người trông thú cưng đầu tiên.",
   "cta_button": "Tham gia danh sách chờ",
   "cta_aria": "Tham gia danh sách chờ của Pawstcard",
   "post_nav_aria": "Bài viết trước và sau",
@@ -24,7 +24,7 @@
   "related_h": "Đọc thêm trong nhật ký",
   "back_all": "Tất cả bài viết",
   "og_image_alt": "Pawstcard: thẻ báo cáo chăm sóc thú cưng do AI viết trên điện thoại",
-  "footer_tagline": "Pawstcard · Làm bằng 🐾 dành cho người trông thú cưng độc lập",
+  "footer_tagline": "Pawstcard · Làm bằng cả tấm lòng 🐾 cho người trông thú cưng độc lập",
   "footer_home": "Trang chủ",
   "footer_journal": "Nhật ký",
   "footer_rss": "RSS",
