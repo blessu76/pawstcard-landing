@@ -99,12 +99,12 @@ key file (`/<32 hex>.txt` in the repo root) to be live, never fails the deploy (
 
 ### Unattended publishing (Mac mini, launchd — lives OUTSIDE this repo)
 
-A launchd job on the Mac mini publishes the night editions. The plist and script are **not** in the repo (decision 2026-10-25); only this note is.
+A launchd job on the Mac mini publishes the night editions. The launchd plist is **not** in the repo (decision 2026-10-25). The script is tracked at `scripts/ops/pawstcard_publish.sh`; the host runs the identical copy at `~/.ipe/bin/pawstcard_publish.sh` (re-copy after any change here).
 
 | piece | where |
 |---|---|
 | job | `~/Library/LaunchAgents/rest.ipe.pawstcard-publish.plist` (label `rest.ipe.pawstcard-publish`, every 300 s + at load) |
-| script | `~/.ipe/bin/pawstcard_publish.sh` |
+| script | repo: `scripts/ops/pawstcard_publish.sh` · host (launchd runs this): `~/.ipe/bin/pawstcard_publish.sh` |
 | dedicated clone | `~/.ipe/pawstcard-publish/repo` (always reset to `origin/main`; never edit it) |
 | manuscripts | `~/pawstcard-journal-queue/` (published ones are moved to `.published/`) |
 | log · state | `~/.ipe/logs/pawstcard-publish.log` · `~/.ipe/pawstcard-publish/{FAILED,SOFT_ALERT,last_tick}` |
