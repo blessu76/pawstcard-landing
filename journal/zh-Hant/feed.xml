@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Pawstcard 日誌</title>
+    <link>https://pawstcard.ipe.rest/journal/zh-Hant/</link>
+    <atom:link href="https://pawstcard.ipe.rest/journal/zh-Hant/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>給獨立寵物保母與遛狗員的實用筆記：飼主進度回報、訪視報告卡，以及一人經營寵物照護事業。</description>
+    <language>zh-Hant</language>
+    <lastBuildDate>Wed, 25 Nov 2026 13:50:00 +0900</lastBuildDate>
+    <item>
+      <title>寫訪視紀錄時不用標籤，改以描述記錄寵物行為</title>
+      <link>https://pawstcard.ipe.rest/journal/zh-Hant/how-to-describe-pet-behavior-in-visit-notes-without-labels/</link>
+      <guid isPermaLink="true">https://pawstcard.ipe.rest/journal/zh-Hant/how-to-describe-pet-behavior-in-visit-notes-without-labels/</guid>
+      <pubDate>Wed, 25 Nov 2026 13:50:00 +0900</pubDate>
+      <description>「攻擊性」「焦慮」之類的字眼可能會跟著寵物好幾年。這裡說明如何用看到的事實取代標籤來描述行為。</description>
+    </item>
+  </channel>
+</rss>

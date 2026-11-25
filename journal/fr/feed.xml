@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Journal Pawstcard</title>
+    <link>https://pawstcard.ipe.rest/journal/fr/</link>
+    <atom:link href="https://pawstcard.ipe.rest/journal/fr/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>Notes pratiques pour les pet-sitters et promeneurs de chiens indépendants : nouvelles aux clients, comptes rendus de visite et gestion d&#x27;une activité de garde d&#x27;animaux en solo.</description>
+    <language>fr</language>
+    <lastBuildDate>Wed, 25 Nov 2026 13:50:00 +0900</lastBuildDate>
+    <item>
+      <title>Décrire le comportement d&#x27;un animal dans les notes de visite, sans étiquettes</title>
+      <link>https://pawstcard.ipe.rest/journal/fr/how-to-describe-pet-behavior-in-visit-notes-without-labels/</link>
+      <guid isPermaLink="true">https://pawstcard.ipe.rest/journal/fr/how-to-describe-pet-behavior-in-visit-notes-without-labels/</guid>
+      <pubDate>Wed, 25 Nov 2026 13:50:00 +0900</pubDate>
+      <description>Des mots comme « agressif » ou « anxieux » peuvent suivre un animal des années. Décrivez plutôt ce que vous avez vu, sans étiquette.</description>
+    </item>
+  </channel>
+</rss>

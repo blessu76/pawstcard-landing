@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>บันทึก Pawstcard</title>
+    <link>https://pawstcard.ipe.rest/journal/th/</link>
+    <atom:link href="https://pawstcard.ipe.rest/journal/th/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>ข้อมูลที่นำไปใช้ได้จริงสำหรับเพ็ตซิตเตอร์และคนจูงสุนัขอิสระ: การอัปเดตให้ลูกค้า การ์ดรายงานการเข้าดูแล และการทำธุรกิจดูแลสัตว์เลี้ยงด้วยตัวคนเดียว</description>
+    <language>th</language>
+    <lastBuildDate>Wed, 25 Nov 2026 13:50:00 +0900</lastBuildDate>
+    <item>
+      <title>วิธีบรรยายพฤติกรรมของสัตว์เลี้ยงในบันทึกการเข้าเยี่ยมโดยไม่ใช้ป้ายกำกับ</title>
+      <link>https://pawstcard.ipe.rest/journal/th/how-to-describe-pet-behavior-in-visit-notes-without-labels/</link>
+      <guid isPermaLink="true">https://pawstcard.ipe.rest/journal/th/how-to-describe-pet-behavior-in-visit-notes-without-labels/</guid>
+      <pubDate>Wed, 25 Nov 2026 13:50:00 +0900</pubDate>
+      <description>คำอย่าง &quot;ก้าวร้าว&quot; หรือ &quot;วิตกกังวล&quot; อาจติดตัวสัตว์เลี้ยงไปหลายปี นี่คือวิธีบรรยายสิ่งที่คุณเห็นแทนการติดป้าย</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Nhật ký Pawstcard</title>
+    <link>https://pawstcard.ipe.rest/journal/vi/</link>
+    <atom:link href="https://pawstcard.ipe.rest/journal/vi/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>Ghi chú thực tế cho người trông thú cưng và người dắt chó độc lập: cập nhật cho khách, thẻ báo cáo mỗi lần chăm sóc và cách vận hành công việc chăm sóc thú cưng một mình.</description>
+    <language>vi</language>
+    <lastBuildDate>Wed, 25 Nov 2026 13:50:00 +0900</lastBuildDate>
+    <item>
+      <title>Cách mô tả hành vi thú cưng trong ghi chú thăm nhà mà không dùng nhãn</title>
+      <link>https://pawstcard.ipe.rest/journal/vi/how-to-describe-pet-behavior-in-visit-notes-without-labels/</link>
+      <guid isPermaLink="true">https://pawstcard.ipe.rest/journal/vi/how-to-describe-pet-behavior-in-visit-notes-without-labels/</guid>
+      <pubDate>Wed, 25 Nov 2026 13:50:00 +0900</pubDate>
+      <description>Những từ như &quot;hung dữ&quot; hay &quot;lo âu&quot; có thể đi theo một bé thú cưng nhiều năm. Hãy mô tả điều bạn thấy thay vì dán nhãn.</description>
+    </item>
+  </channel>
+</rss>

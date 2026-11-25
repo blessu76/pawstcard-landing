@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Pawstcard ジャーナル</title>
+    <link>https://pawstcard.ipe.rest/journal/ja/</link>
+    <atom:link href="https://pawstcard.ipe.rest/journal/ja/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>個人で活動するペットシッターやドッグウォーカーのための実践ノート：飼い主への報告、訪問レポートカード、ひとりでのペットケア運営。</description>
+    <language>ja</language>
+    <lastBuildDate>Wed, 25 Nov 2026 13:50:00 +0900</lastBuildDate>
+    <item>
+      <title>ラベルを使わずに訪問メモでペットの行動を記録する方法</title>
+      <link>https://pawstcard.ipe.rest/journal/ja/how-to-describe-pet-behavior-in-visit-notes-without-labels/</link>
+      <guid isPermaLink="true">https://pawstcard.ipe.rest/journal/ja/how-to-describe-pet-behavior-in-visit-notes-without-labels/</guid>
+      <pubDate>Wed, 25 Nov 2026 13:50:00 +0900</pubDate>
+      <description>「攻撃的」「不安そう」といった言葉は、何年もペットについて回ることがあります。ラベルではなく見たことを書く方法を紹介します。</description>
+    </item>
+  </channel>
+</rss>

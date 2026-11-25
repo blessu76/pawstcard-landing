@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Pawstcard 저널</title>
+    <link>https://pawstcard.ipe.rest/journal/ko/</link>
+    <atom:link href="https://pawstcard.ipe.rest/journal/ko/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>독립 펫시터와 도그워커를 위한 실용 노트: 보호자 업데이트, 방문 리포트 카드, 1인 펫케어 사업 운영.</description>
+    <language>ko</language>
+    <lastBuildDate>Wed, 25 Nov 2026 13:50:00 +0900</lastBuildDate>
+    <item>
+      <title>라벨 없이 방문 메모에 반려동물의 행동을 기록하는 법</title>
+      <link>https://pawstcard.ipe.rest/journal/ko/how-to-describe-pet-behavior-in-visit-notes-without-labels/</link>
+      <guid isPermaLink="true">https://pawstcard.ipe.rest/journal/ko/how-to-describe-pet-behavior-in-visit-notes-without-labels/</guid>
+      <pubDate>Wed, 25 Nov 2026 13:50:00 +0900</pubDate>
+      <description>&quot;공격적&quot;, &quot;불안해함&quot; 같은 말은 몇 년 동안 반려동물을 따라다닐 수 있습니다. 라벨 대신 실제로 본 것을 적는 방법을 소개합니다.</description>
+    </item>
+  </channel>
+</rss>

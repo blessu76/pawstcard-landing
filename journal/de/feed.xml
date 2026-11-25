@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Pawstcard Journal</title>
+    <link>https://pawstcard.ipe.rest/journal/de/</link>
+    <atom:link href="https://pawstcard.ipe.rest/journal/de/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>Praktische Tipps für selbstständige Tiersitter und Hundeausführer: Updates für Kunden, Besuchsberichte und der Alltag eines Ein-Personen-Tierbetreuungsbetriebs.</description>
+    <language>de</language>
+    <lastBuildDate>Wed, 25 Nov 2026 13:50:00 +0900</lastBuildDate>
+    <item>
+      <title>Tierverhalten in Besuchsnotizen beschreiben, ohne Etiketten zu verwenden</title>
+      <link>https://pawstcard.ipe.rest/journal/de/how-to-describe-pet-behavior-in-visit-notes-without-labels/</link>
+      <guid isPermaLink="true">https://pawstcard.ipe.rest/journal/de/how-to-describe-pet-behavior-in-visit-notes-without-labels/</guid>
+      <pubDate>Wed, 25 Nov 2026 13:50:00 +0900</pubDate>
+      <description>Wörter wie „aggressiv“ oder „ängstlich“ können einem Tier jahrelang anhaften. So beschreiben Sie, was Sie gesehen haben, statt ein Etikett zu vergeben.</description>
+    </item>
+  </channel>
+</rss>

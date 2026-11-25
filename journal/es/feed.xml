@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Diario de Pawstcard</title>
+    <link>https://pawstcard.ipe.rest/journal/es/</link>
+    <atom:link href="https://pawstcard.ipe.rest/journal/es/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>Notas prácticas para cuidadores de mascotas y paseadores de perros independientes: actualizaciones para clientes, informes de visita y cómo llevar un negocio de cuidado de mascotas en solitario.</description>
+    <language>es</language>
+    <lastBuildDate>Wed, 25 Nov 2026 13:50:00 +0900</lastBuildDate>
+    <item>
+      <title>Cómo describir el comportamiento de una mascota en las notas de visita sin usar etiquetas</title>
+      <link>https://pawstcard.ipe.rest/journal/es/how-to-describe-pet-behavior-in-visit-notes-without-labels/</link>
+      <guid isPermaLink="true">https://pawstcard.ipe.rest/journal/es/how-to-describe-pet-behavior-in-visit-notes-without-labels/</guid>
+      <pubDate>Wed, 25 Nov 2026 13:50:00 +0900</pubDate>
+      <description>Palabras como &quot;agresivo&quot; o &quot;ansioso&quot; pueden acompañar a una mascota durante años. Así puedes describir lo que viste en lugar de usar una etiqueta.</description>
+    </item>
+  </channel>
+</rss>

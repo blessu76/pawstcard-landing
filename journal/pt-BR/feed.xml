@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Diário do Pawstcard</title>
+    <link>https://pawstcard.ipe.rest/journal/pt-BR/</link>
+    <atom:link href="https://pawstcard.ipe.rest/journal/pt-BR/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>Notas práticas para pet sitters e dog walkers autônomos: atualizações para tutores, relatórios de visita e como tocar um negócio de cuidados com pets sozinho.</description>
+    <language>pt-BR</language>
+    <lastBuildDate>Wed, 25 Nov 2026 13:50:00 +0900</lastBuildDate>
+    <item>
+      <title>Como descrever o comportamento do pet nas notas de visita sem usar rótulos</title>
+      <link>https://pawstcard.ipe.rest/journal/pt-BR/how-to-describe-pet-behavior-in-visit-notes-without-labels/</link>
+      <guid isPermaLink="true">https://pawstcard.ipe.rest/journal/pt-BR/how-to-describe-pet-behavior-in-visit-notes-without-labels/</guid>
+      <pubDate>Wed, 25 Nov 2026 13:50:00 +0900</pubDate>
+      <description>Palavras como &quot;agressivo&quot; ou &quot;ansioso&quot; podem acompanhar um pet por anos. Veja como descrever o que você viu, em vez de usar um rótulo.</description>
+    </item>
+  </channel>
+</rss>

@@ -4,7 +4,7 @@
         xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://pawstcard.ipe.rest/</loc>
-    <lastmod>2026-11-18T19:04:00+09:00</lastmod>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/"/>
@@ -13,11 +13,483 @@
   <!-- journal:start -->
   <url>
     <loc>https://pawstcard.ipe.rest/journal/</loc>
-    <lastmod>2026-11-18T19:04:00+09:00</lastmod>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/"/>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/ko/</loc>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/"/>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/ja/</loc>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/"/>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/zh-Hant/</loc>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/"/>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/es/</loc>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/"/>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/pt-BR/</loc>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/"/>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/fr/</loc>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/"/>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/de/</loc>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/"/>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/id/</loc>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/"/>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/th/</loc>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/"/>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/vi/</loc>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/"/>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/tr/</loc>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/"/>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/</loc>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/ko/how-to-describe-pet-behavior-in-visit-notes-without-labels/</loc>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/ja/how-to-describe-pet-behavior-in-visit-notes-without-labels/</loc>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/zh-Hant/how-to-describe-pet-behavior-in-visit-notes-without-labels/</loc>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/es/how-to-describe-pet-behavior-in-visit-notes-without-labels/</loc>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/pt-BR/how-to-describe-pet-behavior-in-visit-notes-without-labels/</loc>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/fr/how-to-describe-pet-behavior-in-visit-notes-without-labels/</loc>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/de/how-to-describe-pet-behavior-in-visit-notes-without-labels/</loc>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/id/how-to-describe-pet-behavior-in-visit-notes-without-labels/</loc>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/th/how-to-describe-pet-behavior-in-visit-notes-without-labels/</loc>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/vi/how-to-describe-pet-behavior-in-visit-notes-without-labels/</loc>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/tr/how-to-describe-pet-behavior-in-visit-notes-without-labels/</loc>
+    <lastmod>2026-11-25T13:50:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-describe-pet-behavior-in-visit-notes-without-labels/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://pawstcard.ipe.rest/journal/en/what-to-do-if-you-damage-something-in-a-clients-home/</loc>

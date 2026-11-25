@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Pawstcard Günlüğü</title>
+    <link>https://pawstcard.ipe.rest/journal/tr/</link>
+    <atom:link href="https://pawstcard.ipe.rest/journal/tr/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>Bağımsız evcil hayvan bakıcıları ve köpek gezdiriciler için pratik notlar: müşteri güncellemeleri, ziyaret rapor kartları ve tek kişilik bir evcil hayvan bakım işini yürütmek.</description>
+    <language>tr</language>
+    <lastBuildDate>Wed, 25 Nov 2026 13:50:00 +0900</lastBuildDate>
+    <item>
+      <title>Ziyaret notlarında evcil hayvan davranışını etiket kullanmadan nasıl anlatırsınız</title>
+      <link>https://pawstcard.ipe.rest/journal/tr/how-to-describe-pet-behavior-in-visit-notes-without-labels/</link>
+      <guid isPermaLink="true">https://pawstcard.ipe.rest/journal/tr/how-to-describe-pet-behavior-in-visit-notes-without-labels/</guid>
+      <pubDate>Wed, 25 Nov 2026 13:50:00 +0900</pubDate>
+      <description>&quot;Saldırgan&quot; ya da &quot;endişeli&quot; gibi sözcükler bir evcil hayvanın peşini yıllarca bırakmayabilir. Etiket yerine gördüklerinizi nasıl anlatacağınızı öğrenin.</description>
+    </item>
+  </channel>
+</rss>
