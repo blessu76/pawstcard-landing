@@ -280,14 +280,30 @@ class Sitemap(unittest.TestCase):
         for loc in self.locs:
             self.assertTrue(self.file_of(loc).is_file(), loc)
 
+    @staticmethod
+    def built_pages():
+        """{lang: [post pages]} for every site language (i18n/<lang>.json) from the build output on disk, not from the sitemap."""
+        return {L: sorted((REPO / "journal" / L).glob("*/index.html")) for L in bj.enabled_langs(REPO)}
+
+    def test_every_translated_page_has_its_english_original(self):
+        en = {p.parent.name for p in POST_PAGES}
+        for lang, pages in self.built_pages().items():
+            for page in pages:
+                self.assertIn(page.parent.name, en, "%s/%s has no English original" % (lang, page.parent.name))
+
     def test_every_indexable_page_is_listed_and_the_404_is_not(self):
-        expected = {bj.SITE + "/", bj.SITE + "/journal/"} | {"%s/journal/en/%s/" % (bj.SITE, p.parent.name) for p in POST_PAGES}
+        expected = {bj.SITE + "/", bj.SITE + "/journal/"}
+        for lang, pages in self.built_pages().items():
+            expected |= {"%s/journal/%s/%s/" % (bj.SITE, lang, p.parent.name) for p in pages}
+            if lang != "en" and pages:  # a language list page exists (and is listed) once that language has a live post
+                self.assertTrue((REPO / "journal" / lang / "index.html").is_file(), lang)
+                expected.add("%s/journal/%s/" % (bj.SITE, lang))
         self.assertEqual(set(self.locs), expected)
         self.assertNotIn("404", " ".join(self.locs))
 
     def test_post_lastmod_equals_json_ld_date_modified(self):
-        for page in POST_PAGES:
-            url = "%s/journal/en/%s/" % (bj.SITE, page.parent.name)
+        for page in (p for pages in self.built_pages().values() for p in pages):
+            url = "%s/journal/%s/%s/" % (bj.SITE, page.parent.parent.name, page.parent.name)
             post = {b["@type"]: b for b in ld_blocks(page.read_text(encoding="utf-8"))}["BlogPosting"]
             self.assertEqual(parse_iso(self.entries[url]), parse_iso(post["dateModified"]), url)
 
@@ -313,6 +329,8 @@ class GeneratedFilesInSync(unittest.TestCase):
         for name in ("index.html", "sitemap.xml", "llms.txt"):
             shutil.copy(REPO / name, tmp / name)
         shutil.copytree(REPO / "journal", tmp / "journal")
+        if (REPO / bj.I18N_REL).is_dir():  # the site languages: without i18n/ the build is English only and drops every translation
+            shutil.copytree(REPO / bj.I18N_REL, tmp / bj.I18N_REL)
         bj.build(tmp, now(), queue_dir=tmp / "no-queue")
         stale = [str(p.relative_to(REPO)) for p in sorted((REPO / "journal").rglob("*"))
                  if p.is_file() and p.name != "feed.xml" and p.read_bytes() != (tmp / p.relative_to(REPO)).read_bytes()]
