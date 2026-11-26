@@ -141,16 +141,57 @@ log "PUSHED $SHA: $SLUGS"
 echo 0 > "$SOFT"; rm -f "$BASE/SOFT_ALERT"
 for s in $SLUGS; do [ -f "$QUEUE/$s.md" ] && mv "$QUEUE/$s.md" "$QUEUE/.published/"; done
 
-# ---- 6. soft verification: wait for the deploy, then confirm each page is 200 (never fails the run)
-[ "${PAWSTCARD_NO_VERIFY:-0}" = 1 ] && exit 0
-for s in $SLUGS; do
-  ok=0
-  for i in $(seq 1 24); do   # up to ~12 min
-    code="$(curl -s -o /dev/null -w '%{http_code}' "$LIVE/journal/en/$s/?v=$(date +%s)")"
-    if [ "$code" = 200 ]; then ok=1; break; fi
-    sleep 30
+# ---- 6. soft verification: allow time for Pages to deploy, then verify the published URLs
+verify_live() {
+  local -a ids=("$@") languages urls pending pids failed
+  local i id slug lang delay code warning round=0
+  for i in "${!ids[@]}"; do
+    id="${ids[i]}"
+    slug="$id"
+    lang=en
+    if [[ "$id" == *.* ]]; then
+      slug="${id%.*}"
+      lang="${id##*.}"
+    fi
+    languages[i]="$lang"
+    urls[i]="${LIVE%/}/journal/$lang/$slug/"
   done
-  if [ "$ok" = 1 ]; then log "live OK: $LIVE/journal/en/$s/ -> 200"
-  else log "WARN: $s not 200 after 12 min — check the Actions deploy"; echo "$(ts) $s not live after 12 min" > "$BASE/SOFT_ALERT"; notify "$s not live after 12 min"; fi
-done
+
+  pending=("${!ids[@]}")
+  # 18 minutes of backoff plus at most 10 seconds of HTTP time per round.
+  for delay in 30 30 60 120 180 240 420; do
+    sleep "$delay"
+    round=$((round + 1))
+    for i in "${pending[@]}"; do
+      (
+        if code="$(curl -s --max-time 10 -o /dev/null -w '%{http_code}' "${urls[i]}?v=$SHA-$round")" && [ "$code" = 200 ]; then
+          log "live OK: ${urls[i]} -> 200"
+        else
+          exit 1
+        fi
+      ) &
+      pids[i]=$!
+    done
+
+    failed=()
+    for i in "${pending[@]}"; do
+      if ! wait "${pids[i]}"; then failed+=("$i"); fi
+    done
+    [ "${#failed[@]}" -eq 0 ] && return 0
+    pending=("${failed[@]}")
+  done
+
+  warning="Pages for $SHA still not 200 after $round rounds:"
+  for i in "${pending[@]}"; do
+    warning+=" ${languages[i]} (${urls[i]})"
+  done
+  warning+=' — check Actions for No artifacts named "github-pages" and re-dispatch with gh workflow run "Deploy to GitHub Pages".'
+  log "WARN: $warning"
+  printf '%s %s\n' "$(ts)" "$warning" > "$BASE/SOFT_ALERT"
+  notify "Pages for $SHA: ${#pending[@]} URL(s) still not live. Check the publisher log."
+}
+
+[ "${PAWSTCARD_NO_VERIFY:-0}" = 1 ] && exit 0
+read -r -a published_ids <<< "$SLUGS"
+verify_live "${published_ids[@]}"
 exit 0
