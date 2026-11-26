@@ -6,7 +6,14 @@
     <atom:link href="https://pawstcard.ipe.rest/journal/es/feed.xml" rel="self" type="application/rss+xml"/>
     <description>Notas prácticas para cuidadores de mascotas y paseadores de perros independientes: actualizaciones para clientes, informes de visita y cómo llevar un negocio de cuidado de mascotas en solitario.</description>
     <language>es</language>
-    <lastBuildDate>Wed, 25 Nov 2026 13:50:00 +0900</lastBuildDate>
+    <lastBuildDate>Thu, 26 Nov 2026 12:02:00 +0900</lastBuildDate>
+    <item>
+      <title>¿No encuentras al gato? Qué hacer durante una visita</title>
+      <link>https://pawstcard.ipe.rest/journal/es/what-to-do-if-you-cant-find-the-cat-during-a-visit/</link>
+      <guid isPermaLink="true">https://pawstcard.ipe.rest/journal/es/what-to-do-if-you-cant-find-the-cat-during-a-visit/</guid>
+      <pubDate>Thu, 26 Nov 2026 12:02:00 +0900</pubDate>
+      <description>Un plan tranquilo, paso a paso, para cuidadores cuando el gato no está donde debería al llegar: dónde buscar, cuándo llamar al dueño y qué anotar.</description>
+    </item>
     <item>
       <title>Cómo describir el comportamiento de una mascota en las notas de visita sin usar etiquetas</title>
       <link>https://pawstcard.ipe.rest/journal/es/how-to-describe-pet-behavior-in-visit-notes-without-labels/</link>

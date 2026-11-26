@@ -6,7 +6,14 @@
     <atom:link href="https://pawstcard.ipe.rest/journal/fr/feed.xml" rel="self" type="application/rss+xml"/>
     <description>Notes pratiques pour les pet-sitters et promeneurs de chiens indépendants : nouvelles aux clients, comptes rendus de visite et gestion d&#x27;une activité de garde d&#x27;animaux en solo.</description>
     <language>fr</language>
-    <lastBuildDate>Wed, 25 Nov 2026 13:50:00 +0900</lastBuildDate>
+    <lastBuildDate>Thu, 26 Nov 2026 12:02:00 +0900</lastBuildDate>
+    <item>
+      <title>Chat introuvable pendant une visite : que faire ?</title>
+      <link>https://pawstcard.ipe.rest/journal/fr/what-to-do-if-you-cant-find-the-cat-during-a-visit/</link>
+      <guid isPermaLink="true">https://pawstcard.ipe.rest/journal/fr/what-to-do-if-you-cant-find-the-cat-during-a-visit/</guid>
+      <pubDate>Thu, 26 Nov 2026 12:02:00 +0900</pubDate>
+      <description>Un plan calme, étape par étape, pour pet sitters quand le chat n&#x27;est pas à sa place à l&#x27;arrivée : où chercher, quand appeler le propriétaire, quoi noter.</description>
+    </item>
     <item>
       <title>Décrire le comportement d&#x27;un animal dans les notes de visite, sans étiquettes</title>
       <link>https://pawstcard.ipe.rest/journal/fr/how-to-describe-pet-behavior-in-visit-notes-without-labels/</link>

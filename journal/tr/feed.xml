@@ -6,7 +6,14 @@
     <atom:link href="https://pawstcard.ipe.rest/journal/tr/feed.xml" rel="self" type="application/rss+xml"/>
     <description>Bağımsız evcil hayvan bakıcıları ve köpek gezdiriciler için pratik notlar: müşteri güncellemeleri, ziyaret rapor kartları ve tek kişilik bir evcil hayvan bakım işini yürütmek.</description>
     <language>tr</language>
-    <lastBuildDate>Wed, 25 Nov 2026 13:50:00 +0900</lastBuildDate>
+    <lastBuildDate>Thu, 26 Nov 2026 12:02:00 +0900</lastBuildDate>
+    <item>
+      <title>Kediyi Bulamıyor musunuz? Ziyaret Sırasında Ne Yapmalı</title>
+      <link>https://pawstcard.ipe.rest/journal/tr/what-to-do-if-you-cant-find-the-cat-during-a-visit/</link>
+      <guid isPermaLink="true">https://pawstcard.ipe.rest/journal/tr/what-to-do-if-you-cant-find-the-cat-during-a-visit/</guid>
+      <pubDate>Thu, 26 Nov 2026 12:02:00 +0900</pubDate>
+      <description>Varışta kedi her zamanki yerinde değilse evcil hayvan bakıcıları için sakin bir adım adım plan: nereye bakmalı, sahibini ne zaman aramalı, neyi not etmeli.</description>
+    </item>
     <item>
       <title>Ziyaret notlarında evcil hayvan davranışını etiket kullanmadan nasıl anlatırsınız</title>
       <link>https://pawstcard.ipe.rest/journal/tr/how-to-describe-pet-behavior-in-visit-notes-without-labels/</link>
