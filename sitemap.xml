@@ -4,7 +4,7 @@
         xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://pawstcard.ipe.rest/</loc>
-    <lastmod>2026-11-26T12:02:00+09:00</lastmod>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/"/>
@@ -13,7 +13,7 @@
   <!-- journal:start -->
   <url>
     <loc>https://pawstcard.ipe.rest/journal/</loc>
-    <lastmod>2026-11-26T12:02:00+09:00</lastmod>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
@@ -32,7 +32,7 @@
   </url>
   <url>
     <loc>https://pawstcard.ipe.rest/journal/ko/</loc>
-    <lastmod>2026-11-26T12:02:00+09:00</lastmod>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
@@ -51,7 +51,7 @@
   </url>
   <url>
     <loc>https://pawstcard.ipe.rest/journal/ja/</loc>
-    <lastmod>2026-11-26T12:02:00+09:00</lastmod>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
@@ -70,7 +70,7 @@
   </url>
   <url>
     <loc>https://pawstcard.ipe.rest/journal/zh-Hant/</loc>
-    <lastmod>2026-11-26T12:02:00+09:00</lastmod>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
@@ -89,7 +89,7 @@
   </url>
   <url>
     <loc>https://pawstcard.ipe.rest/journal/es/</loc>
-    <lastmod>2026-11-26T12:02:00+09:00</lastmod>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
@@ -108,7 +108,7 @@
   </url>
   <url>
     <loc>https://pawstcard.ipe.rest/journal/pt-BR/</loc>
-    <lastmod>2026-11-26T12:02:00+09:00</lastmod>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
@@ -127,7 +127,7 @@
   </url>
   <url>
     <loc>https://pawstcard.ipe.rest/journal/fr/</loc>
-    <lastmod>2026-11-26T12:02:00+09:00</lastmod>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
@@ -146,7 +146,7 @@
   </url>
   <url>
     <loc>https://pawstcard.ipe.rest/journal/de/</loc>
-    <lastmod>2026-11-26T12:02:00+09:00</lastmod>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
@@ -165,7 +165,7 @@
   </url>
   <url>
     <loc>https://pawstcard.ipe.rest/journal/id/</loc>
-    <lastmod>2026-11-26T12:02:00+09:00</lastmod>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
@@ -184,7 +184,7 @@
   </url>
   <url>
     <loc>https://pawstcard.ipe.rest/journal/th/</loc>
-    <lastmod>2026-11-26T12:02:00+09:00</lastmod>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
@@ -203,7 +203,7 @@
   </url>
   <url>
     <loc>https://pawstcard.ipe.rest/journal/vi/</loc>
-    <lastmod>2026-11-26T12:02:00+09:00</lastmod>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
@@ -222,7 +222,7 @@
   </url>
   <url>
     <loc>https://pawstcard.ipe.rest/journal/tr/</loc>
-    <lastmod>2026-11-26T12:02:00+09:00</lastmod>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/"/>
@@ -238,6 +238,258 @@
     <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/"/>
     <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/"/>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/</loc>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/ko/how-to-decline-a-pet-sitting-booking-politely/</loc>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/ja/how-to-decline-a-pet-sitting-booking-politely/</loc>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/zh-Hant/how-to-decline-a-pet-sitting-booking-politely/</loc>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/es/how-to-decline-a-pet-sitting-booking-politely/</loc>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/pt-BR/how-to-decline-a-pet-sitting-booking-politely/</loc>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/fr/how-to-decline-a-pet-sitting-booking-politely/</loc>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/de/how-to-decline-a-pet-sitting-booking-politely/</loc>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/id/how-to-decline-a-pet-sitting-booking-politely/</loc>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/th/how-to-decline-a-pet-sitting-booking-politely/</loc>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/vi/how-to-decline-a-pet-sitting-booking-politely/</loc>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://pawstcard.ipe.rest/journal/tr/how-to-decline-a-pet-sitting-booking-politely/</loc>
+    <lastmod>2026-11-27T13:00:00+09:00</lastmod>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://pawstcard.ipe.rest/journal/ko/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://pawstcard.ipe.rest/journal/ja/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://pawstcard.ipe.rest/journal/zh-Hant/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://pawstcard.ipe.rest/journal/es/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://pawstcard.ipe.rest/journal/pt-BR/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://pawstcard.ipe.rest/journal/fr/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://pawstcard.ipe.rest/journal/de/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://pawstcard.ipe.rest/journal/id/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://pawstcard.ipe.rest/journal/th/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://pawstcard.ipe.rest/journal/vi/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="tr" href="https://pawstcard.ipe.rest/journal/tr/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://pawstcard.ipe.rest/journal/en/how-to-decline-a-pet-sitting-booking-politely/"/>
+    <image:image>
+      <image:loc>https://pawstcard.ipe.rest/og-image.png</image:loc>
+    </image:image>
   </url>
   <url>
     <loc>https://pawstcard.ipe.rest/journal/en/what-to-do-if-you-cant-find-the-cat-during-a-visit/</loc>

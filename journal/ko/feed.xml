@@ -6,7 +6,14 @@
     <atom:link href="https://pawstcard.ipe.rest/journal/ko/feed.xml" rel="self" type="application/rss+xml"/>
     <description>독립 펫시터와 도그워커를 위한 실용 노트: 보호자 업데이트, 방문 리포트 카드, 1인 펫케어 사업 운영.</description>
     <language>ko</language>
-    <lastBuildDate>Thu, 26 Nov 2026 12:02:00 +0900</lastBuildDate>
+    <lastBuildDate>Fri, 27 Nov 2026 13:00:00 +0900</lastBuildDate>
+    <item>
+      <title>펫시팅 예약을 정중하게 거절하는 방법</title>
+      <link>https://pawstcard.ipe.rest/journal/ko/how-to-decline-a-pet-sitting-booking-politely/</link>
+      <guid isPermaLink="true">https://pawstcard.ipe.rest/journal/ko/how-to-decline-a-pet-sitting-booking-politely/</guid>
+      <pubDate>Fri, 27 Nov 2026 13:00:00 +0900</pubDate>
+      <description>펫시팅 요청을 거절하는 것도 사업을 잘 운영하는 일의 일부입니다. 언제 거절할지, 어떻게 친절하게 말할지, 상황에 맞게 고쳐 쓸 수 있는 예시 메시지를 정리했습니다.</description>
+    </item>
     <item>
       <title>방문 중 고양이가 안 보일 때 해야 할 일</title>
       <link>https://pawstcard.ipe.rest/journal/ko/what-to-do-if-you-cant-find-the-cat-during-a-visit/</link>
