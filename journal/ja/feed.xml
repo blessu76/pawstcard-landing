@@ -6,7 +6,14 @@
     <atom:link href="https://pawstcard.ipe.rest/journal/ja/feed.xml" rel="self" type="application/rss+xml"/>
     <description>個人で活動するペットシッターやドッグウォーカーのための実践ノート：飼い主への報告、訪問レポートカード、ひとりでのペットケア運営。</description>
     <language>ja</language>
-    <lastBuildDate>Fri, 27 Nov 2026 13:00:00 +0900</lastBuildDate>
+    <lastBuildDate>Sat, 28 Nov 2026 16:45:00 +0900</lastBuildDate>
+    <item>
+      <title>ペットシッターが訪問の最後に確認すること</title>
+      <link>https://pawstcard.ipe.rest/journal/ja/pet-sitter-end-of-visit-home-checklist/</link>
+      <guid isPermaLink="true">https://pawstcard.ipe.rest/journal/ja/pet-sitter-end-of-visit-home-checklist/</guid>
+      <pubDate>Sat, 28 Nov 2026 16:45:00 +0900</pubDate>
+      <description>帰る前にペット、水、トイレ、照明、戸締まりを確認し、済んだことと残っていることを依頼主に伝えます。</description>
+    </item>
     <item>
       <title>ペットシッターの予約を丁寧に断る方法</title>
       <link>https://pawstcard.ipe.rest/journal/ja/how-to-decline-a-pet-sitting-booking-politely/</link>

@@ -6,7 +6,14 @@
     <atom:link href="https://pawstcard.ipe.rest/journal/id/feed.xml" rel="self" type="application/rss+xml"/>
     <description>Catatan praktis untuk pet sitter dan dog walker mandiri: kabar untuk klien, kartu laporan kunjungan, dan mengelola bisnis perawatan hewan sendirian.</description>
     <language>id</language>
-    <lastBuildDate>Fri, 27 Nov 2026 13:00:00 +0900</lastBuildDate>
+    <lastBuildDate>Sat, 28 Nov 2026 16:45:00 +0900</lastBuildDate>
+    <item>
+      <title>Daftar Periksa Akhir Kunjungan Pet Sitter</title>
+      <link>https://pawstcard.ipe.rest/journal/id/pet-sitter-end-of-visit-home-checklist/</link>
+      <guid isPermaLink="true">https://pawstcard.ipe.rest/journal/id/pet-sitter-end-of-visit-home-checklist/</guid>
+      <pubDate>Sat, 28 Nov 2026 16:45:00 +0900</pubDate>
+      <description>Periksa hewan, air, kotak pasir, lampu, dan kunci sebelum pergi, lalu beri tahu klien apa yang sudah dilakukan dan apa yang masih perlu ditangani.</description>
+    </item>
     <item>
       <title>Cara Menolak Pemesanan Pet Sitting dengan Sopan</title>
       <link>https://pawstcard.ipe.rest/journal/id/how-to-decline-a-pet-sitting-booking-politely/</link>

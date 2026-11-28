@@ -6,7 +6,14 @@
     <atom:link href="https://pawstcard.ipe.rest/journal/es/feed.xml" rel="self" type="application/rss+xml"/>
     <description>Notas prácticas para cuidadores de mascotas y paseadores de perros independientes: actualizaciones para clientes, informes de visita y cómo llevar un negocio de cuidado de mascotas en solitario.</description>
     <language>es</language>
-    <lastBuildDate>Fri, 27 Nov 2026 13:00:00 +0900</lastBuildDate>
+    <lastBuildDate>Sat, 28 Nov 2026 16:45:00 +0900</lastBuildDate>
+    <item>
+      <title>Qué revisar en casa al terminar el cuidado</title>
+      <link>https://pawstcard.ipe.rest/journal/es/pet-sitter-end-of-visit-home-checklist/</link>
+      <guid isPermaLink="true">https://pawstcard.ipe.rest/journal/es/pet-sitter-end-of-visit-home-checklist/</guid>
+      <pubDate>Sat, 28 Nov 2026 16:45:00 +0900</pubDate>
+      <description>Revisa la mascota, el agua, el arenero, las luces y las cerraduras antes de salir e informa al cliente de las tareas hechas y las pendientes.</description>
+    </item>
     <item>
       <title>Cómo rechazar con amabilidad una reserva de cuidado de mascotas</title>
       <link>https://pawstcard.ipe.rest/journal/es/how-to-decline-a-pet-sitting-booking-politely/</link>
